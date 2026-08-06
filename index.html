@@ -1,13 +1,98 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>16-noviq</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<html lang="en" class="scroll-smooth">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <!-- Title & SEO -->
+        <title>NOVIQ</title>
+
+        <meta name="title" content="NOVIQ" />
+
+        <meta
+            name="description"
+            content="NOVIQ is a multi-tenant booking platform that enables businesses to launch customizable booking websites for clinics, hotels, salons, gyms, restaurants, and more."
+        />
+
+        <meta
+            name="keywords"
+            content="NOVIQ, Booking Platform, Booking SaaS, Multi Tenant, Clinic Booking, Hotel Booking, Salon Booking, Appointment System, Booking Engine"
+        />
+
+        <meta name="author" content="Mohamed Fayed" />
+
+        <meta name="robots" content="index, follow" />
+
+        <!-- Theme -->
+
+        <meta name="theme-color" content="#161f26" />
+
+        <meta name="color-scheme" content="light dark" />
+
+        <!-- Favicon -->
+        <link rel="icon" href="/favicon.png" />
+
+        <!-- Open Graph -->
+        <meta property="og:type" content="website" />
+
+        <meta
+            property="og:title"
+            content="NOVIQ — The Universal Booking Platform"
+        />
+
+        <meta
+            property="og:description"
+            content="Create and manage customizable booking websites for any business."
+        />
+
+        <meta property="og:image" content="/preview.png" />
+
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary_large_image" />
+
+        <meta
+            name="twitter:title"
+            content="NOVIQ — The Universal Booking Platform"
+        />
+
+        <meta
+            name="twitter:description"
+            content="One Platform. Unlimited Businesses."
+        />
+    </head>
+
+    <body>
+        <!-- No JavaScript -->
+
+        <noscript>
+            <div
+                style="
+                    min-height: 100vh;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-direction: column;
+                    font-family: Inter, sans-serif;
+                    text-align: center;
+                    padding: 40px;
+                "
+            >
+                <h1>JavaScript Required</h1>
+
+                <p>NOVIQ requires JavaScript to run properly.</p>
+            </div>
+        </noscript>
+
+        <!-- React Root -->
+
+        <div id="root"></div>
+
+        <!-- React Portals -->
+
+        <div id="modal-root"></div>
+
+        <div id="toast-root"></div>
+
+        <script type="module" src="/src/main.jsx"></script>
+    </body>
 </html>
