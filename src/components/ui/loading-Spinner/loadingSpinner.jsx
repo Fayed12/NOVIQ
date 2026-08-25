@@ -4,17 +4,17 @@ import styles from "./loadingSpinner.module.css";
 // prop-types
 import PropTypes from "prop-types";
 
-// component
 const LoadingSpinner = ({
     size = "md",
     color = "primary",
     label = "",
+    className = "",
 }) => {
     return (
         <span
-            className={styles.wrap}
+            className={`${styles.wrap} ${className}`.trim()}
             role="status"
-            aria-label={label || "Loading…"}
+            aria-label={label || "Loading..."}
             aria-live="polite"
         >
             <span
@@ -33,8 +33,9 @@ const LoadingSpinner = ({
 
 LoadingSpinner.propTypes = {
     size: PropTypes.oneOf(["xs", "sm", "md", "lg", "xl"]),
-    color: PropTypes.oneOf(["primary", "info", "danger", "warning", "white"]),
+    color: PropTypes.oneOf(["primary", "info", "danger", "warning", "white", "neutral"]),
     label: PropTypes.string,
+    className: PropTypes.string,
 };
 
 export default LoadingSpinner;

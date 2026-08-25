@@ -26,14 +26,11 @@ const PrivacyPage = () => {
     const containerRef = useRef(null);
 
     useEffect(() => {
-        // Scroll to top on mount
         window.scrollTo(0, 0);
 
         const handleScroll = () => {
-            // Show/hide scroll-to-top button
             setShowScrollTop(window.scrollY > 300);
 
-            // Determine active section based on scroll position
             const sections = [
                 "sec-1", "sec-2", "sec-3", "sec-4", "sec-5", "sec-6", "sec-7", "sec-8", "sec-9"
             ];
@@ -42,7 +39,6 @@ const PrivacyPage = () => {
                 const el = document.getElementById(sectionId);
                 if (el) {
                     const rect = el.getBoundingClientRect();
-                    // If the section header is near the top of the viewport
                     if (rect.top >= 0 && rect.top <= 150) {
                         setActiveSection(sectionId);
                         break;
@@ -58,19 +54,16 @@ const PrivacyPage = () => {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    // GSAP entrance animations
     useEffect(() => {
         const ctx = gsap.context(() => {
             const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-            // Navbar drop-in
             tl.fromTo(
                 `.${styles.navbar}`,
                 { opacity: 0, y: -20 },
-                { opacity: 1, y: 0, duration: 0.5 }
+                { opacity: 1, y: 0, duration: 0.5, clearProps: "transform" }
             );
 
-            // Hero section animations
             tl.fromTo(
                 `.${styles.iconWrapper}`,
                 { opacity: 0, scale: 0.5 },
@@ -85,7 +78,6 @@ const PrivacyPage = () => {
                 "-=0.4"
             );
 
-            // TOC Card (left) and Sections (right) entrance
             tl.fromTo(
                 `.${styles.tocCard}`,
                 { opacity: 0, x: -30 },
@@ -107,7 +99,7 @@ const PrivacyPage = () => {
     const scrollToSection = (id) => {
         const el = document.getElementById(id);
         if (el) {
-            const offset = 100; // offset for sticky navbar
+            const offset = 90;
             const bodyRect = document.body.getBoundingClientRect().top;
             const elementRect = el.getBoundingClientRect().top;
             const elementPosition = elementRect - bodyRect;
@@ -122,10 +114,7 @@ const PrivacyPage = () => {
     };
 
     const scrollToTop = () => {
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
+        window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
     const tocItems = [
@@ -133,236 +122,171 @@ const PrivacyPage = () => {
         { id: "sec-2", label: "2. How We Use Data" },
         { id: "sec-3", label: "3. Sharing and Disclosures" },
         { id: "sec-4", label: "4. Data Security" },
-        { id: "sec-5", label: "5. Cookies & Local Storage" },
+        { id: "sec-5", label: "5. Cookies & Storage" },
         { id: "sec-6", label: "6. Data Retention" },
-        { id: "sec-7", label: "7. FERPA & Children's Privacy" },
+        { id: "sec-7", label: "7. Children's Privacy" },
         { id: "sec-8", label: "8. Your Rights & Choices" },
         { id: "sec-9", label: "9. Updates & Contact Info" }
     ];
+
+    const logoSrc = isDark ? "/dark-logo.png" : "/light-logo.png";
 
     return (
         <div ref={containerRef} className={styles.pageContainer}>
             {/* Header Navbar */}
             <header className={styles.navbar} id="privacy-navbar">
-                <div className={styles.navLogo} onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
+                <div className={styles.navLogo} onClick={() => navigate("/")} role="button" tabIndex={0}>
                     <img 
-                        src={isDark ? "/dark-logo.png" : "/light-logo.png"} 
-                        alt="Quivio Logo" 
+                        src={logoSrc} 
+                        alt="NOVIQ Logo" 
                         className={styles.logoImg} 
                     />
                 </div>
                 <div className={styles.navActions}>
-                    <MainButton 
-                        id="privacy-back-btn"
-                        variant="ghost" 
-                        onClick={() => navigate("/")} 
+                    <MainButton
+                        onClick={() => navigate("/")}
+                        variant="ghost"
                         size="sm"
+                        icon={<FiArrowLeft />}
                     >
-                        <FiArrowLeft style={{ marginRight: "var(--space-2)" }} /> Back to Home
+                        Back to Home
                     </MainButton>
                 </div>
             </header>
 
             {/* Hero Header */}
-            <section className={styles.heroSection} aria-labelledby="privacy-heading">
-                <div className={styles.heroGlow} />
+            <section className={styles.heroSection}>
+                <div className={styles.heroGlow} aria-hidden="true" />
                 <div className={styles.heroContent}>
                     <div className={styles.iconWrapper}>
-                        <FiShield />
+                        <FiShield className={styles.heroIcon} />
                     </div>
-                    <h1 id="privacy-heading" className={styles.pageTitle}>Privacy Policy</h1>
-                    <p className={styles.pageSubtitle}>Last updated: July 2, 2026</p>
+                    <h1 className={styles.pageTitle}>Privacy Policy</h1>
+                    <p className={styles.pageSubtitle}>
+                        Effective August 2026 • NOVIQ Booking Platform
+                    </p>
                 </div>
             </section>
 
-            {/* Document Content Grid */}
-            <main className={styles.contentGrid}>
-                {/* Sidebar Table of Contents */}
+            {/* Main Content Layout */}
+            <main className={styles.contentLayout}>
+                {/* Sticky Left Sidebar (TOC) */}
                 <aside className={styles.sidebar}>
                     <div className={styles.tocCard}>
-                        <h3>Table of Contents</h3>
-                        <nav aria-label="Privacy policy sections">
-                            <ul className={styles.tocList}>
-                                {tocItems.map((item) => (
-                                    <li key={item.id}>
-                                        <button
-                                            id={`toc-btn-${item.id}`}
-                                            onClick={() => scrollToSection(item.id)}
-                                            className={`${styles.tocLink} ${activeSection === item.id ? styles.activeToc : ""}`}
-                                        >
-                                            {item.label}
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
+                        <h2 className={styles.tocTitle}>Table of Contents</h2>
+                        <nav className={styles.tocNav}>
+                            {tocItems.map((item) => (
+                                <button
+                                    key={item.id}
+                                    type="button"
+                                    className={`${styles.tocLink} ${activeSection === item.id ? styles.activeTocLink : ""}`}
+                                    onClick={() => scrollToSection(item.id)}
+                                >
+                                    {item.label}
+                                </button>
+                            ))}
                         </nav>
                     </div>
                 </aside>
 
-                {/* Main Privacy text */}
-                <article className={styles.textContent}>
+                {/* Right Document Sections */}
+                <article className={styles.documentBody}>
                     <section id="sec-1" className={styles.docSection}>
-                        <h2>1. Information We Collect</h2>
+                        <h2 className={styles.sectionHeading}>1. Information Collection</h2>
                         <p>
-                            Quivio respects your privacy and is committed to protecting your personal data. 
-                            We collect information from and about you in the following ways:
+                            NOVIQ respects your personal privacy. We collect information necessary to manage booking appointments, coordinate service schedules, and provide multi-tenant business dashboards.
                         </p>
                         <p>
-                            <strong>For Instructors:</strong> When you register an account, we collect personal details including your 
-                            name, email address, school or organization name, and system credentials.
+                            We collect personal data directly when you:
                         </p>
-                        <p>
-                            <strong>For Students:</strong> Student account details are provided to the platform by their respective 
-                            Instructors or institution administrators. This includes the student's name, email, student ID, and classroom association.
-                        </p>
-                        <p>
-                            <strong>Assessment Logs:</strong> When students attempt a quiz, we record response metrics including answer selections, 
-                            attempt durations, quiz timers, submission timestamps, and tab-focus change alerts (used solely to assist instructors 
-                            in evaluating examination integrity).
-                        </p>
-                        <p>
-                            <strong>Technical Logs:</strong> We collect hardware and connection details, including IP addresses, browser types, 
-                            and OS configurations to ensure server stability and help troubleshoot offline synchronization errors.
-                        </p>
+                        <ul>
+                            <li>Register an account as a customer, employee, or business owner.</li>
+                            <li>Book appointments online (name, email, phone number, booking notes).</li>
+                            <li>Configure business hours, branches, services, or team assignments.</li>
+                            <li>Submit ratings, feedback, or customer support inquiries.</li>
+                        </ul>
                     </section>
 
                     <section id="sec-2" className={styles.docSection}>
-                        <h2>2. How We Use Your Information</h2>
+                        <h2 className={styles.sectionHeading}>2. How We Use Data</h2>
                         <p>
-                            We use the collected information for purposes necessary to run the Services, including:
+                            NOVIQ utilizes collected data strictly for:
                         </p>
-                        <ul className={styles.bulletList}>
-                            <li>Authenticating users and syncing session data via our secure database provider.</li>
-                            <li>Compiling student performance analytics and generating dashboard statistics for Instructors.</li>
-                            <li>Generating and verifying PDF course certificates with unique validation codes.</li>
-                            <li>Calculating user level-ups, weekly leaderboard positions, achievements, and active streaks.</li>
-                            <li>Managing offline synchronization queues so that progress is cached locally and uploaded when connectivity returns.</li>
+                        <ul>
+                            <li>Processing and confirming appointments in real-time.</li>
+                            <li>Dispatching automated SMS and email reminders.</li>
+                            <li>Enabling multi-branch schedule coordination and staff availability management.</li>
+                            <li>Maintaining platform reliability, preventing fraudulent bookings, and securing accounts.</li>
                         </ul>
                     </section>
 
                     <section id="sec-3" className={styles.docSection}>
-                        <h2>3. Sharing and Disclosures of Data</h2>
+                        <h2 className={styles.sectionHeading}>3. Sharing and Disclosures</h2>
                         <p>
-                            We do not sell, trade, or rent your personal information to third parties. We share data only in the following contexts:
+                            We never sell personal information to advertising brokers. Information is shared only with:
                         </p>
-                        <p>
-                            <strong>Academic Scope:</strong> A student's performance metrics, quiz answers, and account details are fully accessible 
-                            to their course Instructor and institutional administrator.
-                        </p>
-                        <p>
-                            <strong>Service Providers:</strong> We share data with verified infrastructure providers (such as Supabase for database 
-                            hosting and session authentication) strictly for the purpose of maintaining the platform. These providers are bound by 
-                            confidentiality covenants.
-                        </p>
-                        <p>
-                            <strong>Public Validation:</strong> Anyone possessing a student's unique 8-digit certificate verification code can view 
-                            that certificate's public metadata (student name, quiz score, date, and issuer) on our validator screen.
-                        </p>
+                        <ul>
+                            <li><strong>Selected Business Providers:</strong> The specific business you book with receives your appointment contact information.</li>
+                            <li><strong>Authorized Infrastructure Providers:</strong> Secure database, cloud hosting, and transactional email services.</li>
+                            <li><strong>Legal Compliance:</strong> When required by enforceable statutory obligations.</li>
+                        </ul>
                     </section>
 
                     <section id="sec-4" className={styles.docSection}>
-                        <h2>4. Data Security</h2>
+                        <h2 className={styles.sectionHeading}>4. Data Security</h2>
                         <p>
-                            We implement industry-standard administrative, physical, and technical safeguards to secure your personal data. 
-                            Database connections are fully encrypted via Secure Sockets Layer (SSL) protocols, passwords are cryptographically 
-                            hashed, and session authentication utilizes encrypted JSON Web Tokens (JWT).
-                        </p>
-                        <p>
-                            However, no transmission method over the Internet is 100% secure. You are responsible for protecting your account credentials 
-                            and logging out of shared devices.
+                            We employ modern industry standards including TLS/HTTPS encryption in transit, AES-256 database encryption at rest, and PostgreSQL Row-Level Security (RLS) policies guaranteeing tenant isolation.
                         </p>
                     </section>
 
                     <section id="sec-5" className={styles.docSection}>
-                        <h2>5. Cookies & Local Storage</h2>
+                        <h2 className={styles.sectionHeading}>5. Cookies & Local Storage</h2>
                         <p>
-                            Quivio utilizes local cookies and browser Local Storage to facilitate session maintenance and quiz durability.
-                        </p>
-                        <p>
-                            <strong>Session Maintenance:</strong> We store authorization tokens so you remain authenticated across page reloads.
-                        </p>
-                        <p>
-                            <strong>Offline Progress Cache:</strong> In-progress quiz answers are saved locally every 2 seconds. In the event of network dropouts, 
-                            this cache enables you to continue writing responses offline without losing progress.
-                        </p>
-                        <p>
-                            <strong>Preferences:</strong> We store your selected appearance preference ('light' or 'dark') to apply the correct theme on load.
+                            We utilize essential browser storage strictly for session persistence, active theme selection (light/dark mode), and user preferences. No cross-site advertising trackers are installed.
                         </p>
                     </section>
 
                     <section id="sec-6" className={styles.docSection}>
-                        <h2>6. Data Retention Policies</h2>
+                        <h2 className={styles.sectionHeading}>6. Data Retention</h2>
                         <p>
-                            We retain user data for as long as accounts remain active or as required by the educational institution. 
-                            Instructors have full control over the classrooms (Rooms) they create and can delete Student records, quiz metrics, 
-                            and question banks at any time.
-                        </p>
-                        <p>
-                            Upon deletion by an instructor or account termination, corresponding records are permanently deleted from active databases, 
-                            except where minimal data retention is legally required.
+                            Appointment logs and customer records are retained while your account remains active or as required by commercial regulations. Inactive guest records are purged following statutory expiration periods.
                         </p>
                     </section>
 
                     <section id="sec-7" className={styles.docSection}>
-                        <h2>7. FERPA & Children's Privacy</h2>
+                        <h2 className={styles.sectionHeading}>7. Children's Privacy</h2>
                         <p>
-                            We recognize the sensitive nature of student records and comply with academic privacy guidelines including the 
-                            Family Educational Rights and Privacy Act (FERPA).
-                        </p>
-                        <p>
-                            Quivio does not allow child registrations. Student accounts are added under institutional licensing where the school 
-                            or instructor acts as the primary consent agent. If we discover that personal data of children under 13 was provided 
-                            without appropriate institutional consent, we will promptly delete it.
+                            The NOVIQ platform is designed for commercial business booking and is not directed at children under the age of 16. We do not knowingly collect personal data from minors without parental authorization.
                         </p>
                     </section>
 
                     <section id="sec-8" className={styles.docSection}>
-                        <h2>8. Your Rights & Choices</h2>
+                        <h2 className={styles.sectionHeading}>8. Your Rights & Choices</h2>
                         <p>
-                            Depending on your location and role, you have specific rights regarding your personal information:
+                            You have the right to request a copy of your personal data, rectify inaccuracies, or delete your account records at any time through Account Settings or by reaching out to support.
                         </p>
-                        <ul className={styles.bulletList}>
-                            <li><strong>Access & Correction:</strong> You can review and edit your user profile details via your dashboard settings.</li>
-                            <li><strong>Password Management:</strong> You can change your password or initiate password reset requests at any time.</li>
-                            <li><strong>Student Requests:</strong> Because Student accounts are managed by Instructors, students should contact their 
-                            instructor or institution to request deletion, exports, or alterations of their academic records.</li>
-                        </ul>
                     </section>
 
                     <section id="sec-9" className={styles.docSection}>
-                        <h2>9. Policy Updates & Contact Info</h2>
+                        <h2 className={styles.sectionHeading}>9. Updates & Contact Info</h2>
                         <p>
-                            We may revise this Privacy Policy periodically. We will notify you of any material changes by updating the "Last updated" 
-                            date at the top of this document or posting notices inside the application dashboards.
+                            For inquiries regarding this privacy policy or data protection, please contact our support team at <strong>support@noviq.app</strong>.
                         </p>
-                        <p>
-                            For privacy inquiries or request coordination, contact us at:
-                        </p>
-                        <div className={styles.contactCard}>
-                            <strong>Quivio Privacy Office</strong><br />
-                            Email: privacy@quivio.app<br />
-                            GitHub: <a href="https://github.com/Fayed12" target="_blank" rel="noopener noreferrer">github.com/Fayed12</a>
-                        </div>
                     </section>
                 </article>
             </main>
 
-            {/* Back to top button */}
+            {/* Scroll to top floating button */}
             {showScrollTop && (
-                <button 
-                    id="privacy-scroll-top-btn"
-                    className={styles.scrollTopBtn} 
+                <button
+                    type="button"
+                    className={styles.scrollTopBtn}
                     onClick={scrollToTop}
-                    aria-label="Scroll to top"
+                    aria-label="Scroll back to top"
                 >
                     <FiArrowUp />
                 </button>
             )}
-
-            {/* Simple Footer */}
-            <footer className={styles.footer}>
-                <p>&copy; {new Date().getFullYear()} Quivio. All rights reserved. <a href="/terms">Terms of Service</a></p>
-            </footer>
         </div>
     );
 };

@@ -6,83 +6,122 @@ import PropTypes from "prop-types";
 const getCustomStyles = () => ({
     container: (provided) => ({
         ...provided,
-        backgroundImage: "none !important", // Prevent double arrow background from global .select style
+        width: "100%",
     }),
-    control: (provided) => ({
+    control: (provided, state) => ({
         ...provided,
-        backgroundColor: "transparent",
-        border: "none",
-        boxShadow: "none",
-        minHeight: "2.5rem",
-        fontFamily: "var(--font-sans, sans-serif)",
-        fontSize: "var(--text-sm, 0.8125rem)",
+        backgroundColor: "var(--bg-surface)",
+        borderColor: state.isFocused ? "var(--color-accent)" : "var(--border-color)",
+        borderRadius: "var(--radius-md)",
+        minHeight: "40px",
+        height: "40px",
+        boxShadow: state.isFocused ? "0 0 0 3px var(--color-accent-ring)" : "none",
+        fontFamily: "var(--font-sans)",
+        fontSize: "var(--text-sm)",
+        color: "var(--text-primary)",
+        transition: "border-color var(--transition-fast), box-shadow var(--transition-base)",
         "&:hover": {
-            border: "none"
-        }
+            borderColor: state.isFocused ? "var(--color-accent)" : "var(--border-color-strong)",
+        },
     }),
     valueContainer: (provided) => ({
         ...provided,
-        padding: "2px 12px"
+        padding: "0 var(--space-md)",
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
     }),
     input: (provided) => ({
         ...provided,
-        color: "var(--text-primary, #0f172a)"
+        color: "var(--text-primary)",
+        margin: 0,
+        padding: 0,
     }),
     placeholder: (provided) => ({
         ...provided,
-        color: "var(--text-muted, #94a3b8)"
+        color: "var(--text-muted)",
+        fontSize: "var(--text-sm)",
     }),
     singleValue: (provided) => ({
         ...provided,
-        color: "var(--text-primary, #0f172a)"
+        color: "var(--text-primary)",
+        fontSize: "var(--text-sm)",
     }),
     menu: (provided) => ({
         ...provided,
-        backgroundColor: "var(--bg-surface, #ffffff)",
-        border: "1px solid var(--border-default, #cbd5e1)",
-        borderRadius: "var(--radius-md, 0.5rem)",
-        boxShadow: "var(--shadow-lg, 0 10px 24px rgba(0, 0, 0, 0.1))",
-        zIndex: 999
+        backgroundColor: "var(--bg-surface)",
+        border: "1px solid var(--border-color)",
+        borderRadius: "var(--radius-md)",
+        boxShadow: "var(--shadow-lg)",
+        zIndex: "var(--z-dropdown)",
+        overflow: "hidden",
+        marginTop: "4px",
     }),
     menuList: (provided) => ({
         ...provided,
-        padding: "4px 0"
+        padding: "var(--space-xs) 0",
+        backgroundColor: "var(--bg-surface)",
     }),
     option: (provided, state) => ({
         ...provided,
         backgroundColor: state.isSelected
-            ? "var(--color-accent, #2563eb)"
+            ? "var(--color-accent)"
             : state.isFocused
-            ? "var(--bg-surface-2, #f1f5f9)"
+            ? "var(--bg-surface-alt)"
             : "transparent",
         color: state.isSelected
-            ? "var(--text-on-accent, #ffffff)"
-            : "var(--text-primary, #0f172a)",
+            ? "var(--text-on-accent)"
+            : "var(--text-primary)",
         cursor: "pointer",
-        fontSize: "var(--text-sm, 0.8125rem)",
+        fontSize: "var(--text-sm)",
+        padding: "8px 16px",
         "&:active": {
-            backgroundColor: "var(--bg-surface-3, #e2e8f0)"
-        }
+            backgroundColor: state.isSelected ? "var(--color-accent)" : "var(--color-accent-soft)",
+        },
     }),
     multiValue: (provided) => ({
         ...provided,
-        backgroundColor: "var(--bg-surface-2, #f1f5f9)",
-        border: "1px solid var(--border-default, #cbd5e1)",
-        borderRadius: "var(--radius-sm, 0.375rem)"
+        backgroundColor: "var(--bg-surface-alt)",
+        border: "1px solid var(--border-color)",
+        borderRadius: "var(--radius-sm)",
     }),
     multiValueLabel: (provided) => ({
         ...provided,
-        color: "var(--text-primary, #0f172a)",
-        fontSize: "var(--text-xs, 0.6875rem)"
+        color: "var(--text-primary)",
+        fontSize: "var(--text-xs)",
+        padding: "2px 6px",
     }),
     multiValueRemove: (provided) => ({
         ...provided,
-        color: "var(--text-muted, #94a3b8)",
+        color: "var(--text-muted)",
         "&:hover": {
-            backgroundColor: "var(--bg-danger-mid, #ffe4e6)",
-            color: "var(--color-danger, #ef4444)"
-        }
-    })
+            backgroundColor: "var(--color-danger-light)",
+            color: "var(--color-danger)",
+        },
+    }),
+    dropdownIndicator: (provided, state) => ({
+        ...provided,
+        color: "var(--text-muted)",
+        padding: "0 var(--space-sm)",
+        transition: "transform var(--transition-fast), color var(--transition-fast)",
+        transform: state.selectProps.menuIsOpen ? "rotate(180deg)" : "none",
+        "&:hover": {
+            color: "var(--text-primary)",
+        },
+    }),
+    indicatorSeparator: (provided) => ({
+        ...provided,
+        backgroundColor: "var(--border-color)",
+        margin: "8px 0",
+    }),
+    clearIndicator: (provided) => ({
+        ...provided,
+        color: "var(--text-muted)",
+        padding: "0 var(--space-xs)",
+        "&:hover": {
+            color: "var(--color-danger)",
+        },
+    }),
 });
 
 const CustomSelect = ({
@@ -95,6 +134,10 @@ const CustomSelect = ({
     isDisabled = false,
     isClearable = false,
     className = "",
+    label,
+    errorMsg,
+    hint,
+    required = false,
     ...props
 }) => {
     // Standardize options to { value, label } format
@@ -111,9 +154,7 @@ const CustomSelect = ({
             if (!val) return [];
             const valArray = Array.isArray(val) ? val : [val];
             return valArray.map((v) => {
-                // If it is already an object, use it
                 if (typeof v === "object" && v !== null && "value" in v) return v;
-                // Otherwise find in formatted options
                 const found = formattedOptions.find((o) => o.value === v);
                 return found || { value: v, label: String(v) };
             });
@@ -140,19 +181,49 @@ const CustomSelect = ({
     const SelectComponent = isCreatable ? CreatableSelect : Select;
 
     return (
-        <SelectComponent
-            options={formattedOptions}
-            value={selectValue}
-            onChange={handleChange}
-            isMulti={isMulti}
-            placeholder={placeholder}
-            isDisabled={isDisabled}
-            isClearable={isClearable}
-            styles={getCustomStyles()}
-            className={className}
-            classNamePrefix="react-select"
-            {...props}
-        />
+        <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-xs)", width: "100%" }}>
+            {label && (
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <label style={{
+                        fontFamily: "var(--font-sans)",
+                        fontSize: "var(--text-xs)",
+                        fontWeight: "var(--fw-medium)",
+                        color: "var(--text-primary)"
+                    }}>
+                        {label}
+                        {required && <span style={{ color: "var(--color-danger)" }}> *</span>}
+                    </label>
+                    {hint && !errorMsg && (
+                        <span style={{ fontSize: "var(--text-tiny)", color: "var(--text-muted)" }}>{hint}</span>
+                    )}
+                </div>
+            )}
+
+            <SelectComponent
+                options={formattedOptions}
+                value={selectValue}
+                onChange={handleChange}
+                isMulti={isMulti}
+                placeholder={placeholder}
+                isDisabled={isDisabled}
+                isClearable={isClearable}
+                styles={getCustomStyles()}
+                className={className}
+                classNamePrefix="react-select"
+                {...props}
+            />
+
+            {errorMsg && (
+                <p style={{
+                    fontSize: "var(--text-xs)",
+                    color: "var(--color-danger)",
+                    fontFamily: "var(--font-sans)",
+                    marginTop: "2px"
+                }} role="alert">
+                    {errorMsg}
+                </p>
+            )}
+        </div>
     );
 };
 
@@ -174,7 +245,11 @@ CustomSelect.propTypes = {
     placeholder: PropTypes.string,
     isDisabled: PropTypes.bool,
     isClearable: PropTypes.bool,
-    className: PropTypes.string
+    className: PropTypes.string,
+    label: PropTypes.string,
+    errorMsg: PropTypes.string,
+    hint: PropTypes.string,
+    required: PropTypes.bool,
 };
 
 export default CustomSelect;

@@ -1,97 +1,99 @@
 // local
-import MainButton from "../../components/ui/button/MainButton";
+import MainButton from "../../../components/ui/button/MainButton";
 import styles from "./errorPage.module.css";
 
 // react
 import { useEffect, useRef } from "react";
 
 // react-router
-import { useNavigate, useRouteError } from "react-router";
+import { useNavigate, useRouteError, isRouteErrorResponse } from "react-router";
 
 // gsap
 import { gsap } from "gsap";
 
 // react-icons
-import { FiAlertOctagon, FiArrowLeft, FiHome, FiRefreshCw, FiGithub, FiMessageCircle } from "react-icons/fi";
+import {
+    FiAlertOctagon,
+    FiArrowLeft,
+    FiHome,
+    FiRefreshCw,
+    FiLock,
+    FiFileText,
+    FiServer,
+    FiMessageCircle,
+    FiGithub
+} from "react-icons/fi";
 
-const ErrorPage = () => {
+const ErrorPage = ({ customStatus, customTitle, customMessage }) => {
     const navigate = useNavigate();
-    const error = useRouteError();
+    const routeError = useRouteError();
     const containerRef = useRef(null);
 
-    // Parse routing error if present
-    let errorMessage = "An unexpected error occurred.";
-    let errorStatus = "";
-    if (error) {
-        errorMessage = error.statusText || error.message || errorMessage;
-        if (error.status) {
-            errorStatus = `Error Status ${error.status}`;
+    // Determine error type & message
+    let status = customStatus;
+    let title = customTitle || "Oops! Something Went Wrong";
+    let message = customMessage || "NOVIQ encountered an unexpected issue while loading this page.";
+    let icon = <FiAlertOctagon className={styles.errorIcon} />;
+
+    if (isRouteErrorResponse(routeError)) {
+        status = routeError.status;
+        if (status === 404) {
+            title = "404 - Page Not Found";
+            message = "The page or business storefront you are looking for does not exist or has been moved.";
+            icon = <FiFileText className={styles.errorIcon} />;
+        } else if (status === 403) {
+            title = "403 - Access Denied";
+            message = "You don't have permission to access this resource or dashboard area.";
+            icon = <FiLock className={styles.errorIcon} />;
+        } else if (status === 500) {
+            title = "500 - Server Error";
+            message = "Our servers ran into an internal error. We've logged this and are looking into it.";
+            icon = <FiServer className={styles.errorIcon} />;
+        } else {
+            message = routeError.statusText || routeError.data || message;
         }
+    } else if (routeError instanceof Error) {
+        message = routeError.message;
     }
 
     useEffect(() => {
-        if (typeof document !== "undefined") {
-            document.body.style.overflow = "hidden";
-        }
-        return () => {
-            if (typeof document !== "undefined") {
-                document.body.style.overflow = "";
-            }
-        };
-    }, []);
-
-    useEffect(() => {
         const ctx = gsap.context(() => {
-            const tl = gsap.timeline({
-                defaults: { ease: "power3.out" }
-            });
+            const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
             tl.fromTo(
                 `.${styles.card}`,
-                { y: 40, scale: 0.96, opacity: 0 },
+                { y: 40, scale: 0.95, opacity: 0 },
                 { y: 0, scale: 1, opacity: 1, duration: 0.7, ease: "back.out(1.2)" }
-            );
-
-            tl.fromTo(
+            )
+            .fromTo(
                 `.${styles.iconContainer}`,
-                { scale: 0.4, rotation: -30, opacity: 0 },
+                { scale: 0.4, rotation: -20, opacity: 0 },
                 { scale: 1, rotation: 0, opacity: 1, duration: 0.5, ease: "back.out(1.5)" },
                 "-=0.3"
-            );
-
-            tl.fromTo(
+            )
+            .fromTo(
                 `.${styles.heading}`,
                 { y: 15, opacity: 0 },
                 { y: 0, opacity: 1, duration: 0.4 },
                 "-=0.2"
-            );
-
-            tl.fromTo(
+            )
+            .fromTo(
                 `.${styles.description}`,
                 { y: 15, opacity: 0 },
                 { y: 0, opacity: 1, duration: 0.4 },
                 "-=0.2"
-            );
-
-            tl.fromTo(
+            )
+            .fromTo(
                 `.${styles.details}`,
                 { y: 15, opacity: 0 },
                 { y: 0, opacity: 1, duration: 0.4 },
                 "-=0.2"
-            );
-
-            tl.fromTo(
-                `.${styles.actions} button`,
+            )
+            .fromTo(
+                `.${styles.actions} button, .${styles.actions} a`,
                 { y: 10, opacity: 0 },
                 { y: 0, opacity: 1, duration: 0.4, stagger: 0.1 },
                 "-=0.2"
-            );
-
-            tl.fromTo(
-                `.${styles.contactSection}`,
-                { y: 10, opacity: 0 },
-                { y: 0, opacity: 1, duration: 0.4 },
-                "-=0.1"
             );
         }, containerRef);
 
@@ -99,7 +101,11 @@ const ErrorPage = () => {
     }, []);
 
     const handleGoBack = () => {
-        navigate(-1);
+        if (window.history.length > 1) {
+            navigate(-1);
+        } else {
+            navigate("/");
+        }
     };
 
     const handleGoHome = () => {
@@ -114,52 +120,67 @@ const ErrorPage = () => {
         <div ref={containerRef} className={styles.overlay}>
             <main className={styles.card} role="main">
                 <div className={styles.iconContainer}>
-                    <FiAlertOctagon className={styles.errorIcon} aria-hidden="true" />
+                    {icon}
                 </div>
-                
-                {errorStatus && <span className={styles.statusCode}>{errorStatus}</span>}
-                <h1 className={styles.heading}>Oops! Page Error</h1>
-                
-                <p className={styles.description}>
-                    Quivio encountered a problem while trying to render this path. It might be due to an invalid route, server failure, or network disruption.
-                </p>
 
-                <div className={styles.details}>
-                    <code>{errorMessage}</code>
-                </div>
+                {status && <span className={styles.statusCode}>Status Code: {status}</span>}
+                <h1 className={styles.heading}>{title}</h1>
+
+                <p className={styles.description}>{message}</p>
+
+                {routeError && !isRouteErrorResponse(routeError) && (
+                    <div className={styles.details}>
+                        <code>{String(routeError)}</code>
+                    </div>
+                )}
 
                 <div className={styles.actions}>
-                    <MainButton onClick={handleReload} variant="outline" size="md">
-                        <FiRefreshCw aria-hidden="true" /> Reload Page
+                    <MainButton
+                        onClick={handleReload}
+                        variant="secondary"
+                        size="md"
+                        icon={<FiRefreshCw />}
+                    >
+                        Reload Page
                     </MainButton>
-                    <MainButton onClick={handleGoBack} variant="outline" size="md">
-                        <FiArrowLeft aria-hidden="true" /> Go Back
+                    <MainButton
+                        onClick={handleGoBack}
+                        variant="secondary"
+                        size="md"
+                        icon={<FiArrowLeft />}
+                    >
+                        Go Back
                     </MainButton>
-                    <MainButton onClick={handleGoHome} variant="primary" size="md">
-                        <FiHome aria-hidden="true" /> Return Home
+                    <MainButton
+                        onClick={handleGoHome}
+                        variant="primary"
+                        size="md"
+                        icon={<FiHome />}
+                    >
+                        Return Home
                     </MainButton>
                 </div>
 
                 <div className={styles.contactSection}>
                     <p className={styles.contactText}>
-                        Found a bug or have a suggestion? Connect with the developer:
+                        Need assistance? Reach out to support:
                     </p>
                     <div className={styles.contactLinks}>
-                        <a 
-                            href="https://wa.me/201093650836" 
-                            target="_blank" 
+                        <a
+                            href="https://wa.me/201093650836"
+                            target="_blank"
                             rel="noopener noreferrer"
                             className={styles.contactLink}
                         >
-                            <FiMessageCircle /> WhatsApp
+                            <FiMessageCircle /> WhatsApp Support
                         </a>
-                        <a 
-                            href="https://github.com/Fayed12" 
-                            target="_blank" 
+                        <a
+                            href="https://github.com/Fayed12/NOVIQ"
+                            target="_blank"
                             rel="noopener noreferrer"
                             className={styles.contactLink}
                         >
-                            <FiGithub /> GitHub
+                            <FiGithub /> GitHub Repository
                         </a>
                     </div>
                 </div>

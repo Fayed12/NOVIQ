@@ -3,9 +3,15 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const getInitialTheme = () => {
     if (typeof window !== "undefined" && window.localStorage) {
-        return localStorage.getItem("theme") || "dark";
+        const saved = localStorage.getItem("theme");
+        if (saved === "light" || saved === "dark") {
+            return saved;
+        }
+        if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            return "dark";
+        }
     }
-    return "dark";
+    return "light";
 };
 
 const theme = createSlice({
@@ -34,3 +40,4 @@ export default theme.reducer;
 
 // selectors
 export const selectTheme = (state) => state.theme.currentTheme;
+

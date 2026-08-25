@@ -1,8 +1,13 @@
 // local
 import styles from "./welcomePage.module.css";
+import { selectTheme } from "../../../redux/themeSlice";
 
 // react
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import { useNavigate } from "react-router";
+
+// redux
+import { useSelector } from "react-redux";
 
 // prop-types
 import PropTypes from "prop-types";
@@ -10,158 +15,123 @@ import PropTypes from "prop-types";
 // gsap
 import { gsap } from "gsap";
 
-// react-icons
-import { FiBookOpen, FiUsers, FiAward } from "react-icons/fi";
-
-const WelcomePage = ({ onComplete }) => {
+const WelcomePage = ({ onComplete, duration = 4 }) => {
+    const navigate = useNavigate();
     const containerRef = useRef(null);
-
-    // Track dynamic theme state
-    const [isDark, setIsDark] = useState(() => {
-        if (typeof document !== "undefined") {
-            return document.documentElement.classList.contains("dark") || 
-                   document.documentElement.getAttribute("data-theme") === "dark";
-        }
-        return false;
-    });
+    const progressRef = useRef(null);
+    const currentTheme = useSelector(selectTheme);
+    const isDark = currentTheme === "dark";
 
     useEffect(() => {
-        if (typeof document === "undefined") return;
-        const observer = new MutationObserver(() => {
-            setIsDark(
-                document.documentElement.classList.contains("dark") || 
-                document.documentElement.getAttribute("data-theme") === "dark"
-            );
-        });
-        observer.observe(document.documentElement, {
-            attributes: true,
-            attributeFilter: ["class", "data-theme"]
-        });
-        return () => observer.disconnect();
-    }, []);
+        let isCancelled = false;
 
-    useEffect(() => {
-        // Create GSAP Context to handle React 18 strict mode double-renders safely
         const ctx = gsap.context(() => {
-            const tl = gsap.timeline({
-                defaults: { ease: "power3.out" },
-            });
+            gsap.set(containerRef.current, { opacity: 0, scale: 0.96 });
 
-            // Set initial overlay position
-            gsap.set(containerRef.current, { yPercent: 0 });
+            // Entrance animation
+            const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-            // Entrance animations
-            tl.fromTo(
-                `.${styles.logoContainer}`,
-                { scale: 0.8, opacity: 0 },
-                { scale: 1, opacity: 1, duration: 0.8, ease: "back.out(1.5)" }
-            );
-
-            tl.fromTo(
-                `.${styles.title}`,
-                { y: 30, opacity: 0 },
-                { y: 0, opacity: 1, duration: 0.6 },
-                "-=0.5"
-            );
-
-            tl.fromTo(
-                `.${styles.subtitle}`,
-                { y: 20, opacity: 0 },
-                { y: 0, opacity: 1, duration: 0.6 },
-                "-=0.5"
-            );
-
-            tl.fromTo(
-                `.${styles.featureItem}`,
-                { y: 25, opacity: 0 },
-                {
-                    y: 0,
-                    opacity: 1,
-                    duration: 0.5,
-                    stagger: 0.12,
-                },
-                "-=0.3"
-            );
-
-            tl.fromTo(
-                `.${styles.progressBar}`,
-                { width: "0%" },
-                { width: "100%", duration: 3.8, ease: "power1.inOut" },
-                "-=0.1"
-            );
-
-            // Exit animation
             tl.to(containerRef.current, {
-                yPercent: -100,
-                duration: 1.0,
-                ease: "power4.inOut",
-                onComplete: () => {
-                    if (onComplete) onComplete();
-                },
-            });
+                opacity: 1,
+                scale: 1,
+                duration: 0.6
+            })
+            .fromTo(
+                `.${styles.logo}`,
+                { scale: 0.85, opacity: 0 },
+                { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.4)" },
+                "-=0.3"
+            )
+            .fromTo(
+                `.${styles.welcomeTitle}`,
+                { y: 15, opacity: 0 },
+                { y: 0, opacity: 1, duration: 0.4 },
+                "-=0.2"
+            )
+            .fromTo(
+                `.${styles.welcomeSentence}`,
+                { y: 12, opacity: 0 },
+                { y: 0, opacity: 1, duration: 0.4 },
+                "-=0.2"
+            );
+
+            // Progress bar animation
+            if (progressRef.current) {
+                gsap.fromTo(
+                    progressRef.current,
+                    { width: "0%" },
+                    {
+                        width: "100%",
+                        duration: duration,
+                        ease: "power1.inOut"
+                    }
+                );
+            }
         }, containerRef);
 
-        return () => ctx.revert(); // Reverts all animations and clean up DOM modifications
-    }, [onComplete]);
+        // Timer that automatically navigates to Landing Page
+        const timer = setTimeout(() => {
+            if (isCancelled) return;
+
+            // Exit animation
+            gsap.to(containerRef.current, {
+                opacity: 0,
+                scale: 1.03,
+                y: -20,
+                duration: 0.6,
+                ease: "power3.inOut",
+                onComplete: () => {
+                    if (onComplete) {
+                        onComplete();
+                    }
+                    navigate("/", { replace: true });
+                }
+            });
+        }, duration * 1000);
+
+        return () => {
+            isCancelled = true;
+            clearTimeout(timer);
+            ctx.revert();
+        };
+    }, [duration, navigate, onComplete]);
+
+    const logoSrc = isDark ? "/dark-logo.png" : "/light-logo.png";
 
     return (
         <div
             ref={containerRef}
-            className={styles.overlay}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="welcome-title"
+            className={styles.welcomeWrapper}
+            role="region"
+            aria-label="Welcome to NOVIQ"
         >
-            <div className={styles.content}>
+            <div className={styles.ambientGlow} aria-hidden="true" />
+
+            <div className={styles.welcomeCard}>
                 <div className={styles.logoContainer}>
                     <img 
-                        src={isDark ? "/dark-logo.png" : "/light-logo.png"} 
-                        alt="Quivio Logo" 
-                        className={styles.logoImg} 
+                        src={logoSrc} 
+                        alt="NOVIQ Logo" 
+                        className={styles.logo} 
                     />
                 </div>
-                
-                <p className={styles.subtitle}>
-                    A modern EdTech platform built for instructors to create, manage, and analyze quizzes, and students to learn and excel.
+
+                <h1 className={styles.welcomeTitle}>
+                    Welcome to <span className={styles.brandGradient}>NOVIQ</span>
+                </h1>
+
+                <p className={styles.welcomeSentence}>
+                    Empowering your business with intelligent real-time scheduling, effortless bookings, and seamless client management.
                 </p>
 
-                <div className={styles.features}>
-                    <div className={styles.featureItem}>
-                        <div className={styles.iconBox}>
-                            <FiBookOpen aria-hidden="true" />
-                        </div>
-                        <div className={styles.featureText}>
-                            <h3>Diverse Quizzes</h3>
-                            <p>Rich question formats with live tracking.</p>
-                        </div>
-                    </div>
-                    
-                    <div className={styles.featureItem}>
-                        <div className={styles.iconBox}>
-                            <FiUsers aria-hidden="true" />
-                        </div>
-                        <div className={styles.featureText}>
-                            <h3>Virtual Rooms</h3>
-                            <p>Manage courses, students, and invitations.</p>
-                        </div>
-                    </div>
-
-                    <div className={styles.featureItem}>
-                        <div className={styles.iconBox}>
-                            <FiAward aria-hidden="true" />
-                        </div>
-                        <div className={styles.featureText}>
-                            <h3>XP & Gamification</h3>
-                            <p>Stay motivated with streaks and leaderboards.</p>
-                        </div>
-                    </div>
+                {/* Animated Progress Bar */}
+                <div className={styles.progressContainer}>
+                    <div ref={progressRef} className={styles.progressBar} />
                 </div>
 
-                <div className={styles.loaderArea}>
-                    <div className={styles.progressContainer}>
-                        <div className={styles.progressBar} />
-                    </div>
-                    <span className={styles.loaderText}>Booting Quivio engine...</span>
+                <div className={styles.loadingStatus}>
+                    <span className={styles.pulseDot} />
+                    <span>Taking you to NOVIQ...</span>
                 </div>
             </div>
         </div>
@@ -169,7 +139,8 @@ const WelcomePage = ({ onComplete }) => {
 };
 
 WelcomePage.propTypes = {
-    onComplete: PropTypes.func.isRequired,
+    onComplete: PropTypes.func,
+    duration: PropTypes.number,
 };
 
 export default WelcomePage;

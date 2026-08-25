@@ -1,5 +1,5 @@
 // local
-import themeReducer from "./slices/themeSlice";
+import themeReducer from "./themeSlice";
 
 // redux
 import { configureStore } from "@reduxjs/toolkit";

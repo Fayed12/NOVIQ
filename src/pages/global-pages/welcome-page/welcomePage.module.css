@@ -1,139 +1,136 @@
-.overlay {
+.welcomeWrapper {
     position: fixed;
-    top: 0;
-    left: 0;
+    inset: 0;
     width: 100vw;
     height: 100vh;
-    background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-app) 100%);
-    z-index: var(--z-modal);
+    background-color: var(--bg-app);
+    color: var(--text-primary);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: var(--space-6);
+    padding: var(--space-md);
+    z-index: var(--z-modal);
+    font-family: var(--font-sans);
     overflow: hidden;
 }
 
-.content {
-    max-width: 580px;
+.ambientGlow {
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    border-radius: var(--radius-full);
+    background: radial-gradient(circle, color-mix(in srgb, var(--color-accent) 22%, transparent) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.welcomeCard {
+    position: relative;
+    z-index: 1;
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+    max-width: 480px;
     width: 100%;
-    text-align: center;
+    padding: var(--space-3xl) var(--space-2xl);
     display: flex;
     flex-direction: column;
     align-items: center;
+    text-align: center;
+    gap: var(--space-md);
 }
 
 .logoContainer {
-    margin-bottom: var(--space-6);
-}
-
-.logoImg {
-    height: 64px;
-    width: auto;
-    max-width: 200px;
-    object-fit: contain;
-}
-
-.title {
-    font-family: var(--font-sans);
-    font-size: var(--text-3xl);
-    font-weight: var(--fw-bold);
-    color: var(--text-primary);
-    margin-bottom: var(--space-4);
-    letter-spacing: var(--tracking-tight);
-}
-
-.highlight {
-    color: var(--color-accent);
-}
-
-.subtitle {
-    font-size: var(--text-base);
-    color: var(--text-secondary);
-    line-height: var(--leading-relaxed);
-    margin-bottom: var(--space-8);
-    max-width: 480px;
-}
-
-.features {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-    width: 100%;
-    margin-bottom: var(--space-8);
-    text-align: left;
-}
-
-.featureItem {
-    display: flex;
-    align-items: center;
-    gap: var(--space-4);
-    padding: var(--space-4);
-    background: var(--bg-surface);
-    border: 1px solid var(--border-default);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-sm);
-    transition: border-color var(--transition-base), transform var(--transition-base);
-}
-
-.featureItem:hover {
-    border-color: var(--border-accent);
-    transform: translateY(-2px);
-}
-
-.iconBox {
-    width: 48px;
-    height: 48px;
-    border-radius: var(--radius-md);
-    background: var(--color-accent-light);
-    color: var(--color-accent);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
-    flex-shrink: 0;
+    margin-bottom: var(--space-xs);
 }
 
-.featureText h3 {
-    font-size: var(--text-md);
-    font-weight: var(--fw-semibold);
+.logo {
+    height: 48px;
+    width: auto;
+    max-width: 170px;
+    object-fit: contain;
+}
+
+.welcomeTitle {
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    font-weight: var(--fw-bold);
     color: var(--text-primary);
-    margin-bottom: var(--space-1);
+    line-height: var(--leading-tight);
+    letter-spacing: -0.02em;
 }
 
-.featureText p {
+.brandGradient {
+    background: linear-gradient(135deg, var(--color-accent), color-mix(in srgb, var(--color-accent) 60%, var(--color-info)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.welcomeSentence {
     font-size: var(--text-sm);
+    line-height: var(--leading-relaxed);
     color: var(--text-secondary);
+    max-width: 380px;
 }
 
-.loaderArea {
-    width: 100%;
-    max-width: 300px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-3);
-    margin-top: var(--space-4);
-}
-
+/* ── Progress Bar ─────────────────────────────────────────── */
 .progressContainer {
     width: 100%;
-    height: 6px;
-    background: var(--bg-surface-3);
+    max-width: 240px;
+    height: 4px;
+    background-color: var(--bg-surface-alt);
     border-radius: var(--radius-full);
     overflow: hidden;
+    margin-top: var(--space-sm);
 }
 
 .progressBar {
     height: 100%;
-    background: var(--color-accent);
-    border-radius: var(--radius-full);
     width: 0%;
+    background: linear-gradient(90deg, var(--color-accent), var(--color-info));
+    border-radius: var(--radius-full);
 }
 
-.loaderText {
-    font-size: var(--text-xs);
+.loadingStatus {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--text-tiny);
+    font-weight: var(--fw-medium);
     color: var(--text-muted);
-    font-weight: var(--fw-semibold);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-wider);
+}
+
+.pulseDot {
+    width: 7px;
+    height: 7px;
+    border-radius: var(--radius-full);
+    background-color: var(--color-accent);
+    animation: pulse 1.2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.3; transform: scale(0.7); }
+}
+
+@media (max-width: 500px) {
+    .welcomeCard {
+        padding: var(--space-2xl) var(--space-lg);
+        border-radius: var(--radius-lg);
+    }
+
+    .logo {
+        height: 38px;
+    }
+
+    .welcomeTitle {
+        font-size: 1.45rem;
+    }
+
+    .welcomeSentence {
+        font-size: var(--text-xs);
+    }
 }

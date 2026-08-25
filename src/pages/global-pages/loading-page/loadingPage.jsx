@@ -8,41 +8,30 @@ import { useEffect, useRef } from "react";
 // gsap
 import { gsap } from "gsap";
 
-const LoadingPage = () => {
+const LoadingPage = ({ label = "Loading NOVIQ..." }) => {
     const containerRef = useRef(null);
 
     useEffect(() => {
-        if (typeof document !== "undefined") {
-            document.body.style.overflow = "hidden";
-        }
-        return () => {
-            if (typeof document !== "undefined") {
-                document.body.style.overflow = "";
-            }
-        };
-    }, []);
-
-    useEffect(() => {
         const ctx = gsap.context(() => {
-            // Pulse the skeletons in unison
+            // Pulse the skeletons
             gsap.fromTo(
                 `.${styles.skeleton}`,
                 { opacity: 0.4 },
                 {
-                    opacity: 0.7,
-                    duration: 1.0,
+                    opacity: 0.75,
+                    duration: 0.9,
                     repeat: -1,
                     yoyo: true,
                     ease: "sine.inOut",
-                    stagger: 0.05
+                    stagger: 0.04
                 }
             );
 
-            // Intro fade-in of the entire loading container
+            // Intro fade-in of container
             gsap.fromTo(
                 containerRef.current,
                 { opacity: 0 },
-                { opacity: 1, duration: 0.4, ease: "power2.out" }
+                { opacity: 1, duration: 0.3, ease: "power2.out" }
             );
         }, containerRef);
 
@@ -50,7 +39,7 @@ const LoadingPage = () => {
     }, []);
 
     return (
-        <div ref={containerRef} className={styles.container} role="status" aria-label="Loading application">
+        <div ref={containerRef} className={styles.container} role="status" aria-label={label}>
             {/* Topbar skeleton */}
             <div className={styles.topbar}>
                 <div className={`${styles.skeleton} ${styles.logoSkeleton}`} />
@@ -87,10 +76,10 @@ const LoadingPage = () => {
                 </main>
             </div>
 
-            {/* Spinner Floating Center */}
+            {/* Spinner Overlay */}
             <div className={styles.spinnerOverlay}>
                 <div className={styles.spinnerWrapper}>
-                    <LoadingSpinner size="lg" color="primary" label="loading..." />
+                    <LoadingSpinner size="lg" color="primary" label={label} />
                 </div>
             </div>
         </div>

@@ -26,14 +26,11 @@ const TermsPage = () => {
     const containerRef = useRef(null);
 
     useEffect(() => {
-        // Scroll to top on mount
         window.scrollTo(0, 0);
 
         const handleScroll = () => {
-            // Show/hide scroll-to-top button
             setShowScrollTop(window.scrollY > 300);
 
-            // Determine active section based on scroll position
             const sections = [
                 "sec-1", "sec-2", "sec-3", "sec-4", "sec-5", "sec-6", "sec-7", "sec-8", "sec-9"
             ];
@@ -42,7 +39,6 @@ const TermsPage = () => {
                 const el = document.getElementById(sectionId);
                 if (el) {
                     const rect = el.getBoundingClientRect();
-                    // If the section header is near the top of the viewport
                     if (rect.top >= 0 && rect.top <= 150) {
                         setActiveSection(sectionId);
                         break;
@@ -58,19 +54,16 @@ const TermsPage = () => {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    // GSAP entrance animations
     useEffect(() => {
         const ctx = gsap.context(() => {
             const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-            // Navbar drop-in
             tl.fromTo(
                 `.${styles.navbar}`,
                 { opacity: 0, y: -20 },
-                { opacity: 1, y: 0, duration: 0.5 }
+                { opacity: 1, y: 0, duration: 0.5, clearProps: "transform" }
             );
 
-            // Hero section animations
             tl.fromTo(
                 `.${styles.iconWrapper}`,
                 { opacity: 0, scale: 0.5 },
@@ -85,7 +78,6 @@ const TermsPage = () => {
                 "-=0.4"
             );
 
-            // TOC Card (left) and Sections (right) entrance
             tl.fromTo(
                 `.${styles.tocCard}`,
                 { opacity: 0, x: -30 },
@@ -107,7 +99,7 @@ const TermsPage = () => {
     const scrollToSection = (id) => {
         const el = document.getElementById(id);
         if (el) {
-            const offset = 100; // offset for sticky navbar
+            const offset = 90;
             const bodyRect = document.body.getBoundingClientRect().top;
             const elementRect = el.getBoundingClientRect().top;
             const elementPosition = elementRect - bodyRect;
@@ -122,230 +114,172 @@ const TermsPage = () => {
     };
 
     const scrollToTop = () => {
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
+        window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
     const tocItems = [
         { id: "sec-1", label: "1. Acceptance of Terms" },
         { id: "sec-2", label: "2. Account Registration" },
-        { id: "sec-3", label: "3. Intellectual Property" },
-        { id: "sec-4", label: "4. User Conduct" },
-        { id: "sec-5", label: "5. Grading & Certificates" },
+        { id: "sec-3", label: "3. Booking & Cancellations" },
+        { id: "sec-4", label: "4. Business Tenant Terms" },
+        { id: "sec-5", label: "5. Customer Code of Conduct" },
         { id: "sec-6", label: "6. Platform Availability" },
-        { id: "sec-7", label: "7. Limitation of Liability" },
-        { id: "sec-8", label: "8. Termination" },
+        { id: "sec-7", label: "7. Intellectual Property" },
+        { id: "sec-8", label: "8. Limitation of Liability" },
         { id: "sec-9", label: "9. Governing Law & Contact" }
     ];
+
+    const logoSrc = isDark ? "/dark-logo.png" : "/light-logo.png";
 
     return (
         <div ref={containerRef} className={styles.pageContainer}>
             {/* Header Navbar */}
             <header className={styles.navbar} id="terms-navbar">
-                <div className={styles.navLogo} onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
+                <div className={styles.navLogo} onClick={() => navigate("/")} role="button" tabIndex={0}>
                     <img 
-                        src={isDark ? "/dark-logo.png" : "/light-logo.png"} 
-                        alt="Quivio Logo" 
+                        src={logoSrc} 
+                        alt="NOVIQ Logo" 
                         className={styles.logoImg} 
                     />
                 </div>
                 <div className={styles.navActions}>
-                    <MainButton 
-                        id="terms-back-btn"
-                        variant="ghost" 
-                        onClick={() => navigate("/")} 
+                    <MainButton
+                        onClick={() => navigate("/")}
+                        variant="ghost"
                         size="sm"
+                        icon={<FiArrowLeft />}
                     >
-                        <FiArrowLeft style={{ marginRight: "var(--space-2)" }} /> Back to Home
+                        Back to Home
                     </MainButton>
                 </div>
             </header>
 
             {/* Hero Header */}
-            <section className={styles.heroSection} aria-labelledby="terms-heading">
-                <div className={styles.heroGlow} />
+            <section className={styles.heroSection}>
+                <div className={styles.heroGlow} aria-hidden="true" />
                 <div className={styles.heroContent}>
                     <div className={styles.iconWrapper}>
-                        <FiFileText />
+                        <FiFileText className={styles.heroIcon} />
                     </div>
-                    <h1 id="terms-heading" className={styles.pageTitle}>Terms of Service</h1>
-                    <p className={styles.pageSubtitle}>Last updated: July 2, 2026</p>
+                    <h1 className={styles.pageTitle}>Terms of Service</h1>
+                    <p className={styles.pageSubtitle}>
+                        Effective August 2026 • NOVIQ Booking Platform
+                    </p>
                 </div>
             </section>
 
-            {/* Document Content Grid */}
-            <main className={styles.contentGrid}>
-                {/* Sidebar Table of Contents */}
+            {/* Main Content Layout */}
+            <main className={styles.contentLayout}>
+                {/* Sticky Left Sidebar (TOC) */}
                 <aside className={styles.sidebar}>
                     <div className={styles.tocCard}>
-                        <h3>Table of Contents</h3>
-                        <nav aria-label="Terms of service sections">
-                            <ul className={styles.tocList}>
-                                {tocItems.map((item) => (
-                                    <li key={item.id}>
-                                        <button
-                                            id={`toc-btn-${item.id}`}
-                                            onClick={() => scrollToSection(item.id)}
-                                            className={`${styles.tocLink} ${activeSection === item.id ? styles.activeToc : ""}`}
-                                        >
-                                            {item.label}
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
+                        <h2 className={styles.tocTitle}>Table of Contents</h2>
+                        <nav className={styles.tocNav}>
+                            {tocItems.map((item) => (
+                                <button
+                                    key={item.id}
+                                    type="button"
+                                    className={`${styles.tocLink} ${activeSection === item.id ? styles.activeTocLink : ""}`}
+                                    onClick={() => scrollToSection(item.id)}
+                                >
+                                    {item.label}
+                                </button>
+                            ))}
                         </nav>
                     </div>
                 </aside>
 
-                {/* Main Terms text */}
-                <article className={styles.textContent}>
+                {/* Right Document Sections */}
+                <article className={styles.documentBody}>
                     <section id="sec-1" className={styles.docSection}>
-                        <h2>1. Acceptance of Terms</h2>
+                        <h2 className={styles.sectionHeading}>1. Acceptance of Terms</h2>
                         <p>
-                            Welcome to Quivio (referred to as "Quivio", "we", "us", or "our"). By accessing or using our website, 
-                            web applications, services, and software (collectively, the "Services"), you agree to be bound by these 
-                            Terms of Service ("Terms"). If you do not agree to these Terms, you may not access or use the Services.
-                        </p>
-                        <p>
-                            These Terms apply to all users of the Services, including without limitation educators, instructors, 
-                            institutions, administrators (collectively, "Instructors"), and students or examinees (collectively, "Students").
+                            Welcome to NOVIQ. By accessing or using the NOVIQ software application, booking widgets, or web services, you agree to be bound by these Terms of Service. If you do not agree to these terms, please discontinue using the platform immediately.
                         </p>
                     </section>
 
                     <section id="sec-2" className={styles.docSection}>
-                        <h2>2. Account Registration & User Accounts</h2>
+                        <h2 className={styles.sectionHeading}>2. Account Registration & Roles</h2>
                         <p>
-                            To utilize most features of the Services, you must register for an account. 
-                            <strong> For Instructors:</strong> You represent and warrant that the information you provide is accurate, current, 
-                            and complete. You are solely responsible for maintaining the confidentiality of your account credentials.
+                            To access business management or unified customer spaces, you must register an account with a valid email address. You are responsible for safeguarding your login credentials.
                         </p>
                         <p>
-                            <strong>For Students:</strong> Student accounts are created and managed directly by their course instructors. 
-                            If you are a student, your credentials have been generated and provided to you by your institution or instructor. 
-                            You are responsible for changing your temporary password upon initial login and keeping your account secure.
+                            NOVIQ supports multiple user roles:
                         </p>
-                        <p>
-                            You agree to notify us immediately of any unauthorized use of your account or any other breach of security. 
-                            Quivio will not be liable for any losses caused by any unauthorized use of your account.
-                        </p>
-                    </section>
-
-                    <section id="sec-3" className={styles.docSection}>
-                        <h2>3. Intellectual Property Rights</h2>
-                        <p>
-                            All content, features, and functionality on the Services, including but not limited to software, text, graphics, 
-                            logos, icons, and designs, are the exclusive property of Quivio and are protected by copyright, trademark, and other laws.
-                        </p>
-                        <p>
-                            Quivio grants you a limited, non-exclusive, non-transferable, and revocable license to access and use the Services 
-                            for educational and academic evaluation purposes.
-                        </p>
-                        <p>
-                            <strong>User Content:</strong> Instructors retain ownership of all quiz questions, question banks, course descriptions, 
-                            and academic materials they upload or create ("User Content"). By uploading User Content, you grant Quivio a worldwide, 
-                            royalty-free license to host, store, and display such content solely for the purpose of delivering the Services to you and your students.
-                        </p>
-                    </section>
-
-                    <section id="sec-4" className={styles.docSection}>
-                        <h2>4. User Conduct & Prohibited Activities</h2>
-                        <p>
-                            You agree to use the Services only for lawful, educational purposes. You are strictly prohibited from:
-                        </p>
-                        <ul className={styles.bulletList}>
-                            <li>Using the platform for cheating, academic dishonesty, plagiarism, or distributing exam questions to unauthorized sites.</li>
-                            <li>Attempting to bypass, disable, or tamper with quiz timers, anti-tab-switching guards, or local cache integrity checks.</li>
-                            <li>Uploading malware, malicious code, or content that infringes upon the intellectual property of others.</li>
-                            <li>Automating quiz attempts, scraping data, or using bots to answer assessments.</li>
-                            <li>Impersonating another student, user, or instructor.</li>
+                        <ul>
+                            <li><strong>Customers:</strong> Book, reschedule, and manage appointments across businesses.</li>
+                            <li><strong>Business Owners:</strong> Set up tenants, branch locations, service menus, and staff permissions.</li>
+                            <li><strong>Managers & Staff:</strong> View designated calendars, fulfill appointments, and update status codes.</li>
                         </ul>
                     </section>
 
-                    <section id="sec-5" className={styles.docSection}>
-                        <h2>5. Academic Grading & Certificate Authenticity</h2>
+                    <section id="sec-3" className={styles.docSection}>
+                        <h2 className={styles.sectionHeading}>3. Booking & Cancellation Rules</h2>
                         <p>
-                            Quivio operates as a software provider for academic assessments. Instructors are solely responsible for setting 
-                            passing thresholds, grading criteria, and reviewing exam results. Quivio is not responsible for the accuracy of 
-                            grades or evaluation metrics.
+                            Each business on NOVIQ configures their individual appointment rules, buffer times, deposit terms, and cancellation policies. When booking an appointment:
                         </p>
+                        <ul>
+                            <li>Customers must arrive at the scheduled time or provide timely notice within the cancellation window.</li>
+                            <li>Cancellations requested outside the permitted notice window may forfeit deposits or incur late fees per the business's policy.</li>
+                            <li>NOVIQ provides the booking infrastructure but is not liable for direct service disputes between businesses and clients.</li>
+                        </ul>
+                    </section>
+
+                    <section id="sec-4" className={styles.docSection}>
+                        <h2 className={styles.sectionHeading}>4. Business Tenant Terms</h2>
                         <p>
-                            <strong>Verifiable Certificates:</strong> Certificates generated by the platform are issued under the authority of the 
-                            respective Instructor or academic institution. The verification system acts as a validator that a student achieved a 
-                            passing score on the platform; it does not constitute an independent accreditation by Quivio.
+                            Business owners agree to accurately represent their services, working hours, licensing credentials, and pricing. Businesses must honor confirmed bookings or promptly notify customers in the event of unforeseen rescheduling.
+                        </p>
+                    </section>
+
+                    <section id="sec-5" className={styles.docSection}>
+                        <h2 className={styles.sectionHeading}>5. Customer Code of Conduct</h2>
+                        <p>
+                            Users agree not to make abusive or fake reservations, submit defamatory reviews, or attempt to circumvent security protections or rate limits on NOVIQ.
                         </p>
                     </section>
 
                     <section id="sec-6" className={styles.docSection}>
-                        <h2>6. Platform Availability & Offline Synchronization</h2>
+                        <h2 className={styles.sectionHeading}>6. Platform Availability & Uptime</h2>
                         <p>
-                            Quivio offers a local caching and synchronization module designed to preserve quiz progress during minor network interruptions. 
-                            However, we do not guarantee that the Services will be uninterrupted, secure, or free from errors. We recommend keeping a 
-                            stable internet connection when submitting final quiz attempts.
+                            While NOVIQ targets 99.9% uptime, we do not warrant uninterrupted operation during scheduled maintenance windows, emergency server upgrades, or upstream network disruptions.
                         </p>
                     </section>
 
                     <section id="sec-7" className={styles.docSection}>
-                        <h2>7. Limitation of Liability</h2>
+                        <h2 className={styles.sectionHeading}>7. Intellectual Property</h2>
                         <p>
-                            To the maximum extent permitted by law, in no event shall Quivio, its affiliates, directors, or employees, be liable 
-                            for any indirect, incidental, special, consequential, or punitive damages, including but not limited to loss of profits, 
-                            data, use, goodwill, or other intangible losses, resulting from:
+                            All software, user interface designs, trademarks, and documentation related to NOVIQ remain the exclusive intellectual property of NOVIQ Inc.
                         </p>
-                        <ul className={styles.bulletList}>
-                            <li>Your access to or use of (or inability to access or use) the Services.</li>
-                            <li>Any academic consequences, failing grades, or institutional disciplinary actions resulting from quiz performance or detected anomalies.</li>
-                            <li>Unauthorized access to or alteration of your transmissions or data.</li>
-                        </ul>
                     </section>
 
                     <section id="sec-8" className={styles.docSection}>
-                        <h2>8. Termination of Accounts</h2>
+                        <h2 className={styles.sectionHeading}>8. Limitation of Liability</h2>
                         <p>
-                            We reserve the right to suspend or terminate your access to the Services at any time, without prior notice, for conduct 
-                            that we believe violates these Terms or is harmful to other users, our business interests, or academic integrity.
-                        </p>
-                        <p>
-                            Instructors may delete their rooms, student rosters, or questionnaires at any time. Upon deletion, data is removed in accordance 
-                            with our Privacy Policy.
+                            To the maximum extent permitted by applicable law, NOVIQ Inc. shall not be liable for indirect, incidental, or consequential damages resulting from missed appointments or business service issues.
                         </p>
                     </section>
 
                     <section id="sec-9" className={styles.docSection}>
-                        <h2>9. Governing Law & Contact Information</h2>
+                        <h2 className={styles.sectionHeading}>9. Governing Law & Contact</h2>
                         <p>
-                            These Terms shall be governed by and construed in accordance with the laws of the jurisdiction in which Quivio operates, 
-                            without regard to its conflict of law provisions.
+                            These terms shall be governed by applicable commercial laws. If you have any inquiries regarding these terms, please contact our support team at <strong>legal@noviq.app</strong>.
                         </p>
-                        <p>
-                            If you have any questions about these Terms, please contact us at:
-                        </p>
-                        <div className={styles.contactCard}>
-                            <strong>Quivio Support Team</strong><br />
-                            Email: legal@quivio.app<br />
-                            GitHub: <a href="https://github.com/Fayed12" target="_blank" rel="noopener noreferrer">github.com/Fayed12</a>
-                        </div>
                     </section>
                 </article>
             </main>
 
-            {/* Back to top button */}
+            {/* Scroll to top floating button */}
             {showScrollTop && (
-                <button 
-                    id="terms-scroll-top-btn"
-                    className={styles.scrollTopBtn} 
+                <button
+                    type="button"
+                    className={styles.scrollTopBtn}
                     onClick={scrollToTop}
-                    aria-label="Scroll to top"
+                    aria-label="Scroll back to top"
                 >
                     <FiArrowUp />
                 </button>
             )}
-
-            {/* Simple Footer */}
-            <footer className={styles.footer}>
-                <p>&copy; {new Date().getFullYear()} Quivio. All rights reserved. <a href="/privacy">Privacy Policy</a></p>
-            </footer>
         </div>
     );
 };
