@@ -1,0 +1,133 @@
+.portalOverlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-overlay);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: var(--z-modal);
+  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.portalModal {
+  position: relative;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  width: 100%;
+  max-width: 460px;
+  padding: 28px 24px;
+  box-shadow: var(--shadow-xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  animation: scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  color: var(--text-primary);
+  box-sizing: border-box;
+}
+
+.iconWrapper {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  margin-bottom: 18px;
+}
+
+.iconWrapper[data-variant="warning"] {
+  background-color: var(--color-warning-light);
+  color: var(--color-warning);
+}
+
+.iconWrapper[data-variant="danger"] {
+  background-color: var(--color-danger-light);
+  color: var(--color-danger);
+}
+
+.iconWrapper[data-variant="info"] {
+  background-color: var(--color-info-light);
+  color: var(--color-info);
+}
+
+.iconWrapper[data-variant="success"] {
+  background-color: var(--color-success-light);
+  color: var(--color-success);
+}
+
+.title {
+  font-size: var(--text-h4);
+  font-weight: var(--fw-bold);
+  color: var(--text-primary);
+  margin: 0 0 8px 0;
+  line-height: var(--leading-tight);
+}
+
+.message {
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  color: var(--text-secondary);
+  margin: 0 0 22px 0;
+}
+
+.actionsRow {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.modalBtn {
+  width: 100% !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+  height: auto !important;
+  min-height: 42px !important;
+  padding: 10px 16px !important;
+  line-height: 1.35 !important;
+  font-size: var(--text-xs) !important;
+}
+
+.modalBtn span {
+  white-space: normal !important;
+  text-align: center !important;
+  display: inline-block !important;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleUp {
+  from { opacity: 0; transform: scale(0.94) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@media (max-width: 480px) {
+  .portalModal {
+    padding: 22px 16px;
+    max-width: 95%;
+  }
+
+  .actionsRow {
+    gap: 8px;
+  }
+
+  .modalBtn {
+    min-height: 40px !important;
+    padding: 8px 12px !important;
+    font-size: var(--text-tiny) !important;
+  }
+}

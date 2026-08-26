@@ -205,7 +205,7 @@ input, textarea { user-select: text; }
   --transition-slow: 300ms ease-out;
 
   /* ── Z-Index ── */
-  --z-sidebar: 40; --z-topbar: 50; --z-dropdown: 60; --z-modal: 100; --z-toast: 110;
+  --z-sidebar: 400; --z-topbar: 1000; --z-dropdown: 1100; --z-modal: 99999; --z-toast: 100000;
 
   /* ── Layout ── */
   --sidebar-width: 240px;

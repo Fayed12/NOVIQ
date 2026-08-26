@@ -22,6 +22,15 @@ const WelcomePage = ({ onComplete, duration = 4 }) => {
     const currentTheme = useSelector(selectTheme);
     const isDark = currentTheme === "dark";
 
+    // Lock body scrolling while welcome modal is visible
+    useEffect(() => {
+        const originalOverflow = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+        return () => {
+            document.body.style.overflow = originalOverflow;
+        };
+    }, []);
+
     useEffect(() => {
         let isCancelled = false;
 

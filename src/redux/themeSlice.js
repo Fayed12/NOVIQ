@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const getInitialTheme = () => {
     if (typeof window !== "undefined" && window.localStorage) {
-        const saved = localStorage.getItem("theme");
+        const saved = localStorage.getItem("ThemeNoviq");
         if (saved === "light" || saved === "dark") {
             return saved;
         }
@@ -23,13 +23,13 @@ const theme = createSlice({
         toggleTheme: (state) => {
             state.currentTheme = state.currentTheme === "dark" ? "light" : "dark";
             if (typeof window !== "undefined" && window.localStorage) {
-                localStorage.setItem("theme", state.currentTheme);
+                localStorage.setItem("ThemeNoviq", state.currentTheme);
             }
         },
         setTheme: (state, action) => {
             state.currentTheme = action.payload;
             if (typeof window !== "undefined" && window.localStorage) {
-                localStorage.setItem("theme", state.currentTheme);
+                localStorage.setItem("ThemeNoviq", state.currentTheme);
             }
         },
     },

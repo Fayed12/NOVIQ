@@ -17,8 +17,15 @@ import { FiWifiOff, FiRefreshCw, FiArrowLeft, FiCheckCircle } from "react-icons/
 const OfflinePage = ({ isOffline = true, onExited }) => {
     const containerRef = useRef(null);
     const exitTriggeredRef = useRef(false);
-    const [isChecking, setIsChecking] = useState(false);
-    const [reconnected, setReconnected] = useState(!isOffline);
+    // Lock body scrolling while offline overlay is active
+    useEffect(() => {
+        if (!isOffline) return;
+        const originalOverflow = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+        return () => {
+            document.body.style.overflow = originalOverflow;
+        };
+    }, [isOffline]);
 
     useEffect(() => {
         // Entrance animation

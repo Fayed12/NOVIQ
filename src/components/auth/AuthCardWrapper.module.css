@@ -1,0 +1,224 @@
+.pageWrapper {
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+  background-color: var(--bg-app);
+  background-image: 
+    radial-gradient(at 0% 0%, color-mix(in srgb, var(--color-accent) 12%, transparent) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, color-mix(in srgb, var(--color-accent-medical, #0E7C86) 10%, transparent) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, color-mix(in srgb, var(--border-color) 35%, transparent) 0px, transparent 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 12px;
+  position: relative;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  color: var(--text-primary);
+  transition: background-color var(--transition-base), color var(--transition-base);
+}
+
+/* Background container containing glowing orbs strictly clipped */
+.ambientContainer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ambientOrb1 {
+  position: absolute;
+  top: -80px;
+  left: 10%;
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, color-mix(in srgb, var(--color-accent) 15%, transparent) 0%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(40px);
+}
+
+.ambientOrb2 {
+  position: absolute;
+  bottom: -60px;
+  right: 10%;
+  width: 340px;
+  height: 340px;
+  background: radial-gradient(circle, color-mix(in srgb, var(--color-info, #0284C7) 12%, transparent) 0%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(40px);
+}
+
+.cardContainer {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  background-color: var(--bg-surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-color);
+  padding: 24px 22px;
+  z-index: 1;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-sizing: border-box;
+  color: var(--text-primary);
+  transition: background-color var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+.cardContainer[data-wide="true"] {
+  max-width: 460px;
+}
+
+.backHomeBtn {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 9px;
+  background-color: var(--bg-surface-alt);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: var(--text-tiny);
+  font-weight: var(--fw-semibold);
+  transition: all var(--transition-base);
+  z-index: 10;
+}
+
+.backHomeBtn:hover {
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  border-color: var(--border-color-strong);
+  box-shadow: var(--shadow-sm);
+  transform: translateX(-2px);
+  text-decoration: none;
+}
+
+.backArrowIcon {
+  font-size: 12px;
+  transition: transform var(--transition-fast);
+}
+
+.backHomeBtn:hover .backArrowIcon {
+  transform: translateX(-2px);
+}
+
+.backHomeIcon {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.backHomeBtn:hover .backHomeIcon {
+  color: var(--color-accent);
+}
+
+.backHomeLabel {
+  font-size: var(--text-tiny);
+}
+
+.brandHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+.logoLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  margin-bottom: 8px;
+  transition: transform var(--transition-fast);
+}
+
+.logoLink:hover {
+  transform: scale(1.03);
+}
+
+.brandLogo {
+  height: 38px;
+  width: auto;
+  max-width: 150px;
+  object-fit: contain;
+}
+
+.customBadge {
+  margin-bottom: 8px;
+}
+
+.pageTitle {
+  font-size: var(--text-h4);
+  font-weight: var(--fw-bold);
+  color: var(--text-primary);
+  margin: 0 0 3px 0;
+  line-height: var(--leading-tight);
+}
+
+.pageSubtitle {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: var(--leading-normal);
+}
+
+.footerNote {
+  margin-top: 14px;
+  text-align: center;
+  font-size: var(--text-tiny);
+  color: var(--text-muted);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.footerLink {
+  color: var(--text-secondary);
+  font-weight: var(--fw-semibold);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.footerLink:hover {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
+/* Mobile & Small Screens (< 500px) */
+@media (max-width: 500px) {
+  .pageWrapper {
+    padding: 16px 8px;
+  }
+
+  .cardContainer {
+    padding: 18px 14px;
+    border-radius: var(--radius-lg);
+  }
+
+  .pageTitle {
+    font-size: 1.1rem;
+  }
+
+  .pageSubtitle {
+    font-size: var(--text-tiny);
+  }
+
+  .brandLogo {
+    height: 32px;
+    max-width: 130px;
+  }
+
+  .backHomeBtn {
+    top: 12px;
+    left: 12px;
+    padding: 4px 7px;
+  }
+}

@@ -45,7 +45,9 @@ const LandingPage = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const currentTheme = useSelector(selectTheme);
+    const { user } = useSelector((state) => state.auth);
     const isDark = currentTheme === "dark";
+    const isAuthenticated = !!user;
 
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [openFaqIndex, setOpenFaqIndex] = useState(0);
@@ -291,21 +293,34 @@ const LandingPage = () => {
                         </button>
 
                         <div className={styles.desktopAuthBtns}>
-                            <MainButton
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => navigate("/login")}
-                            >
-                                Sign in
-                            </MainButton>
-                            <MainButton
-                                variant="primary"
-                                size="sm"
-                                onClick={() => navigate("/register")}
-                                rightIcon={<FiArrowRight />}
-                            >
-                                Launch Business
-                            </MainButton>
+                            {isAuthenticated ? (
+                                <MainButton
+                                    variant="primary"
+                                    size="sm"
+                                    onClick={() => navigate("/account")}
+                                    rightIcon={<FiArrowRight />}
+                                >
+                                    My Space
+                                </MainButton>
+                            ) : (
+                                <>
+                                    <MainButton
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => navigate("/login")}
+                                    >
+                                        Sign In
+                                    </MainButton>
+                                    <MainButton
+                                        variant="primary"
+                                        size="sm"
+                                        onClick={() => navigate("/register")}
+                                        rightIcon={<FiArrowRight />}
+                                    >
+                                        Claim Membership
+                                    </MainButton>
+                                </>
+                            )}
                         </div>
 
                         {/* Mobile hamburger button */}
@@ -362,29 +377,46 @@ const LandingPage = () => {
                             </a>
                             
                             <div className={styles.mobileNavAuth}>
-                                <MainButton
-                                    variant="secondary"
-                                    size="md"
-                                    fullWidth
-                                    onClick={() => {
-                                        setMobileMenuOpen(false);
-                                        navigate("/login");
-                                    }}
-                                >
-                                    Sign In
-                                </MainButton>
-                                <MainButton
-                                    variant="primary"
-                                    size="md"
-                                    fullWidth
-                                    onClick={() => {
-                                        setMobileMenuOpen(false);
-                                        navigate("/register");
-                                    }}
-                                    rightIcon={<FiArrowRight />}
-                                >
-                                    Get Started — Free
-                                </MainButton>
+                                {isAuthenticated ? (
+                                    <MainButton
+                                        variant="primary"
+                                        size="md"
+                                        fullWidth
+                                        onClick={() => {
+                                            setMobileMenuOpen(false);
+                                            navigate("/account");
+                                        }}
+                                        rightIcon={<FiArrowRight />}
+                                    >
+                                        My Space Hub
+                                    </MainButton>
+                                ) : (
+                                    <>
+                                        <MainButton
+                                            variant="secondary"
+                                            size="md"
+                                            fullWidth
+                                            onClick={() => {
+                                                setMobileMenuOpen(false);
+                                                navigate("/login");
+                                            }}
+                                        >
+                                            Sign In
+                                        </MainButton>
+                                        <MainButton
+                                            variant="primary"
+                                            size="md"
+                                            fullWidth
+                                            onClick={() => {
+                                                setMobileMenuOpen(false);
+                                                navigate("/register");
+                                            }}
+                                            rightIcon={<FiArrowRight />}
+                                        >
+                                            Claim Membership — Free
+                                        </MainButton>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -415,10 +447,10 @@ const LandingPage = () => {
                             <MainButton
                                 variant="primary"
                                 size="xl"
-                                onClick={() => navigate("/register")}
+                                onClick={() => navigate(isAuthenticated ? "/account" : "/register")}
                                 rightIcon={<FiArrowRight />}
                             >
-                                Launch Your Business — Free
+                                {isAuthenticated ? "Go to My Space" : "Launch Your Business — Free"}
                             </MainButton>
                             <MainButton
                                 variant="secondary"
@@ -821,17 +853,17 @@ const LandingPage = () => {
                         <MainButton
                             variant="primary"
                             size="xl"
-                            onClick={() => navigate("/register")}
+                            onClick={() => navigate(isAuthenticated ? "/account" : "/register")}
                             rightIcon={<FiArrowRight />}
                         >
-                            Get Started for Free
+                            {isAuthenticated ? "Enter Account Hub" : "Get Started for Free"}
                         </MainButton>
                         <MainButton
                             variant="secondary"
                             size="xl"
-                            onClick={() => navigate("/login")}
+                            onClick={() => navigate(isAuthenticated ? "/account" : "/login")}
                         >
-                            Sign In to Dashboard
+                            {isAuthenticated ? "Manage Bookings" : "Sign In to Space"}
                         </MainButton>
                     </div>
                 </div>
