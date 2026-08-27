@@ -32,7 +32,8 @@ import {
     FiScissors,
     FiHome as FiHotel,
     FiHeart,
-    FiCheck
+    FiCheck,
+    FiCompass
 } from "react-icons/fi";
 
 // gsap
@@ -249,6 +250,9 @@ const LandingPage = () => {
                     </Link>
 
                     <nav className={styles.desktopNav}>
+                        <Link to="/explore" className={styles.navLink}>
+                            Explore
+                        </Link>
                         <a 
                             href="#about" 
                             className={`${styles.navLink} ${activeSection === "about" ? styles.activeNavLink : ""}`}
@@ -340,26 +344,33 @@ const LandingPage = () => {
                 {mobileMenuOpen && (
                     <div className={styles.mobileNavOverlay}>
                         <div className={styles.mobileNavLinks}>
+                            <Link 
+                                to="/explore" 
+                                className={styles.mobileNavLink}
+                                onClick={() => setMobileMenuOpen(false)}
+                            >
+                                Explore Marketplace
+                            </Link>
                             <a 
                                 href="#about" 
                                 className={`${styles.mobileNavLink} ${activeSection === "about" ? styles.activeMobileNavLink : ""}`}
                                 onClick={() => setMobileMenuOpen(false)}
                             >
-                                About NOVIQ
+                                About
                             </a>
                             <a 
                                 href="#features" 
                                 className={`${styles.mobileNavLink} ${activeSection === "features" ? styles.activeMobileNavLink : ""}`}
                                 onClick={() => setMobileMenuOpen(false)}
                             >
-                                Features & Capabilities
+                                Features
                             </a>
                             <a 
                                 href="#industries" 
                                 className={`${styles.mobileNavLink} ${activeSection === "industries" ? styles.activeMobileNavLink : ""}`}
                                 onClick={() => setMobileMenuOpen(false)}
                             >
-                                Industry Solutions
+                                Industries
                             </a>
                             <a 
                                 href="#how-it-works" 
@@ -455,13 +466,10 @@ const LandingPage = () => {
                             <MainButton
                                 variant="secondary"
                                 size="xl"
-                                onClick={() => {
-                                    const el = document.getElementById("about");
-                                    if (el) el.scrollIntoView({ behavior: "smooth" });
-                                }}
-                                icon={<FiLayers />}
+                                onClick={() => navigate("/explore")}
+                                icon={<FiCompass />}
                             >
-                                Discover Our Platform
+                                Explore Businesses
                             </MainButton>
                         </div>
 
@@ -478,6 +486,29 @@ const LandingPage = () => {
                                 <FiCheckCircle className={styles.pillIcon} />
                                 <span>5-minute guided setup</span>
                             </div>
+                        </div>
+
+                        {/* Customer Ticket & Digital Pass Booking Hint Banner */}
+                        <div className={styles.ticketHintBanner}>
+                            <div className={styles.ticketHintLeft}>
+                                <div className={styles.ticketHintIconBadge}>
+                                    <FiCheckCircle />
+                                </div>
+                                <div className={styles.ticketHintText}>
+                                    <span className={styles.ticketHintTag}>Public Discovery & Ticket Passes</span>
+                                    <p className={styles.ticketHintTitle}>
+                                        Looking to book an appointment or reserve a ticket pass? Explore verified spaces in Egypt and receive your instant digital QR pass.
+                                    </p>
+                                </div>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => navigate("/explore")}
+                                className={styles.ticketHintBtn}
+                            >
+                                <span>Explore & Book Passes</span>
+                                <FiArrowRight />
+                            </button>
                         </div>
                     </div>
                 </div>

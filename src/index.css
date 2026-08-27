@@ -59,7 +59,9 @@ a {
   color: var(--color-accent);
   text-decoration: none;
 }
-a:hover { text-decoration: underline; }
+a:hover { 
+  text-decoration: none; 
+}
 
 button {
   font-family: var(--font-sans);
@@ -84,7 +86,7 @@ h1, h2, h3, h4, h5, h6 {
 
 table { border-collapse: collapse; width: 100%; }
 
-a, img, input, button, section, main, ul, li, ol, table, td, th, tr {
+a, img, input, button, ul, li, ol, table, td, th, tr {
   -webkit-user-select: none;
   user-select: none;
 }

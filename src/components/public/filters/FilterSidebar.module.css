@@ -1,0 +1,400 @@
+/* Filter Sidebar Modern Design System - Ink & Cream Aesthetic */
+
+.sidebarCard {
+    background-color: var(--color-surface-white, #FFFFFF);
+    border: 1px solid var(--color-border, #E4E1D9);
+    border-radius: 14px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    transition: all 0.2s ease;
+}
+
+:global([data-theme="dark"]) .sidebarCard {
+    background-color: #161F26;
+    border-color: #24303B;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* ── HEADER ───────────────────────────────────────────────────── */
+.sidebarHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--color-border, #E4E1D9);
+}
+
+:global([data-theme="dark"]) .sidebarHeader {
+    border-bottom-color: #24303B;
+}
+
+.headerLeft {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    flex: 1;
+}
+
+.filterIconCircle {
+    width: 30px;
+    height: 30px;
+    border-radius: 7px;
+    background-color: rgba(14, 124, 134, 0.1);
+    color: #0E7C86;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+:global([data-theme="dark"]) .filterIconCircle {
+    background-color: rgba(14, 124, 134, 0.2);
+    color: #38BDF8;
+}
+
+.headerTextGroup {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.headerTitle {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--color-ink-900, #161F26);
+    margin: 0;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+:global([data-theme="dark"]) .headerTitle {
+    color: #F3F2EE;
+}
+
+.headerSub {
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--color-ink-500, #8B939A);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.resetBtn {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: 1px solid var(--color-border, #E4E1D9);
+    background-color: var(--color-surface-cream, #F3F2EE);
+    color: #DC2626;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+:global([data-theme="dark"]) .resetBtn {
+    background-color: #1E293B;
+    border-color: #334155;
+}
+
+.resetBtn:hover {
+    background-color: rgba(220, 38, 38, 0.12);
+    border-color: #DC2626;
+    transform: rotate(-45deg);
+}
+
+.resetIcon {
+    font-size: 13px;
+}
+
+/* ── FILTER BLOCKS ────────────────────────────────────────────── */
+.filterBlock {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--color-border, #E4E1D9);
+}
+
+:global([data-theme="dark"]) .filterBlock {
+    border-bottom-color: #24303B;
+}
+
+.filterBlockLast {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.blockLabel {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--color-ink-700, #2B3640);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+:global([data-theme="dark"]) .blockLabel {
+    color: #94A3B8;
+}
+
+.labelIcon {
+    font-size: 14px;
+    color: #0E7C86;
+}
+
+:global([data-theme="dark"]) .labelIcon {
+    color: #38BDF8;
+}
+
+.selectContainer {
+    width: 100%;
+}
+
+/* GPS Button */
+.gpsActionBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    height: 38px;
+    border-radius: 8px;
+    border: 1px solid var(--color-border, #E4E1D9);
+    background-color: var(--color-surface-cream, #F3F2EE);
+    color: var(--color-ink-800, #2B3640);
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+:global([data-theme="dark"]) .gpsActionBtn {
+    background-color: #1A242E;
+    border-color: #2E3D4A;
+    color: #CBD5E1;
+}
+
+.gpsActionBtn:hover {
+    border-color: #0E7C86;
+    color: #0E7C86;
+}
+
+.gpsActive {
+    background-color: rgba(14, 124, 134, 0.12) !important;
+    border-color: #0E7C86 !important;
+    color: #0E7C86 !important;
+    font-weight: 700 !important;
+}
+
+:global([data-theme="dark"]) .gpsActive {
+    background-color: rgba(56, 189, 248, 0.15) !important;
+    border-color: #38BDF8 !important;
+    color: #38BDF8 !important;
+}
+
+.gpsIcon {
+    font-size: 14px;
+}
+
+/* Distance Slider */
+.distanceSliderWrap {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px;
+    background-color: var(--color-surface-cream, #F3F2EE);
+    border-radius: 8px;
+}
+
+:global([data-theme="dark"]) .distanceSliderWrap {
+    background-color: #121A21;
+}
+
+.sliderHeader {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+}
+
+.sliderLabel {
+    color: var(--color-ink-600, #3A444D);
+    font-weight: 500;
+}
+
+.sliderNumber {
+    font-weight: 800;
+    color: #0E7C86;
+}
+
+.rangeSlider {
+    width: 100%;
+    accent-color: #0E7C86;
+    cursor: pointer;
+}
+
+/* ── NUMERIC RATING CHIPS ─────────────────────────────────────── */
+.numericGrid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 5px;
+}
+
+.numericChip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    height: 34px;
+    padding: 0 4px;
+    border-radius: 6px;
+    border: 1px solid var(--color-border, #E4E1D9);
+    background-color: var(--color-surface-cream, #F3F2EE);
+    color: var(--color-ink-700, #2B3640);
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+:global([data-theme="dark"]) .numericChip {
+    background-color: #1A242E;
+    border-color: #2E3D4A;
+    color: #CBD5E1;
+}
+
+.numericChip:hover {
+    border-color: #0E7C86;
+    color: #0E7C86;
+}
+
+.chipActive {
+    background-color: #0E7C86 !important;
+    border-color: #0E7C86 !important;
+    color: #FFFFFF !important;
+}
+
+.starSmall {
+    font-size: 11px;
+    color: #F59E0B;
+}
+
+.chipActive .starSmall {
+    color: #FFFFFF;
+}
+
+/* ── CAPACITY NUMBERS ─────────────────────────────────────────── */
+.numericPillsList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.capacityPill {
+    flex: 1 1 calc(50% - 6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 34px;
+    padding: 0 8px;
+    border-radius: 6px;
+    border: 1px solid var(--color-border, #E4E1D9);
+    background-color: var(--color-surface-cream, #F3F2EE);
+    color: var(--color-ink-700, #2B3640);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+:global([data-theme="dark"]) .capacityPill {
+    background-color: #1A242E;
+    border-color: #2E3D4A;
+    color: #CBD5E1;
+}
+
+.capacityPill:hover {
+    border-color: #0E7C86;
+    color: #0E7C86;
+}
+
+.capacityActive {
+    background-color: #0E7C86 !important;
+    border-color: #0E7C86 !important;
+    color: #FFFFFF !important;
+    font-weight: 700;
+}
+
+/* ── TOGGLE ROW (OPEN NOW) ────────────────────────────────────── */
+.toggleContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background-color: var(--color-surface-cream, #F3F2EE);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+:global([data-theme="dark"]) .toggleContainer {
+    background-color: #1A242E;
+}
+
+.toggleContainer:hover {
+    background-color: rgba(14, 124, 134, 0.08);
+}
+
+.toggleLeft {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.clockIconWrap {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background-color: rgba(14, 124, 134, 0.1);
+    color: #0E7C86;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.toggleTitle {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-ink-900, #161F26);
+    display: block;
+}
+
+:global([data-theme="dark"]) .toggleTitle {
+    color: #F3F2EE;
+}
+
+.toggleSubtitle {
+    font-size: 11px;
+    color: var(--color-ink-500, #8B939A);
+    display: block;
+}
+
+.toggleCheckbox {
+    width: 18px;
+    height: 18px;
+    accent-color: #0E7C86;
+    cursor: pointer;
+}

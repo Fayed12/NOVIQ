@@ -1,0 +1,106 @@
+/* Filter Drawer Styles (Mobile Bottom Sheet) */
+
+.drawerOverlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(22, 31, 38, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    animation: fadeIn 0.25s ease forwards;
+}
+
+.drawerContent {
+    width: 100%;
+    max-width: 500px;
+    max-height: 85vh;
+    background-color: var(--color-surface-white, #FFFFFF);
+    border-radius: 18px 18px 0 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.2);
+    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+:global([data-theme="dark"]) .drawerContent {
+    background-color: #161F26;
+}
+
+.drawerHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--color-border, #E4E1D9);
+}
+
+:global([data-theme="dark"]) .drawerHeader {
+    border-bottom-color: #24303B;
+}
+
+.drawerTitle {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-ink-900, #161F26);
+    margin: 0;
+}
+
+:global([data-theme="dark"]) .drawerTitle {
+    color: #F3F2EE;
+}
+
+.closeBtn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background-color: var(--color-surface-cream, #F3F2EE);
+    color: var(--color-ink-700, #2B3640);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+:global([data-theme="dark"]) .closeBtn {
+    background-color: #1E293B;
+    color: #F3F2EE;
+}
+
+.drawerBody {
+    padding: 16px 20px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.drawerBody :global(aside) {
+    width: 100% !important;
+    border: none !important;
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+.drawerFooter {
+    padding: 14px 20px 20px;
+    border-top: 1px solid var(--color-border, #E4E1D9);
+    background-color: var(--color-surface-white, #FFFFFF);
+}
+
+:global([data-theme="dark"]) .drawerFooter {
+    background-color: #161F26;
+    border-top-color: #24303B;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}

@@ -1,0 +1,185 @@
+/* Public Footer - Matching Landing Page Footer Styling */
+
+.footer {
+    background-color: var(--color-ink-900, #161F26);
+    color: var(--color-ink-300, #8B939A);
+    padding-top: var(--space-3xl, 64px);
+    border-top: 1px solid var(--color-ink-700, #2B3640);
+    margin-top: auto;
+}
+
+.footerContainer {
+    max-width: var(--content-max-width, 1280px);
+    margin: 0 auto;
+    padding: 0 var(--space-xl, 24px) var(--space-2xl, 48px);
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: var(--space-2xl, 48px);
+}
+
+.footerBrandCol {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md, 16px);
+}
+
+.logoLink {
+    display: inline-block;
+    text-decoration: none !important;
+}
+
+.footerLogo {
+    height: 36px;
+    width: auto;
+    max-width: 140px;
+    object-fit: contain;
+    transition: transform var(--transition-fast, 0.15s ease);
+}
+
+.footerLogo:hover {
+    transform: scale(1.04);
+}
+
+.footerTagline {
+    font-size: var(--text-xs, 13px);
+    line-height: var(--leading-relaxed, 1.6);
+    color: var(--color-ink-300, #8B939A);
+    max-width: 340px;
+    margin: 0;
+}
+
+.footerStatusBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--text-tiny, 11px);
+    font-weight: var(--fw-medium, 500);
+    color: #16A34A;
+    background-color: rgba(22, 163, 74, 0.15);
+    padding: 3px 10px;
+    border-radius: var(--radius-full, 9999px);
+    width: fit-content;
+}
+
+.statusDotGreen {
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-full, 9999px);
+    background-color: #16A34A;
+}
+
+.footerNavGroup {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs, 8px);
+}
+
+.footerGroupTitle {
+    font-size: var(--text-xs, 13px);
+    font-weight: var(--fw-bold, 700);
+    color: var(--color-cream, #F3F2EE);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0 0 4px;
+}
+
+.footerLinksList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.footerLinksList li a {
+    font-size: var(--text-xs, 13px);
+    color: var(--color-ink-300, #8B939A);
+    text-decoration: none !important;
+    transition: color var(--transition-fast, 0.15s ease), transform var(--transition-fast, 0.15s ease);
+    display: inline-block;
+}
+
+.footerLinksList li a:hover {
+    color: #FFFFFF;
+    text-decoration: none !important;
+    transform: translateX(2px);
+}
+
+.footerBottom {
+    border-top: 1px solid var(--color-ink-700, #2B3640);
+    padding: var(--space-md, 16px) var(--space-xl, 24px);
+    max-width: var(--content-max-width, 1280px);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: var(--text-tiny, 11px);
+    color: var(--color-ink-300, #8B939A);
+    flex-wrap: wrap;
+    gap: var(--space-md, 16px);
+}
+
+.footerLegalLinks {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md, 16px);
+}
+
+.footerLegalLinks a {
+    color: var(--color-ink-300, #8B939A);
+    text-decoration: none !important;
+    transition: color var(--transition-fast, 0.15s ease);
+}
+
+.footerLegalLinks a:hover {
+    color: #FFFFFF;
+    text-decoration: none !important;
+}
+
+.backToTopBtn {
+    background: transparent;
+    border: 1px solid #334155;
+    color: var(--color-ink-300, #8B939A);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.backToTopBtn:hover {
+    color: #FFFFFF;
+    border-color: #0E7C86;
+    background-color: rgba(14, 124, 134, 0.15);
+}
+
+@media (max-width: 1024px) {
+    .footerContainer {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-xl, 24px);
+    }
+}
+
+@media (max-width: 500px) {
+    .footer {
+        padding-top: var(--space-xl, 32px);
+    }
+
+    .footerContainer {
+        grid-template-columns: 1fr;
+        gap: var(--space-lg, 20px);
+        padding-inline: var(--space-md, 16px);
+    }
+
+    .footerBottom {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-sm, 10px);
+        padding-inline: var(--space-md, 16px);
+    }
+}

@@ -57,9 +57,46 @@ const router = createBrowserRouter([
                     return { Component };
                 },
             },
+            // Section 1: Public Discovery & Booking Pages
             {
-                path: "/loading",
-                element: <LoadingPage label="Loading NOVIQ Application..." />,
+                path: "/explore",
+                hydrateFallbackElement: <LoadingPage label="Loading NOVIQ Marketplace..." />,
+                lazy: async () => {
+                    const { default: Component } = await import("../pages/global-pages/explore-page/ExplorePage");
+                    return { Component };
+                },
+            },
+            {
+                path: "/explore/:categorySlug",
+                hydrateFallbackElement: <LoadingPage label="Loading Category Showcase..." />,
+                lazy: async () => {
+                    const { default: Component } = await import("../pages/global-pages/category-page/CategoryPage");
+                    return { Component };
+                },
+            },
+            {
+                path: "/:tenantSlug/book",
+                hydrateFallbackElement: <LoadingPage label="Initializing Booking Session..." />,
+                lazy: async () => {
+                    const { default: Component } = await import("../pages/global-pages/booking-widget-page/BookingWidgetPage");
+                    return { Component };
+                },
+            },
+            {
+                path: "/:tenantSlug/booking/:bookingId",
+                hydrateFallbackElement: <LoadingPage label="Retrieving Booking Receipt..." />,
+                lazy: async () => {
+                    const { default: Component } = await import("../pages/global-pages/booking-confirmation-page/BookingConfirmationPage");
+                    return { Component };
+                },
+            },
+            {
+                path: "/:tenantSlug",
+                hydrateFallbackElement: <LoadingPage label="Loading Business Storefront..." />,
+                lazy: async () => {
+                    const { default: Component } = await import("../pages/global-pages/tenant-storefront-page/TenantStorefrontPage");
+                    return { Component };
+                },
             },
 
             // Authentication Pages (Section 2)

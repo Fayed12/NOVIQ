@@ -1,0 +1,148 @@
+/* Booking Time Slots Styles */
+
+.slotsCard {
+    background-color: var(--color-surface-white, #FFFFFF);
+    border: 1px solid var(--color-border, #E4E1D9);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+:global([data-theme="dark"]) .slotsCard {
+    background-color: #161F26;
+    border-color: #24303B;
+}
+
+.slotsHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--color-border, #E4E1D9);
+}
+
+:global([data-theme="dark"]) .slotsHeader {
+    border-bottom-color: #24303B;
+}
+
+.headerTitleGroup {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.headerIcon {
+    font-size: 16px;
+    color: var(--accent-color, #0E7C86);
+}
+
+.headerTitle {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--color-ink-900, #161F26);
+    margin: 0;
+}
+
+:global([data-theme="dark"]) .headerTitle {
+    color: #F3F2EE;
+}
+
+.timezoneBadge {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-ink-500, #8B939A);
+}
+
+/* Period Group */
+.periodGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.periodLabel {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-ink-700, #2B3640);
+}
+
+:global([data-theme="dark"]) .periodLabel {
+    color: #CBD5E1;
+}
+
+.periodIcon {
+    font-size: 14px;
+    color: var(--accent-color, #0E7C86);
+}
+
+/* Slots Grid */
+.slotsGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.slotBtn {
+    height: 40px;
+    border-radius: 8px;
+    border: 1px solid var(--color-border, #E4E1D9);
+    background-color: var(--color-surface-cream, #F3F2EE);
+    color: var(--color-ink-900, #161F26);
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:global([data-theme="dark"]) .slotBtn {
+    background-color: #1E293B;
+    border-color: #334155;
+    color: #CBD5E1;
+}
+
+.slotBtn:hover:not(:disabled) {
+    background-color: var(--color-surface-white, #FFFFFF);
+    border-color: var(--accent-color, #0E7C86);
+    color: var(--accent-color, #0E7C86);
+    transform: translateY(-1px);
+}
+
+:global([data-theme="dark"]) .slotBtn:hover:not(:disabled) {
+    background-color: #24303B;
+}
+
+.selectedSlot {
+    background-color: var(--accent-color, #0E7C86) !important;
+    border-color: var(--accent-color, #0E7C86) !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 4px 10px rgba(14, 124, 134, 0.3);
+}
+
+.takenSlot {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background-color: rgba(220, 38, 38, 0.05) !important;
+    border-color: rgba(220, 38, 38, 0.2) !important;
+    color: #DC2626 !important;
+}
+
+.takenLabel {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+@media (max-width: 500px) {
+    .slotsGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

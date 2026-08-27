@@ -1,0 +1,575 @@
+/* Booking Confirmation Page Styles - Ink & Cream Theme */
+
+.confirmationPageWrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-surface-cream, #F3F2EE);
+}
+
+:global([data-theme="dark"]) .confirmationPageWrapper {
+    background-color: #0F171E;
+}
+
+.confirmationMain {
+    padding: 48px 24px 80px;
+    flex: 1;
+}
+
+.confirmationInner {
+    max-width: 1040px;
+    margin: 0 auto;
+}
+
+/* Hero Section */
+.heroSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.successCircle {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background-color: #16A34A;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 24px rgba(22, 163, 74, 0.35);
+}
+
+.checkmarkIcon {
+    stroke-width: 3;
+}
+
+.heroTitle {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--color-ink-900, #161F26);
+    margin: 0 0 10px;
+}
+
+:global([data-theme="dark"]) .heroTitle {
+    color: #F3F2EE;
+}
+
+.heroSubtitle {
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--color-ink-600, #3A444D);
+    max-width: 600px;
+    margin: 0 0 20px;
+}
+
+:global([data-theme="dark"]) .heroSubtitle {
+    color: #94A3B8;
+}
+
+.refCodeBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    background-color: var(--color-surface-white, #FFFFFF);
+    border: 1px solid var(--color-border, #E4E1D9);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+:global([data-theme="dark"]) .refCodeBadge {
+    background-color: #161F26;
+    border-color: #24303B;
+}
+
+.refLabel {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-ink-600, #3A444D);
+}
+
+:global([data-theme="dark"]) .refLabel {
+    color: #94A3B8;
+}
+
+.refCode {
+    font-family: monospace, "JetBrains Mono";
+    font-size: 15px;
+    font-weight: 800;
+    color: #0E7C86;
+    letter-spacing: 0.5px;
+}
+
+.copyBtn {
+    background: transparent;
+    border: none;
+    color: var(--color-ink-500, #8B939A);
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    padding: 2px;
+    transition: color 0.2s ease;
+}
+
+.copyBtn:hover {
+    color: #0E7C86;
+}
+
+/* 2-Column Content Grid */
+.contentGrid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 28px;
+    align-items: flex-start;
+    margin-bottom: 40px;
+}
+
+/* Summary Card */
+.summaryCard {
+    background-color: var(--color-surface-white, #FFFFFF);
+    border: 1px solid var(--color-border, #E4E1D9);
+    border-radius: 14px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    box-shadow: 0 4px 16px rgba(22, 31, 38, 0.04);
+}
+
+:global([data-theme="dark"]) .summaryCard {
+    background-color: #161F26;
+    border-color: #24303B;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.cardHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--color-border, #E4E1D9);
+}
+
+:global([data-theme="dark"]) .cardHeader {
+    border-bottom-color: #24303B;
+}
+
+.tenantIdentity {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.tenantLogo {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.tenantTitle {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-ink-900, #161F26);
+    margin: 0 0 2px;
+}
+
+:global([data-theme="dark"]) .tenantTitle {
+    color: #F3F2EE;
+}
+
+.tenantCat {
+    font-size: 12px;
+    font-weight: 600;
+    color: #0E7C86;
+}
+
+.confirmedPill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #DCFCE7;
+    color: #16A34A;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 6px;
+}
+
+:global([data-theme="dark"]) .confirmedPill {
+    background-color: #0E2E1A;
+    color: #4ADE80;
+}
+
+.pillIcon {
+    font-size: 14px;
+}
+
+.detailsList {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.detailRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    gap: 16px;
+}
+
+.detailLabel {
+    color: var(--color-ink-600, #3A444D);
+}
+
+:global([data-theme="dark"]) .detailLabel {
+    color: #94A3B8;
+}
+
+.detailValue {
+    font-weight: 600;
+    color: var(--color-ink-900, #161F26);
+    text-align: right;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+:global([data-theme="dark"]) .detailValue {
+    color: #F3F2EE;
+}
+
+.detailValueHighlight {
+    font-weight: 700;
+    color: #0E7C86;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.priceValue {
+    font-size: 17px;
+    font-weight: 800;
+    color: #16A34A;
+}
+
+.originalPriceStruck {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-ink-500, #8B939A);
+    text-decoration: line-through;
+}
+
+.discountDetailRow {
+    color: #16A34A !important;
+}
+
+.discountCheckIcon {
+    color: #16A34A;
+    font-size: 14px;
+}
+
+.discountBadgeValue {
+    font-size: 14px;
+    font-weight: 800;
+    color: #16A34A;
+}
+
+:global([data-theme="dark"]) .discountBadgeValue,
+:global([data-theme="dark"]) .discountDetailRow {
+    color: #4ADE80 !important;
+}
+
+.totalDueRow {
+    padding-top: 10px;
+    border-top: 1px dashed var(--color-border, #E4E1D9);
+    margin-top: 4px;
+    align-items: flex-end;
+}
+
+:global([data-theme="dark"]) .totalDueRow {
+    border-top-color: #24303B;
+}
+
+.totalDueTitle {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--color-ink-900, #161F26);
+    display: block;
+}
+
+:global([data-theme="dark"]) .totalDueTitle {
+    color: #F3F2EE;
+}
+
+.totalDueNote {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-ink-500, #8B939A);
+    display: block;
+}
+
+.finalPriceValue {
+    font-size: 20px;
+    font-weight: 800;
+    color: #0E7C86;
+}
+
+:global([data-theme="dark"]) .finalPriceValue {
+    color: #38BDF8;
+}
+
+.inlineIcon {
+    font-size: 14px;
+    color: #0E7C86;
+}
+
+.policyNotice {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    background-color: var(--color-surface-cream, #F3F2EE);
+    font-size: 12px;
+    color: var(--color-ink-600, #3A444D);
+    line-height: 1.45;
+}
+
+:global([data-theme="dark"]) .policyNotice {
+    background-color: #1E293B;
+    color: #94A3B8;
+}
+
+.noticeIcon {
+    font-size: 15px;
+    color: #0E7C86;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.calendarActionsArea {
+    padding-top: 14px;
+    border-top: 1px solid var(--color-border, #E4E1D9);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+:global([data-theme="dark"]) .calendarActionsArea {
+    border-top-color: #24303B;
+}
+
+.actionsLabel {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-ink-800, #2B3640);
+}
+
+:global([data-theme="dark"]) .actionsLabel {
+    color: #CBD5E1;
+}
+
+.calendarBtnsGroup {
+    display: flex;
+    gap: 10px;
+}
+
+.calBtn {
+    flex: 1;
+    height: 38px;
+    border-radius: 8px;
+    border: 1px solid var(--color-border, #E4E1D9);
+    background-color: var(--color-surface-cream, #F3F2EE);
+    color: var(--color-ink-900, #161F26);
+    font-size: 12.5px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+:global([data-theme="dark"]) .calBtn {
+    background-color: #1E293B;
+    border-color: #334155;
+    color: #F3F2EE;
+}
+
+.calBtn:hover {
+    border-color: #0E7C86;
+    color: #0E7C86;
+}
+
+.calBtnIcon {
+    font-size: 14px;
+    color: #0E7C86;
+}
+
+/* QR Pass Card */
+.qrCard {
+    background-color: var(--color-ink-900, #161F26);
+    color: #FFFFFF;
+    border-radius: 14px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border: 1px solid #2B3640;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+.qrCardHeader {
+    margin-bottom: 16px;
+}
+
+.qrTitle {
+    font-size: 17px;
+    font-weight: 800;
+    color: #FFFFFF;
+    margin: 0 0 2px;
+}
+
+.qrSubtitle {
+    font-size: 12px;
+    color: #94A3B8;
+}
+
+.qrFrame {
+    padding: 10px;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.staffNoticeBox {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background-color: rgba(180, 83, 9, 0.15);
+    border: 1px solid rgba(180, 83, 9, 0.4);
+    text-align: left;
+    margin-bottom: 16px;
+}
+
+.staffHeader {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #F59E0B;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.shieldIcon {
+    font-size: 13px;
+}
+
+.staffText {
+    font-size: 11px;
+    line-height: 1.4;
+    color: #E2E8F0;
+    margin: 0;
+}
+
+.ticketActions {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.secondaryActions {
+    display: flex;
+    gap: 8px;
+}
+
+.printBtn,
+.shareTicketBtn {
+    flex: 1;
+    height: 36px;
+    border-radius: 8px;
+    border: 1px solid #334155;
+    background-color: #1E293B;
+    color: #CBD5E1;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.printBtn:hover,
+.shareTicketBtn:hover {
+    background-color: #24303B;
+    color: #FFFFFF;
+    border-color: #475569;
+}
+
+/* Bottom Nav Actions */
+.bottomNavActions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding-top: 24px;
+    border-top: 1px solid var(--color-border, #E4E1D9);
+}
+
+:global([data-theme="dark"]) .bottomNavActions {
+    border-top-color: #24303B;
+}
+
+.exploreLink {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-ink-700, #2B3640);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+:global([data-theme="dark"]) .exploreLink {
+    color: #CBD5E1;
+}
+
+.exploreLink:hover {
+    color: #0E7C86;
+}
+
+@media (max-width: 850px) {
+    .contentGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 500px) {
+    .confirmationMain {
+        padding: 32px 16px 60px;
+    }
+    .summaryCard {
+        padding: 20px 16px;
+    }
+    .heroTitle {
+        font-size: 24px;
+    }
+    .calendarBtnsGroup {
+        flex-direction: column;
+    }
+}

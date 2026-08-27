@@ -1,0 +1,345 @@
+/* Booking Summary Card Styles - Modern Ink & Cream Aesthetic */
+
+.summaryCard {
+    background-color: var(--color-surface-white, #FFFFFF);
+    border: 1px solid var(--color-border, #E4E1D9);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 96px;
+}
+
+:global([data-theme="dark"]) .summaryCard {
+    background-color: #161F26;
+    border-color: #24303B;
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* Tenant Header */
+.tenantHeader {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.tenantLogo {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 1px solid var(--color-border, #E4E1D9);
+}
+
+:global([data-theme="dark"]) .tenantLogo {
+    border-color: #24303B;
+}
+
+.tenantName {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-ink-900, #161F26);
+    margin: 0 0 2px;
+}
+
+:global([data-theme="dark"]) .tenantName {
+    color: #F3F2EE;
+}
+
+.tenantCategory {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent-color, #0E7C86);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.summaryDivider {
+    border: none;
+    border-top: 1px solid var(--color-border, #E4E1D9);
+    margin: 0;
+}
+
+:global([data-theme="dark"]) .summaryDivider {
+    border-top-color: #24303B;
+}
+
+/* Items List */
+.itemsList {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.summaryRow {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.rowLabelGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.rowTitle {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-ink-900, #161F26);
+}
+
+:global([data-theme="dark"]) .rowTitle {
+    color: #F3F2EE;
+}
+
+.rowSub {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--color-ink-600, #3A444D);
+}
+
+:global([data-theme="dark"]) .rowSub {
+    color: #94A3B8;
+}
+
+.inlineIcon {
+    font-size: 12px;
+    color: var(--accent-color, #0E7C86);
+}
+
+.rowPrice {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-ink-900, #161F26);
+    white-space: nowrap;
+}
+
+:global([data-theme="dark"]) .rowPrice {
+    color: #F3F2EE;
+}
+
+.includedBadge {
+    font-size: 11px;
+    font-weight: 600;
+    color: #16A34A;
+    background-color: #DCFCE7;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+:global([data-theme="dark"]) .includedBadge {
+    background-color: #0E2E1A;
+    color: #4ADE80;
+}
+
+/* Member Discount Incentive Box */
+.memberIncentiveBox {
+    background: linear-gradient(135deg, rgba(22, 163, 74, 0.08) 0%, rgba(14, 124, 134, 0.04) 100%);
+    border: 1px dashed rgba(22, 163, 74, 0.4);
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+:global([data-theme="dark"]) .memberIncentiveBox {
+    background: linear-gradient(135deg, rgba(22, 163, 74, 0.15) 0%, rgba(14, 124, 134, 0.08) 100%);
+    border-color: rgba(74, 222, 128, 0.4);
+}
+
+.incentiveHeader {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.incentiveIcon {
+    color: #16A34A;
+    font-size: 14px;
+}
+
+:global([data-theme="dark"]) .incentiveIcon {
+    color: #4ADE80;
+}
+
+.incentiveTitle {
+    font-size: 12.5px;
+    font-weight: 800;
+    color: #16A34A;
+    letter-spacing: -0.1px;
+}
+
+:global([data-theme="dark"]) .incentiveTitle {
+    color: #4ADE80;
+}
+
+.incentiveText {
+    font-size: 11.5px;
+    line-height: 1.4;
+    color: var(--color-ink-700, #2B3640);
+    margin: 0;
+}
+
+:global([data-theme="dark"]) .incentiveText {
+    color: #CBD5E1;
+}
+
+.incentiveLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #0E7C86;
+    text-decoration: none;
+    margin-top: 2px;
+    transition: color 0.2s ease;
+}
+
+.incentiveLink:hover {
+    color: #0B656D;
+    text-decoration: none;
+}
+
+/* Applied Member Badge */
+.memberAppliedBox {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: rgba(22, 163, 74, 0.1);
+    border: 1px solid rgba(22, 163, 74, 0.3);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #16A34A;
+}
+
+:global([data-theme="dark"]) .memberAppliedBox {
+    background-color: rgba(22, 163, 74, 0.2);
+    border-color: rgba(74, 222, 128, 0.4);
+    color: #4ADE80;
+}
+
+.appliedIcon {
+    font-size: 14px;
+}
+
+/* Price Breakdown */
+.priceBreakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.priceRow {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--color-ink-600, #3A444D);
+}
+
+:global([data-theme="dark"]) .priceRow {
+    color: #94A3B8;
+}
+
+.discountRow {
+    color: #16A34A !important;
+    font-weight: 700;
+}
+
+:global([data-theme="dark"]) .discountRow {
+    color: #4ADE80 !important;
+}
+
+.discountLabel {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.discountValue {
+    font-weight: 800;
+}
+
+.totalRow {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--color-ink-900, #161F26);
+    padding-top: 10px;
+    border-top: 1px dashed var(--color-border, #E4E1D9);
+    margin-top: 4px;
+    align-items: flex-end;
+}
+
+:global([data-theme="dark"]) .totalRow {
+    color: #FFFFFF;
+    border-top-color: #24303B;
+}
+
+.payNote {
+    display: block;
+    font-size: 10.5px;
+    font-weight: 500;
+    color: var(--color-ink-500, #8B939A);
+}
+
+.totalAmountGroup {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.struckOriginal {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-ink-400, #9CA3AF);
+    text-decoration: line-through;
+}
+
+.totalValue {
+    color: var(--accent-color, #0E7C86);
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.securityPill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-ink-600, #3A444D);
+    background-color: var(--color-surface-cream, #F3F2EE);
+    padding: 8px 10px;
+    border-radius: 6px;
+}
+
+:global([data-theme="dark"]) .securityPill {
+    background-color: #1E293B;
+    color: #94A3B8;
+}
+
+.securityIcon {
+    font-size: 13px;
+    color: #16A34A;
+    flex-shrink: 0;
+}
+
+.actionArea {
+    margin-top: 4px;
+}
+
+@media (max-width: 500px) {
+    .summaryCard {
+        padding: 18px;
+    }
+}

@@ -1,0 +1,312 @@
+/* Business Card Styles - Ink & Cream Theme */
+
+.businessCard {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-surface-white, #FFFFFF);
+    border: 1px solid var(--color-border, #E4E1D9);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 2px 8px rgba(22, 31, 38, 0.04);
+}
+
+:global([data-theme="dark"]) .businessCard {
+    background-color: #161F26;
+    border-color: #24303B;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.businessCard:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(22, 31, 38, 0.1);
+    border-color: var(--accent-color, #0E7C86);
+}
+
+:global([data-theme="dark"]) .businessCard:hover {
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* Media Cover */
+.coverWrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background-color: #0F171E;
+}
+
+.coverImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.businessCard:hover .coverImage {
+    transform: scale(1.04);
+}
+
+.coverScrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.65) 100%);
+}
+
+.categoryBadge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background-color: rgba(22, 31, 38, 0.85);
+    backdrop-filter: blur(8px);
+    color: #FFFFFF;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.distanceBadge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background-color: rgba(14, 124, 134, 0.9);
+    color: #FFFFFF;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.verifiedPill {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background-color: #16A34A;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.badgeIcon,
+.verifiedIcon {
+    font-size: 12px;
+}
+
+.logoBadge {
+    position: absolute;
+    bottom: -16px;
+    left: 16px;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background-color: #FFFFFF;
+    border: 2px solid var(--color-surface-white, #FFFFFF);
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    z-index: 2;
+}
+
+:global([data-theme="dark"]) .logoBadge {
+    border-color: #161F26;
+    background-color: #161F26;
+}
+
+.logoBadge img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Card Body */
+.cardBody {
+    padding: 24px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.titleRow {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+.businessTitle {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0;
+}
+
+.businessTitle a {
+    color: var(--color-ink-900, #161F26);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+:global([data-theme="dark"]) .businessTitle a {
+    color: #F3F2EE;
+}
+
+.businessTitle a:hover {
+    color: var(--accent-color, #0E7C86);
+}
+
+.ratingBadge {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    background-color: #FEF3C7;
+    color: #92400E;
+    padding: 3px 6px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+:global([data-theme="dark"]) .ratingBadge {
+    background-color: #2E2310;
+    color: #FBBF24;
+}
+
+.starIcon {
+    font-size: 12px;
+    fill: currentColor;
+}
+
+.ratingValue {
+    margin-left: 1px;
+}
+
+.reviewCount {
+    font-size: 10px;
+    font-weight: 500;
+    opacity: 0.85;
+}
+
+.metaRow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--color-ink-600, #3A444D);
+    margin-bottom: 10px;
+}
+
+:global([data-theme="dark"]) .metaRow {
+    color: #94A3B8;
+}
+
+.metaIcon {
+    font-size: 13px;
+    color: var(--accent-color, #0E7C86);
+}
+
+.cityText {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.priceTierBadge {
+    font-weight: 700;
+    color: var(--color-ink-700, #2B3640);
+    letter-spacing: 1px;
+}
+
+:global([data-theme="dark"]) .priceTierBadge {
+    color: #CBD5E1;
+}
+
+.taglineText {
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--color-ink-600, #3A444D);
+    margin: 0 0 12px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+:global([data-theme="dark"]) .taglineText {
+    color: #94A3B8;
+}
+
+.hoursRow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #16A34A;
+    font-weight: 500;
+    margin-bottom: 16px;
+}
+
+.hoursIcon {
+    font-size: 13px;
+}
+
+.cardActions {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-border, #E4E1D9);
+}
+
+:global([data-theme="dark"]) .cardActions {
+    border-top-color: #24303B;
+}
+
+.viewStoreLink {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-ink-700, #2B3640);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+:global([data-theme="dark"]) .viewStoreLink {
+    color: #CBD5E1;
+}
+
+.viewStoreLink:hover {
+    color: var(--accent-color, #0E7C86);
+}
+
+.bookActionBtn {
+    border-radius: 8px !important;
+}
+
+@media (max-width: 500px) {
+    .cardBody {
+        padding: 20px 14px 14px;
+    }
+    .businessTitle {
+        font-size: 15px;
+    }
+    .taglineText {
+        font-size: 12px;
+    }
+}

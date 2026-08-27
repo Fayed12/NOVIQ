@@ -1,0 +1,416 @@
+/* Category Page Styles - Ink & Cream Modern Theme */
+
+.categoryPageWrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-surface-cream, #F3F2EE);
+}
+
+:global([data-theme="dark"]) .categoryPageWrapper {
+    background-color: #0F171E;
+}
+
+/* Hero Section */
+.heroSection {
+    background: linear-gradient(135deg, #161F26 0%, #1E293B 100%);
+    padding: 40px 24px 48px;
+    border-bottom: 1px solid #2B3640;
+    color: #FFFFFF;
+}
+
+:global([data-theme="dark"]) .heroSection {
+    background: linear-gradient(135deg, #0A0F14 0%, #161F26 100%);
+}
+
+.heroInner {
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #94A3B8;
+    margin-bottom: 24px;
+}
+
+.breadcrumb a {
+    color: #94A3B8;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.breadcrumb a:hover {
+    color: var(--accent-color, #38BDF8);
+}
+
+.breadIcon {
+    font-size: 12px;
+}
+
+.currentBread {
+    color: #FFFFFF;
+    font-weight: 600;
+}
+
+.categoryTitle {
+    font-size: 36px;
+    font-weight: 800;
+    color: #FFFFFF;
+    margin: 0 0 10px;
+    letter-spacing: -0.5px;
+}
+
+.categorySub {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #94A3B8;
+    max-width: 640px;
+    margin: 0 0 24px;
+}
+
+.quickStatsRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.statPill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    font-size: 12px;
+    font-weight: 600;
+    color: #E2E8F0;
+}
+
+.statIcon {
+    font-size: 14px;
+    color: var(--accent-color, #38BDF8);
+}
+
+/* Main Section */
+.mainSection {
+    padding: 36px 24px 80px;
+    flex: 1;
+}
+
+.mainInner {
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.layoutGrid {
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+}
+
+.desktopSidebar {
+    width: 260px;
+    flex-shrink: 0;
+}
+
+.resultsArea {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Sort Bar */
+.sortBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    background-color: var(--color-surface-white, #FFFFFF);
+    border: 1px solid var(--color-border, #E4E1D9);
+    border-radius: 12px;
+    padding: 12px 16px;
+}
+
+:global([data-theme="dark"]) .sortBar {
+    background-color: #161F26;
+    border-color: #24303B;
+}
+
+.searchInline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--color-surface-cream, #F3F2EE);
+    border: 1px solid var(--color-border, #E4E1D9);
+    border-radius: 8px;
+    padding: 0 12px;
+    flex: 1;
+    max-width: 380px;
+}
+
+:global([data-theme="dark"]) .searchInline {
+    background-color: #1E293B;
+    border-color: #334155;
+}
+
+.searchIcon {
+    font-size: 16px;
+    color: #0E7C86;
+}
+
+.inlineSearchInput {
+    width: 100%;
+    height: 36px;
+    border: none;
+    background: transparent;
+    font-size: 13px;
+    color: #161F26;
+    outline: none;
+}
+
+:global([data-theme="dark"]) .inlineSearchInput {
+    color: #F3F2EE;
+}
+
+.sortAndFilterControls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sortGroup {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sortLabel {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-ink-600, #3A444D);
+    white-space: nowrap;
+}
+
+:global([data-theme="dark"]) .sortLabel {
+    color: #94A3B8;
+}
+
+.sortSelect {
+    height: 36px;
+    padding: 0 10px;
+    border-radius: 8px;
+    border: 1px solid var(--color-border, #E4E1D9);
+    background-color: var(--color-surface-cream, #F3F2EE);
+    color: var(--color-ink-900, #161F26);
+    font-size: 13px;
+    font-weight: 600;
+    outline: none;
+    cursor: pointer;
+}
+
+:global([data-theme="dark"]) .sortSelect {
+    background-color: #1E293B;
+    border-color: #334155;
+    color: #F3F2EE;
+}
+
+.mobileFilterBtn {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    height: 36px;
+    padding: 0 14px;
+    border-radius: 8px;
+    border: 1px solid var(--color-border, #E4E1D9);
+    background-color: var(--color-surface-cream, #F3F2EE);
+    color: var(--color-ink-900, #161F26);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+:global([data-theme="dark"]) .mobileFilterBtn {
+    background-color: #1E293B;
+    border-color: #334155;
+    color: #F3F2EE;
+}
+
+/* Business Grid */
+.businessGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+/* Empty State */
+.emptyState {
+    padding: 64px 24px;
+    background-color: var(--color-surface-white, #FFFFFF);
+    border: 1px solid var(--color-border, #E4E1D9);
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+:global([data-theme="dark"]) .emptyState {
+    background-color: #161F26;
+    border-color: #24303B;
+}
+
+.emptyIconCircle {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background-color: var(--color-surface-cream, #F3F2EE);
+    color: var(--color-ink-400, #8B939A);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin-bottom: 16px;
+}
+
+:global([data-theme="dark"]) .emptyIconCircle {
+    background-color: #1E293B;
+}
+
+.emptyTitle {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-ink-900, #161F26);
+    margin: 0 0 8px;
+}
+
+:global([data-theme="dark"]) .emptyTitle {
+    color: #F3F2EE;
+}
+
+.emptyText {
+    font-size: 14px;
+    color: var(--color-ink-600, #3A444D);
+    max-width: 440px;
+    line-height: 1.5;
+    margin: 0 0 24px;
+}
+
+:global([data-theme="dark"]) .emptyText {
+    color: #94A3B8;
+}
+
+/* Pagination */
+.paginationWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 24px;
+}
+
+.pageNavBtn {
+    height: 38px;
+    padding: 0 14px;
+    border-radius: 8px;
+    border: 1px solid var(--color-border, #E4E1D9);
+    background-color: var(--color-surface-white, #FFFFFF);
+    color: var(--color-ink-900, #161F26);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+:global([data-theme="dark"]) .pageNavBtn {
+    background-color: #161F26;
+    border-color: #24303B;
+    color: #CBD5E1;
+}
+
+.pageNavBtn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.pageNumbers {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.pageNumberBtn {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    border: 1px solid var(--color-border, #E4E1D9);
+    background-color: var(--color-surface-white, #FFFFFF);
+    color: var(--color-ink-900, #161F26);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+:global([data-theme="dark"]) .pageNumberBtn {
+    background-color: #161F26;
+    border-color: #24303B;
+    color: #CBD5E1;
+}
+
+.activePageBtn {
+    background-color: #0E7C86 !important;
+    border-color: #0E7C86 !important;
+    color: #FFFFFF !important;
+}
+
+/* Responsive Rules */
+@media (max-width: 1100px) {
+    .businessGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .desktopSidebar {
+        display: none;
+    }
+    .mobileFilterBtn {
+        display: flex;
+    }
+}
+
+@media (max-width: 640px) {
+    .businessGrid {
+        grid-template-columns: 1fr;
+    }
+    .sortBar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .searchInline {
+        max-width: 100%;
+    }
+    .sortAndFilterControls {
+        justify-content: space-between;
+    }
+}
+
+@media (max-width: 500px) {
+    .heroSection {
+        padding: 28px 16px 36px;
+    }
+    .categoryTitle {
+        font-size: 26px;
+    }
+    .mainSection {
+        padding: 20px 16px 60px;
+    }
+}

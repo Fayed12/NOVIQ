@@ -1,0 +1,221 @@
+/* Category Card Styles - Modern Ink & Cream Design System */
+
+.categoryCard {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+    min-height: 240px;
+    padding: 24px;
+    border-radius: 14px;
+    background-color: var(--color-surface-white, #FFFFFF);
+    border: 1px solid var(--color-border, #E4E1D9);
+    text-decoration: none !important;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+}
+
+:global([data-theme="dark"]) .categoryCard {
+    background-color: #161F26;
+    border-color: #24303B;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.categoryCard::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background-color: var(--accent-color, #0E7C86);
+    opacity: 0.8;
+    transition: height 0.25s ease, opacity 0.25s ease;
+}
+
+.categoryCard:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent-color, #0E7C86);
+    box-shadow: 0 14px 34px rgba(22, 31, 38, 0.08);
+    text-decoration: none !important;
+}
+
+:global([data-theme="dark"]) .categoryCard:hover {
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45);
+}
+
+.categoryCard:hover::before {
+    height: 5px;
+    opacity: 1;
+}
+
+.topHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    gap: 10px;
+}
+
+.iconFrame {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    background-color: color-mix(in srgb, var(--accent-color, #0E7C86) 12%, transparent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+    flex-shrink: 0;
+}
+
+.categoryCard:hover .iconFrame {
+    background-color: var(--accent-color, #0E7C86);
+}
+
+.categoryIcon {
+    font-size: 22px;
+    color: var(--accent-color, #0E7C86);
+    transition: color 0.25s ease;
+}
+
+.categoryCard:hover .categoryIcon {
+    color: #FFFFFF;
+}
+
+.engineBadge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background-color: var(--color-surface-cream, #F3F2EE);
+    color: var(--color-ink-700, #2B3640);
+    border: 1px solid var(--color-border, #E4E1D9);
+    text-align: right;
+    white-space: nowrap;
+}
+
+:global([data-theme="dark"]) .engineBadge {
+    background-color: #1E293B;
+    border-color: #334155;
+    color: #CBD5E1;
+}
+
+.contentBody {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.categoryTitle {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--color-ink-900, #161F26);
+    margin: 0 0 8px;
+    transition: color 0.2s ease;
+}
+
+:global([data-theme="dark"]) .categoryTitle {
+    color: #F3F2EE;
+}
+
+.categoryCard:hover .categoryTitle {
+    color: var(--accent-color, #0E7C86);
+}
+
+.categoryDescription {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--color-ink-600, #3A444D);
+    margin: 0 0 14px;
+    flex: 1;
+}
+
+:global([data-theme="dark"]) .categoryDescription {
+    color: #94A3B8;
+}
+
+.featureItem {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-ink-700, #2B3640);
+    padding: 6px 10px;
+    background-color: var(--color-surface-cream, #F3F2EE);
+    border-radius: 6px;
+}
+
+:global([data-theme="dark"]) .featureItem {
+    background-color: #1E293B;
+    color: #CBD5E1;
+}
+
+.checkIcon {
+    font-size: 13px;
+    color: var(--accent-color, #0E7C86);
+    flex-shrink: 0;
+}
+
+.cardFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 14px;
+    border-top: 1px solid var(--color-border, #E4E1D9);
+}
+
+:global([data-theme="dark"]) .cardFooter {
+    border-top-color: #24303B;
+}
+
+.exploreActionText {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--color-ink-700, #2B3640);
+    transition: color 0.2s ease;
+}
+
+:global([data-theme="dark"]) .exploreActionText {
+    color: #CBD5E1;
+}
+
+.categoryCard:hover .exploreActionText {
+    color: var(--accent-color, #0E7C86);
+}
+
+.arrowCircle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: var(--color-surface-cream, #F3F2EE);
+    color: var(--color-ink-700, #2B3640);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    transition: all 0.25s ease;
+}
+
+:global([data-theme="dark"]) .arrowCircle {
+    background-color: #1E293B;
+    color: #CBD5E1;
+}
+
+.categoryCard:hover .arrowCircle {
+    background-color: var(--accent-color, #0E7C86);
+    color: #FFFFFF;
+    transform: translateX(4px);
+}
+
+@media (max-width: 500px) {
+    .categoryCard {
+        padding: 18px;
+        min-height: auto;
+    }
+}
