@@ -1,0 +1,192 @@
+.stepperContainer {
+    width: 100%;
+    margin-bottom: 24px;
+}
+
+/* Desktop */
+.desktopStepper {
+    position: relative;
+    width: 100%;
+    padding: 12px 0 20px 0;
+}
+
+.progressBarBackground {
+    position: absolute;
+    top: 28px;
+    left: 20px;
+    right: 20px;
+    height: 3px;
+    background-color: var(--color-border, #e4e1d9);
+    border-radius: 9999px;
+    z-index: 1;
+}
+
+:global([data-theme="dark"]) .progressBarBackground {
+    background-color: var(--color-ink-700, #2b3640);
+}
+
+.progressBarFill {
+    height: 100%;
+    background: linear-gradient(90deg, #0e7c86 0%, #10b981 100%);
+    border-radius: 9999px;
+    transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stepsList {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    z-index: 2;
+}
+
+.stepNode {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: default;
+    user-select: none;
+}
+
+.clickableNode {
+    cursor: pointer;
+}
+
+.nodeCircle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--color-white, #ffffff);
+    border: 2px solid var(--color-border, #e4e1d9);
+    color: var(--color-ink-300, #8b939a);
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+}
+
+:global([data-theme="dark"]) .nodeCircle {
+    background-color: var(--color-ink-900, #161f26);
+    border-color: var(--color-ink-700, #2b3640);
+    color: var(--color-ink-300, #8b939a);
+}
+
+.nodeLabel {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-ink-300, #8b939a);
+    transition: color 0.2s ease;
+}
+
+/* Active Node */
+.activeNode .nodeCircle {
+    border-color: var(--color-accent-teal, #0e7c86);
+    background-color: var(--color-accent-teal, #0e7c86);
+    color: #ffffff;
+    box-shadow: 0 0 0 4px rgba(14, 124, 134, 0.2);
+    transform: scale(1.05);
+}
+
+.activeNode .nodeLabel {
+    color: var(--color-ink-900, #161f26);
+    font-weight: 700;
+}
+
+:global([data-theme="dark"]) .activeNode .nodeLabel {
+    color: var(--color-surface-cream, #f3f2ee);
+}
+
+/* Completed Node */
+.completedNode .nodeCircle {
+    border-color: #10b981;
+    background-color: #10b981;
+    color: #ffffff;
+}
+
+.completedNode .nodeLabel {
+    color: var(--color-ink-700, #2b3640);
+}
+
+:global([data-theme="dark"]) .completedNode .nodeLabel {
+    color: var(--color-surface-cream, #f3f2ee);
+}
+
+.checkIcon {
+    stroke-width: 3;
+}
+
+/* Mobile Stepper (<500px) */
+.mobileStepper {
+    display: none;
+    background-color: var(--color-white, #ffffff);
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--color-border, #e4e1d9);
+}
+
+:global([data-theme="dark"]) .mobileStepper {
+    background-color: var(--color-ink-800, #1f2a33);
+    border-color: var(--color-ink-700, #2b3640);
+}
+
+.mobileHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.mobileStepBadge {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--color-accent-teal, #0e7c86);
+    background: rgba(14, 124, 134, 0.12);
+    padding: 2px 8px;
+    border-radius: 9999px;
+}
+
+.mobileStepTitle {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-ink-900, #161f26);
+}
+
+:global([data-theme="dark"]) .mobileStepTitle {
+    color: var(--color-surface-cream, #f3f2ee);
+}
+
+.mobilePercent {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-ink-300, #8b939a);
+}
+
+.mobileProgressBar {
+    width: 100%;
+    height: 4px;
+    background-color: var(--color-border, #e4e1d9);
+    border-radius: 9999px;
+    overflow: hidden;
+}
+
+:global([data-theme="dark"]) .mobileProgressBar {
+    background-color: var(--color-ink-700, #2b3640);
+}
+
+.mobileProgressFill {
+    height: 100%;
+    background: linear-gradient(90deg, #0e7c86 0%, #10b981 100%);
+    border-radius: 9999px;
+    transition: width 0.3s ease;
+}
+
+@media (max-width: 640px) {
+    .desktopStepper {
+        display: none;
+    }
+    .mobileStepper {
+        display: block;
+    }
+}

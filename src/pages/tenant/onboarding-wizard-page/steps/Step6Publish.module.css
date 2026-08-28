@@ -1,0 +1,254 @@
+.stepContainer {
+    width: 100%;
+    animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.headingGroup {
+    margin-bottom: 24px;
+    text-align: left;
+}
+
+.stepKicker {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-accent-teal, #0e7c86);
+    display: inline-block;
+    margin-bottom: 6px;
+}
+
+.stepTitle {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--color-ink-900, #161f26);
+    margin: 0 0 8px 0;
+    letter-spacing: -0.02em;
+}
+
+:global([data-theme="dark"]) .stepTitle {
+    color: var(--color-surface-cream, #f3f2ee);
+}
+
+.stepSubtitle {
+    font-size: 14px;
+    color: var(--color-ink-600, #3a444d);
+    margin: 0;
+    line-height: 1.5;
+}
+
+:global([data-theme="dark"]) .stepSubtitle {
+    color: var(--color-ink-300, #8b939a);
+}
+
+/* Checklist Card */
+.checklistCard {
+    background-color: var(--color-white, #ffffff);
+    border: 1px solid var(--color-border, #e4e1d9);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+}
+
+:global([data-theme="dark"]) .checklistCard {
+    background-color: var(--color-ink-900, #161f26);
+    border-color: var(--color-ink-700, #2b3640);
+}
+
+.checklistHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--color-border, #e4e1d9);
+    margin-bottom: 16px;
+}
+
+:global([data-theme="dark"]) .checklistHeader {
+    border-bottom-color: var(--color-ink-700, #2b3640);
+}
+
+.cardTitle {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-ink-900, #161f26);
+    margin: 0;
+}
+
+:global([data-theme="dark"]) .cardTitle {
+    color: var(--color-surface-cream, #f3f2ee);
+}
+
+.statusBadge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 9999px;
+}
+
+.readyBadge {
+    background-color: rgba(16, 185, 129, 0.12);
+    color: #10b981;
+}
+
+.pendingBadge {
+    background-color: rgba(217, 119, 6, 0.12);
+    color: var(--color-warning, #d97706);
+}
+
+.itemsList {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.checkItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 12px;
+    border-radius: 8px;
+    background-color: var(--color-surface-cream, #f3f2ee);
+}
+
+:global([data-theme="dark"]) .checkItem {
+    background-color: var(--color-ink-800, #1f2a33);
+}
+
+.itemIconCol {
+    font-size: 20px;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.doneIcon {
+    color: #10b981;
+}
+
+.warningIcon {
+    color: var(--color-warning, #d97706);
+}
+
+.itemContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.itemTitle {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-ink-900, #161f26);
+}
+
+:global([data-theme="dark"]) .itemTitle {
+    color: var(--color-surface-cream, #f3f2ee);
+}
+
+.itemMeta {
+    font-size: 12px;
+    color: var(--color-ink-600, #3a444d);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+:global([data-theme="dark"]) .itemMeta {
+    color: var(--color-ink-300, #8b939a);
+}
+
+.colorDot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.actionRequiredText {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-danger, #dc2626);
+}
+
+.entityBadges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.entityPill {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background-color: var(--color-white, #ffffff);
+    border: 1px solid var(--color-border, #e4e1d9);
+    color: var(--color-ink-900, #161f26);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+:global([data-theme="dark"]) .entityPill {
+    background-color: var(--color-ink-900, #161f26);
+    border-color: var(--color-ink-700, #2b3640);
+    color: var(--color-surface-cream, #f3f2ee);
+}
+
+/* Summary Banner */
+.summaryBanner {
+    background: linear-gradient(135deg, rgba(14, 124, 134, 0.08) 0%, rgba(16, 185, 129, 0.08) 100%);
+    border: 1px solid rgba(14, 124, 134, 0.2);
+    border-radius: 12px;
+    padding: 16px 20px;
+}
+
+.bannerTitle {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-ink-900, #161f26);
+    margin: 0 0 4px 0;
+}
+
+:global([data-theme="dark"]) .bannerTitle {
+    color: var(--color-surface-cream, #f3f2ee);
+}
+
+.bannerTitle code {
+    font-family: monospace;
+    font-size: 13px;
+    color: var(--color-accent-teal, #0e7c86);
+    background: rgba(14, 124, 134, 0.12);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.bannerSubtitle {
+    font-size: 12px;
+    color: var(--color-ink-600, #3a444d);
+    margin: 0;
+    line-height: 1.4;
+}
+
+:global([data-theme="dark"]) .bannerSubtitle {
+    color: var(--color-ink-300, #8b939a);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 600px) {
+    .checklistCard {
+        padding: 16px;
+    }
+    .checkItem {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}

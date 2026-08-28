@@ -458,10 +458,10 @@ const LandingPage = () => {
                             <MainButton
                                 variant="primary"
                                 size="xl"
-                                onClick={() => navigate(isAuthenticated ? "/account" : "/register")}
+                                onClick={() => navigate("/onboarding/category")}
                                 rightIcon={<FiArrowRight />}
                             >
-                                {isAuthenticated ? "Go to My Space" : "Launch Your Business — Free"}
+                                Launch Your Business — Free
                             </MainButton>
                             <MainButton
                                 variant="secondary"

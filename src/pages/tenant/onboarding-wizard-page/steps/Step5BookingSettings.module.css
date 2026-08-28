@@ -1,0 +1,266 @@
+.stepContainer {
+    width: 100%;
+    animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.headingGroup {
+    margin-bottom: 24px;
+    text-align: left;
+}
+
+.stepKicker {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-accent-teal, #0e7c86);
+    display: inline-block;
+    margin-bottom: 6px;
+}
+
+.stepTitle {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--color-ink-900, #161f26);
+    margin: 0 0 8px 0;
+    letter-spacing: -0.02em;
+}
+
+:global([data-theme="dark"]) .stepTitle {
+    color: var(--color-surface-cream, #f3f2ee);
+}
+
+.stepSubtitle {
+    font-size: 14px;
+    color: var(--color-ink-600, #3a444d);
+    margin: 0;
+    line-height: 1.5;
+}
+
+:global([data-theme="dark"]) .stepSubtitle {
+    color: var(--color-ink-300, #8b939a);
+}
+
+/* Schedule Card */
+.scheduleCard {
+    background-color: var(--color-white, #ffffff);
+    border: 1px solid var(--color-border, #e4e1d9);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+:global([data-theme="dark"]) .scheduleCard {
+    background-color: var(--color-ink-900, #161f26);
+    border-color: var(--color-ink-700, #2b3640);
+}
+
+.cardHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--color-border, #e4e1d9);
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+:global([data-theme="dark"]) .cardHeader {
+    border-bottom-color: var(--color-ink-700, #2b3640);
+}
+
+.cardTitleGroup {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.headerIcon {
+    font-size: 20px;
+    color: var(--color-accent-teal, #0e7c86);
+    margin-top: 2px;
+}
+
+.cardTitle {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--color-ink-900, #161f26);
+    margin: 0 0 2px 0;
+}
+
+:global([data-theme="dark"]) .cardTitle {
+    color: var(--color-surface-cream, #f3f2ee);
+}
+
+.cardSubtitle {
+    font-size: 12px;
+    color: var(--color-ink-300, #8b939a);
+}
+
+.hoursList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.hourRow {
+    display: grid;
+    grid-template-columns: 140px 1fr 110px;
+    align-items: center;
+    gap: 14px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background-color: var(--color-surface-cream, #f3f2ee);
+    transition: background-color 0.2s ease;
+}
+
+:global([data-theme="dark"]) .hourRow {
+    background-color: var(--color-ink-800, #1f2a33);
+}
+
+.closedRow {
+    opacity: 0.65;
+}
+
+.dayLabelCol {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dayName {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-ink-900, #161f26);
+}
+
+:global([data-theme="dark"]) .dayName {
+    color: var(--color-surface-cream, #f3f2ee);
+}
+
+.openPill {
+    font-size: 10px;
+    font-weight: 700;
+    color: #10b981;
+    background-color: rgba(16, 185, 129, 0.12);
+    padding: 1px 6px;
+    border-radius: 9999px;
+}
+
+.closedPill {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--color-danger, #dc2626);
+    background-color: rgba(220, 38, 38, 0.12);
+    padding: 1px 6px;
+    border-radius: 9999px;
+}
+
+.timePickersCol {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.selectWrapperMini {
+    flex: 1;
+}
+
+.timeSeparator {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-ink-300, #8b939a);
+}
+
+.dayOffNotice {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-ink-300, #8b939a);
+    font-style: italic;
+}
+
+.toggleCol {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.closedToggleBtn {
+    background: transparent;
+    border: 1px solid var(--color-border, #e4e1d9);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-ink-700, #2b3640);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+:global([data-theme="dark"]) .closedToggleBtn {
+    border-color: var(--color-ink-700, #2b3640);
+    color: var(--color-surface-cream, #f3f2ee);
+}
+
+.closedToggleBtn:hover {
+    background-color: var(--color-white, #ffffff);
+    border-color: var(--color-ink-300, #8b939a);
+}
+
+:global([data-theme="dark"]) .closedToggleBtn:hover {
+    background-color: var(--color-ink-900, #161f26);
+}
+
+.btnActiveClosed {
+    color: var(--color-accent-teal, #0e7c86);
+    border-color: var(--color-accent-teal, #0e7c86);
+}
+
+/* Cancellation Policy Card */
+.policyCard {
+    background-color: var(--color-white, #ffffff);
+    border: 1px solid var(--color-border, #e4e1d9);
+    border-radius: 12px;
+    padding: 20px;
+}
+
+:global([data-theme="dark"]) .policyCard {
+    background-color: var(--color-ink-900, #161f26);
+    border-color: var(--color-ink-700, #2b3640);
+}
+
+.policyHeader {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.policyIcon {
+    font-size: 20px;
+    color: var(--color-accent-teal, #0e7c86);
+    margin-top: 2px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 680px) {
+    .hourRow {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 12px;
+    }
+    .timePickersCol {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .timeSeparator {
+        text-align: center;
+    }
+    .toggleCol {
+        justify-content: flex-start;
+    }
+}

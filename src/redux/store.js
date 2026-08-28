@@ -21,6 +21,7 @@ import customFieldDefinitionReducer from './slices/customFieldDefinitionSlice';
 import customFieldValueReducer from './slices/customFieldValueSlice';
 import reviewReducer from './slices/reviewSlice';
 import notificationReducer from './slices/notificationSlice';
+import onboardingReducer from './slices/onboardingSlice';
 
 export const store = configureStore({
   reducer: {
@@ -44,6 +45,7 @@ export const store = configureStore({
     customFieldValues: customFieldValueReducer,
     reviews: reviewReducer,
     notifications: notificationReducer,
+    onboarding: onboardingReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().prepend(apiNotifyMiddleware.middleware),

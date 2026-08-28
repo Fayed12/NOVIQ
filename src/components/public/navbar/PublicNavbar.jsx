@@ -81,14 +81,23 @@ const PublicNavbar = () => {
 
                     <div className={styles.desktopAuthBtns}>
                         {isAuthenticated ? (
-                            <MainButton
-                                variant="primary"
-                                size="sm"
-                                onClick={() => navigate("/account")}
-                                rightIcon={<FiArrowRight />}
-                            >
-                                My Space
-                            </MainButton>
+                            <>
+                                <MainButton
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => navigate("/onboarding/category")}
+                                >
+                                    List Business
+                                </MainButton>
+                                <MainButton
+                                    variant="primary"
+                                    size="sm"
+                                    onClick={() => navigate("/account")}
+                                    rightIcon={<FiArrowRight />}
+                                >
+                                    My Space
+                                </MainButton>
+                            </>
                         ) : (
                             <>
                                 <MainButton
@@ -101,7 +110,7 @@ const PublicNavbar = () => {
                                 <MainButton
                                     variant="primary"
                                     size="sm"
-                                    onClick={() => navigate("/register")}
+                                    onClick={() => navigate("/onboarding/category")}
                                     rightIcon={<FiArrowRight />}
                                 >
                                     List Business

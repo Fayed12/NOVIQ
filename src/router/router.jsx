@@ -161,7 +161,41 @@ const router = createBrowserRouter([
                 },
             },
 
-            // Scaffolding / Protected Test Dashboards
+            // Section 4: ONBOARDING WIZARD (Become a Business Owner)
+            {
+                path: "/onboarding",
+                hydrateFallbackElement: <LoadingPage label="Launching Business Onboarding..." />,
+                lazy: async () => {
+                    const { default: OnboardingWizardPage } = await import(
+                        "../pages/tenant/onboarding-wizard-page/OnboardingWizardPage"
+                    );
+                    return {
+                        Component: () => (
+                            <ProtectedRoute>
+                                <OnboardingWizardPage />
+                            </ProtectedRoute>
+                        ),
+                    };
+                },
+            },
+            {
+                path: "/onboarding/:stepSlug",
+                hydrateFallbackElement: <LoadingPage label="Loading Setup Step..." />,
+                lazy: async () => {
+                    const { default: OnboardingWizardPage } = await import(
+                        "../pages/tenant/onboarding-wizard-page/OnboardingWizardPage"
+                    );
+                    return {
+                        Component: () => (
+                            <ProtectedRoute>
+                                <OnboardingWizardPage />
+                            </ProtectedRoute>
+                        ),
+                    };
+                },
+            },
+
+            // Scaffolding / Protected Customer & Dashboard Pages
             {
                 path: "/account",
                 hydrateFallbackElement: <LoadingPage label="Loading Customer Hub..." />,
