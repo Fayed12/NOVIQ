@@ -1,10 +1,18 @@
-import { useState, useMemo } from "react";
-import PropTypes from "prop-types";
+// local
 import MainInput from "../../../../components/ui/input/MainInput";
 import MainSelect from "../../../../components/ui/select/MainSelect";
 import MainButton from "../../../../components/ui/button/MainButton";
-import { FiUserCheck, FiX, FiLayers, FiUsers, FiMapPin } from "react-icons/fi";
 import styles from "./QuickResourceModal.module.css";
+
+// prop-types
+import PropTypes from "prop-types";
+
+// react
+import { useState, useMemo, useEffect } from "react";
+import { createPortal } from "react-dom";
+
+// react icons
+import { FiUserCheck, FiX, FiLayers, FiUsers, FiMapPin } from "react-icons/fi";
 
 const RESOURCE_TYPE_OPTIONS = [
     { value: "Specialist / Doctor", label: "Specialist / Practitioner (Doctor, Consultant)" },
@@ -13,18 +21,13 @@ const RESOURCE_TYPE_OPTIONS = [
     { value: "Equipment / Station", label: "Equipment / Station (Chair, Court, Studio)" },
 ];
 
-export default function QuickResourceModal({
-    isOpen,
+function QuickResourceModalContent({
+    existingResource,
     onClose,
     onSave,
     isLoading,
     branches = [],
 }) {
-    const [name, setName] = useState("");
-    const [selectedType, setSelectedType] = useState(RESOURCE_TYPE_OPTIONS[0]);
-    const [capacity, setCapacity] = useState("1");
-    const [error, setError] = useState("");
-
     const branchOptions = useMemo(() => {
         const list = [{ value: "all", label: "Stationed across All Branches" }];
         branches.forEach((b) => {
@@ -37,9 +40,51 @@ export default function QuickResourceModal({
         return list;
     }, [branches]);
 
-    const [selectedBranch, setSelectedBranch] = useState(branchOptions[0]);
+    const [name, setName] = useState(() => existingResource?.name || "");
+    const [selectedType, setSelectedType] = useState(() => {
+        if (existingResource?.typeName) {
+            return (
+                RESOURCE_TYPE_OPTIONS.find(
+                    (opt) => opt.value === existingResource.typeName
+                ) || RESOURCE_TYPE_OPTIONS[0]
+            );
+        }
+        return RESOURCE_TYPE_OPTIONS[0];
+    });
+    const [capacity, setCapacity] = useState(() =>
+        String(existingResource?.capacity || 1)
+    );
+    const [selectedBranch, setSelectedBranch] = useState(() => {
+        if (existingResource?.branchId) {
+            return (
+                branchOptions.find(
+                    (b) => b.value === existingResource.branchId
+                ) || branchOptions[0]
+            );
+        }
+        return branchOptions[0];
+    });
+    const [error, setError] = useState("");
 
-    if (!isOpen) return null;
+    // Lock body scrolling when modal is open
+    useEffect(() => {
+        const originalOverflow = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+        return () => {
+            document.body.style.overflow = originalOverflow;
+        };
+    }, []);
+
+    // Close on Escape key press
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === "Escape" && onClose && !isLoading) {
+                onClose();
+            }
+        };
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [onClose, isLoading]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -49,6 +94,7 @@ export default function QuickResourceModal({
         }
 
         onSave({
+            id: existingResource?.id,
             name: name.trim(),
             typeName: selectedType.value,
             capacity: parseInt(capacity, 10) || 1,
@@ -58,7 +104,7 @@ export default function QuickResourceModal({
     };
 
     return (
-        <div className={styles.overlay} onClick={onClose}>
+        <div className={styles.overlay} onClick={onClose} role="dialog" aria-modal="true">
             <div className={styles.modalCard} onClick={(e) => e.stopPropagation()}>
                 {/* Header */}
                 <div className={styles.modalHeader}>
@@ -67,20 +113,27 @@ export default function QuickResourceModal({
                             <FiUserCheck size={20} />
                         </div>
                         <div>
-                            <h3 className={styles.modalTitle}>Add Bookable Resource</h3>
+                            <h3 className={styles.modalTitle}>
+                                {existingResource ? `Edit Resource — ${existingResource.name}` : "Add Bookable Resource"}
+                            </h3>
                             <p className={styles.modalSubtitle}>
                                 Who or what can clients book at your business?
                             </p>
                         </div>
                     </div>
-                    <button type="button" className={styles.closeBtn} onClick={onClose}>
-                        <FiX size={20} />
-                    </button>
+                    <MainButton
+                        variant="ghost"
+                        size="xs"
+                        onClick={onClose}
+                        aria-label="Close modal"
+                        icon={<FiX size={18} />}
+                    />
                 </div>
 
                 {/* Form */}
                 <form onSubmit={handleSubmit} className={styles.formBody}>
                     <MainInput
+                        name="resourceName"
                         label="Resource Name"
                         placeholder="e.g. Dr. Ahmed Tarek, Master Chair 1, Deluxe Suite"
                         value={name}
@@ -88,9 +141,11 @@ export default function QuickResourceModal({
                             setName(e.target.value);
                             setError("");
                         }}
-                        error={error}
-                        icon={FiUserCheck}
+                        hasError={!!error}
+                        errorMsg={error}
+                        icon={<FiUserCheck size={16} />}
                         required
+                        autoFocus
                     />
 
                     <MainSelect
@@ -113,13 +168,14 @@ export default function QuickResourceModal({
                     )}
 
                     <MainInput
+                        name="resourceCapacity"
                         label="Capacity (Simultaneous clients)"
                         type="number"
                         min="1"
                         max="100"
                         value={capacity}
                         onChange={(e) => setCapacity(e.target.value)}
-                        icon={FiUsers}
+                        icon={<FiUsers size={16} />}
                         helperText="Usually 1 for individual specialists or rooms"
                     />
 
@@ -134,12 +190,47 @@ export default function QuickResourceModal({
                             type="submit"
                             loading={isLoading}
                         >
-                            Save Resource
+                            {existingResource ? "Update Resource" : "Save Resource"}
                         </MainButton>
                     </div>
                 </form>
             </div>
         </div>
+    );
+}
+
+QuickResourceModalContent.propTypes = {
+    existingResource: PropTypes.object,
+    onClose: PropTypes.func.isRequired,
+    onSave: PropTypes.func.isRequired,
+    isLoading: PropTypes.bool,
+    branches: PropTypes.array,
+};
+
+export default function QuickResourceModal({
+    isOpen,
+    onClose,
+    onSave,
+    isLoading,
+    branches = [],
+    existingResource,
+}) {
+    if (!isOpen) return null;
+
+    const modalKey = existingResource
+        ? `edit-resource-${existingResource.id || existingResource.name || "existing"}`
+        : "new-resource";
+
+    return createPortal(
+        <QuickResourceModalContent
+            key={modalKey}
+            existingResource={existingResource}
+            onClose={onClose}
+            onSave={onSave}
+            isLoading={isLoading}
+            branches={branches}
+        />,
+        document.body
     );
 }
 
@@ -149,4 +240,5 @@ QuickResourceModal.propTypes = {
     onSave: PropTypes.func.isRequired,
     isLoading: PropTypes.bool,
     branches: PropTypes.array,
+    existingResource: PropTypes.object,
 };

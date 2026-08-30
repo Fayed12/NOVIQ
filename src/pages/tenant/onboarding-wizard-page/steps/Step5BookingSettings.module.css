@@ -185,43 +185,13 @@
     justify-content: flex-end;
 }
 
-.closedToggleBtn {
-    background: transparent;
-    border: 1px solid var(--color-border, #e4e1d9);
-    border-radius: 6px;
-    padding: 6px 10px;
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--color-ink-700, #2b3640);
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-:global([data-theme="dark"]) .closedToggleBtn {
-    border-color: var(--color-ink-700, #2b3640);
-    color: var(--color-surface-cream, #f3f2ee);
-}
-
-.closedToggleBtn:hover {
-    background-color: var(--color-white, #ffffff);
-    border-color: var(--color-ink-300, #8b939a);
-}
-
-:global([data-theme="dark"]) .closedToggleBtn:hover {
-    background-color: var(--color-ink-900, #161f26);
-}
-
-.btnActiveClosed {
-    color: var(--color-accent-teal, #0e7c86);
-    border-color: var(--color-accent-teal, #0e7c86);
-}
-
 /* Cancellation Policy Card */
 .policyCard {
     background-color: var(--color-white, #ffffff);
     border: 1px solid var(--color-border, #e4e1d9);
     border-radius: 12px;
-    padding: 20px;
+    padding: 24px;
+    position: relative;
 }
 
 :global([data-theme="dark"]) .policyCard {
@@ -232,14 +202,148 @@
 .policyHeader {
     display: flex;
     align-items: flex-start;
-    gap: 10px;
-    margin-bottom: 16px;
+    gap: 12px;
+    margin-bottom: 18px;
 }
 
-.policyIcon {
-    font-size: 20px;
+.policyIconCircle {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background-color: rgba(14, 124, 134, 0.12);
     color: var(--color-accent-teal, #0e7c86);
-    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.policySelectWrapper {
+    margin-bottom: 18px;
+}
+
+/* Option Layout inside Dropdown Menu */
+.optionLayout {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    width: 100%;
+}
+
+.optionContent {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 100%;
+}
+
+.optionHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.optionTitle {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.optionTag {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 2px 6px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+}
+
+.optionSubtitle {
+    font-size: 12px;
+    opacity: 0.75;
+    line-height: 1.3;
+}
+
+/* Policy Summary Box */
+.policySummaryBox {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    padding: 14px;
+    background-color: var(--color-surface-cream, #f3f2ee);
+    border-radius: 10px;
+    border: 1px solid var(--color-border, #e4e1d9);
+    margin-bottom: 14px;
+}
+
+:global([data-theme="dark"]) .policySummaryBox {
+    background-color: var(--color-ink-800, #1f2a33);
+    border-color: var(--color-ink-700, #2b3640);
+}
+
+.summaryItem {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.summaryIconWrap {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background-color: rgba(14, 124, 134, 0.12);
+    color: var(--color-accent-teal, #0e7c86);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.summaryTextGroup {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.summaryLabel {
+    font-size: 11px;
+    color: var(--color-ink-400, #6c757d);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-weight: 600;
+}
+
+:global([data-theme="dark"]) .summaryLabel {
+    color: var(--color-ink-300, #8b939a);
+}
+
+.summaryValue {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-ink-900, #161f26);
+}
+
+:global([data-theme="dark"]) .summaryValue {
+    color: var(--color-surface-cream, #f3f2ee);
+}
+
+.policyNotice {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--color-ink-400, #6c757d);
+    line-height: 1.4;
+}
+
+:global([data-theme="dark"]) .policyNotice {
+    color: var(--color-ink-300, #8b939a);
+}
+
+.noticeIcon {
+    color: var(--color-accent-teal, #0e7c86);
+    flex-shrink: 0;
 }
 
 @keyframes fadeIn {
@@ -262,5 +366,9 @@
     }
     .toggleCol {
         justify-content: flex-start;
+    }
+    .policySummaryBox {
+        grid-template-columns: 1fr;
+        gap: 10px;
     }
 }

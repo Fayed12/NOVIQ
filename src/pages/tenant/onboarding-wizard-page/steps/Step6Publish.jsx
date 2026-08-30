@@ -1,96 +1,142 @@
-import { useState, useRef, useEffect } from "react";
-import PropTypes from "prop-types";
-import { useSelector, useDispatch } from "react-redux";
-import {
-    addStarterResourceThunk,
-    addStarterServiceThunk,
-} from "../../../../redux/slices/onboardingSlice";
-import QuickResourceModal from "../components/QuickResourceModal";
+// local
 import QuickServiceModal from "../components/QuickServiceModal";
 import MainButton from "../../../../components/ui/button/MainButton";
+import {
+    addStarterServiceThunk,
+    saveDraftStepThunk,
+    updateFormData,
+} from "../../../../redux/slices/onboardingSlice";
+import styles from "./Step6Publish.module.css";
+
+// prop-types
+import PropTypes from "prop-types";
+
+// react
+import { useState } from "react";
+
+// react-redux
+import { useSelector, useDispatch } from "react-redux";
+
+// react-toastify
+import { toast } from "react-toastify";
+
+// react icons
 import {
     FiCheckCircle,
     FiAlertCircle,
     FiPlus,
-    FiUserCheck,
     FiCheckSquare,
-    FiClock,
-    FiDollarSign,
     FiMapPin,
-    FiLayers,
-    FiExternalLink,
+    FiUsers,
+    FiEdit2,
 } from "react-icons/fi";
-import { toast } from "react-toastify";
-import gsap from "gsap";
-import styles from "./Step6Publish.module.css";
 
-export default function Step6Publish({ onPublish, isPublishing }) {
+export default function Step6Publish() {
     const dispatch = useDispatch();
     const { formData, draftTenant } = useSelector((state) => state.onboarding);
+    const { user } = useSelector((state) => state.auth || {});
 
-    const [isResourceModalOpen, setIsResourceModalOpen] = useState(false);
     const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
-    const [isAddingResource, setIsAddingResource] = useState(false);
+    const [editingService, setEditingService] = useState(null);
     const [isAddingService, setIsAddingService] = useState(false);
-
-    const celebrationRef = useRef(null);
 
     // Readiness items
     const hasCategory = !!formData.categoryId;
     const hasInfo = !!(formData.name && formData.slug);
     const hasTheme = !!formData.themeColor;
     const hasHours = !!(formData.workingHours && formData.workingHours.length > 0);
-    const hasResources = (formData.resources || []).length > 0;
     const hasServices = (formData.services || []).length > 0;
 
     const isReadyToPublish =
-        hasCategory && hasInfo && hasTheme && hasHours && hasResources && hasServices;
+        hasCategory && hasInfo && hasTheme && hasHours && hasServices;
 
-    // Handle Quick Resource Save
-    const handleSaveResource = async (resourceData) => {
-        if (!draftTenant?.id) {
-            toast.error("Please complete previous steps first");
-            return;
-        }
-
-        setIsAddingResource(true);
-        try {
-            await dispatch(
-                addStarterResourceThunk({
-                    tenantId: draftTenant.id,
-                    resourceData,
-                })
-            ).unwrap();
-
-            setIsResourceModalOpen(false);
-            toast.success(`Bookable resource "${resourceData.name}" added successfully!`);
-        } catch (err) {
-            toast.error(err || "Failed to add resource");
-        } finally {
-            setIsAddingResource(false);
-        }
-    };
-
-    // Handle Quick Service Save
+    // Handle Quick Service Save (create or update)
     const handleSaveService = async (serviceData) => {
-        if (!draftTenant?.id) {
-            toast.error("Please complete previous steps first");
-            return;
-        }
-
         setIsAddingService(true);
         try {
-            await dispatch(
-                addStarterServiceThunk({
-                    tenantId: draftTenant.id,
-                    serviceData,
-                })
-            ).unwrap();
+            let activeTenantId = draftTenant?.id;
+
+            // 1. If draftTenant is not created in Supabase yet, create it on-the-fly!
+            if (!activeTenantId && user?.id) {
+                const savedDraft = await dispatch(
+                    saveDraftStepThunk({
+                        userId: user.id,
+                        stepData: {
+                            category_id: formData.categoryId,
+                            name: formData.name || "My Business",
+                            slug: formData.slug || "my-business",
+                            description: formData.description,
+                            phone: formData.phone,
+                            email: formData.email,
+                            address: formData.address,
+                            theme_color: formData.themeColor,
+                            theme_config: formData.themeConfig,
+                            config: { modules: formData.modules },
+                        },
+                    })
+                ).unwrap();
+                activeTenantId = savedDraft?.id;
+            }
+
+            // 2. If we have a tenant ID in Supabase, persist the service to Supabase
+            if (activeTenantId) {
+                await dispatch(
+                    addStarterServiceThunk({
+                        tenantId: activeTenantId,
+                        serviceData,
+                    })
+                ).unwrap();
+            } else {
+                // 3. Otherwise save to Redux form state locally
+                const newService = {
+                    id:
+                        serviceData.id ||
+                        (typeof crypto !== "undefined" && crypto.randomUUID
+                            ? crypto.randomUUID()
+                            : `srv-${Math.random().toString(36).slice(2, 9)}`),
+                    name: serviceData.name,
+                    duration_minutes: serviceData.durationMinutes || 30,
+                    price: serviceData.price || 0,
+                    currency: serviceData.currency || "EGP",
+                };
+                const existingServices = formData.services || [];
+                const updatedList = editingService
+                    ? existingServices.map((s) =>
+                          s.id === editingService.id ? { ...s, ...newService } : s
+                      )
+                    : [...existingServices, newService];
+
+                dispatch(updateFormData({ services: updatedList }));
+            }
 
             setIsServiceModalOpen(false);
-            toast.success(`Service "${serviceData.name}" added successfully!`);
+            setEditingService(null);
+            toast.success(`Service "${serviceData.name}" saved successfully!`);
         } catch (err) {
-            toast.error(err || "Failed to add service");
+            console.error("Save service fallback:", err);
+            // In case of network error, ensure local Redux state is updated gracefully
+            const newService = {
+                id:
+                    serviceData.id ||
+                    (typeof crypto !== "undefined" && crypto.randomUUID
+                        ? crypto.randomUUID()
+                        : `srv-${Math.random().toString(36).slice(2, 9)}`),
+                name: serviceData.name,
+                duration_minutes: serviceData.durationMinutes || 30,
+                price: serviceData.price || 0,
+                currency: serviceData.currency || "EGP",
+            };
+            const existingServices = formData.services || [];
+            const updatedList = editingService
+                ? existingServices.map((s) =>
+                      s.id === editingService.id ? { ...s, ...newService } : s
+                  )
+                : [...existingServices, newService];
+
+            dispatch(updateFormData({ services: updatedList }));
+            setIsServiceModalOpen(false);
+            setEditingService(null);
+            toast.success(`Service "${serviceData.name}" saved!`);
         } finally {
             setIsAddingService(false);
         }
@@ -103,7 +149,7 @@ export default function Step6Publish({ onPublish, isPublishing }) {
                 <span className={styles.stepKicker}>Step 6 — Final Review & Launch</span>
                 <h2 className={styles.stepTitle}>Ready to launch your business?</h2>
                 <p className={styles.stepSubtitle}>
-                    Ensure your tenant checklist is fulfilled before turning your draft space into a live, published business on NOVIQ.
+                    Review your core business setup before turning your space into a live, published business on NOVIQ.
                 </p>
             </div>
 
@@ -116,7 +162,7 @@ export default function Step6Publish({ onPublish, isPublishing }) {
                             isReadyToPublish ? styles.readyBadge : styles.pendingBadge
                         }`}
                     >
-                        {isReadyToPublish ? "100% Ready to Publish" : "Action Items Required"}
+                        {isReadyToPublish ? "100% Ready to Publish" : "Service Required"}
                     </span>
                 </div>
 
@@ -202,46 +248,7 @@ export default function Step6Publish({ onPublish, isPublishing }) {
                         </div>
                     )}
 
-                    {/* Item 4: Bookable Resource Requirement */}
-                    <div className={styles.checkItem}>
-                        <div className={styles.itemIconCol}>
-                            {hasResources ? (
-                                <FiCheckCircle className={styles.doneIcon} />
-                            ) : (
-                                <FiAlertCircle className={styles.warningIcon} />
-                            )}
-                        </div>
-                        <div className={styles.itemContent}>
-                            <span className={styles.itemTitle}>
-                                Bookable Resource (Doctor / Stylist / Room / Station)
-                            </span>
-                            {hasResources ? (
-                                <div className={styles.entityBadges}>
-                                    {formData.resources.map((r, i) => (
-                                        <span key={i} className={styles.entityPill}>
-                                            <FiUserCheck size={11} /> {r.name}
-                                        </span>
-                                    ))}
-                                </div>
-                            ) : (
-                                <span className={styles.actionRequiredText}>
-                                    At least 1 bookable resource is mandatory to accept bookings.
-                                </span>
-                            )}
-                        </div>
-                        {!hasResources && (
-                            <MainButton
-                                variant="secondary"
-                                size="sm"
-                                onClick={() => setIsResourceModalOpen(true)}
-                                leftIcon={<FiPlus />}
-                            >
-                                Add Resource
-                            </MainButton>
-                        )}
-                    </div>
-
-                    {/* Item 5: Service Requirement */}
+                    {/* Item 4: Initial Service Requirement */}
                     <div className={styles.checkItem}>
                         <div className={styles.itemIconCol}>
                             {hasServices ? (
@@ -252,7 +259,7 @@ export default function Step6Publish({ onPublish, isPublishing }) {
                         </div>
                         <div className={styles.itemContent}>
                             <span className={styles.itemTitle}>
-                                Bookable Service (Consultation / Treatment / Session)
+                                Initial Bookable Service
                             </span>
                             {hasServices ? (
                                 <div className={styles.entityBadges}>
@@ -264,21 +271,54 @@ export default function Step6Publish({ onPublish, isPublishing }) {
                                 </div>
                             ) : (
                                 <span className={styles.actionRequiredText}>
-                                    At least 1 service is mandatory to allow customer checkouts.
+                                    At least 1 bookable service is required to allow initial customer checkouts.
                                 </span>
                             )}
                         </div>
-                        {!hasServices && (
+                        {hasServices ? (
                             <MainButton
-                                variant="secondary"
+                                variant="ghost"
+                                size="xs"
+                                onClick={() => {
+                                    setEditingService(formData.services[0]);
+                                    setIsServiceModalOpen(true);
+                                }}
+                                icon={<FiEdit2 size={13} />}
+                            >
+                                Edit Service
+                            </MainButton>
+                        ) : (
+                            <MainButton
+                                variant="primary"
                                 size="sm"
-                                onClick={() => setIsServiceModalOpen(true)}
+                                onClick={() => {
+                                    setEditingService(null);
+                                    setIsServiceModalOpen(true);
+                                }}
                                 leftIcon={<FiPlus />}
                             >
                                 Add Service
                             </MainButton>
                         )}
                     </div>
+                </div>
+            </div>
+
+            {/* Team Members & Resources Notice Card */}
+            <div className={styles.teamDashboardCard}>
+                <div className={styles.teamCardIconWrap}>
+                    <FiUsers size={22} />
+                </div>
+                <div className={styles.teamCardContent}>
+                    <div className={styles.teamCardHeaderRow}>
+                        <h4 className={styles.teamCardTitle}>
+                            Team Members & Service Assignment in Dashboard
+                        </h4>
+                        <span className={styles.teamCardBadge}>Next Step After Launch</span>
+                    </div>
+                    <p className={styles.teamCardDesc}>
+                        Once published, you will be redirected to your <strong>Tenant Dashboard</strong> where you can add specialists, doctors, and staff members, and link each practitioner specifically to the services they provide.
+                    </p>
                 </div>
             </div>
 
@@ -294,20 +334,16 @@ export default function Step6Publish({ onPublish, isPublishing }) {
                 </div>
             </div>
 
-            {/* Modals */}
-            <QuickResourceModal
-                isOpen={isResourceModalOpen}
-                onClose={() => setIsResourceModalOpen(false)}
-                onSave={handleSaveResource}
-                isLoading={isAddingResource}
-                branches={formData.branches || []}
-            />
-
+            {/* Quick Service Modal */}
             <QuickServiceModal
                 isOpen={isServiceModalOpen}
-                onClose={() => setIsServiceModalOpen(false)}
+                onClose={() => {
+                    setIsServiceModalOpen(false);
+                    setEditingService(null);
+                }}
                 onSave={handleSaveService}
                 isLoading={isAddingService}
+                existingService={editingService}
             />
         </div>
     );

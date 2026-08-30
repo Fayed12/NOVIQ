@@ -199,6 +199,97 @@
     color: var(--color-surface-cream, #f3f2ee);
 }
 
+/* Team Dashboard Notice Card */
+.teamDashboardCard {
+    background: linear-gradient(135deg, rgba(14, 124, 134, 0.06) 0%, rgba(14, 124, 134, 0.02) 100%);
+    border: 1px solid rgba(14, 124, 134, 0.2);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+:global([data-theme="dark"]) .teamDashboardCard {
+    background: linear-gradient(135deg, rgba(14, 124, 134, 0.12) 0%, rgba(14, 124, 134, 0.04) 100%);
+    border-color: rgba(14, 124, 134, 0.3);
+}
+
+.teamCardIconWrap {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background-color: rgba(14, 124, 134, 0.14);
+    color: var(--color-accent-teal, #0e7c86);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+:global([data-theme="dark"]) .teamCardIconWrap {
+    background-color: rgba(14, 124, 134, 0.25);
+    color: #5eead4;
+}
+
+.teamCardContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: left;
+}
+
+.teamCardHeaderRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.teamCardTitle {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--color-ink-900, #161f26);
+    margin: 0;
+}
+
+:global([data-theme="dark"]) .teamCardTitle {
+    color: var(--color-surface-cream, #f3f2ee);
+}
+
+.teamCardBadge {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background-color: rgba(14, 124, 134, 0.12);
+    color: var(--color-accent-teal, #0e7c86);
+    border: 1px solid rgba(14, 124, 134, 0.25);
+}
+
+:global([data-theme="dark"]) .teamCardBadge {
+    background-color: rgba(94, 234, 212, 0.12);
+    color: #5eead4;
+    border-color: rgba(94, 234, 212, 0.25);
+}
+
+.teamCardDesc {
+    font-size: 13px;
+    color: var(--color-ink-600, #3a444d);
+    margin: 0;
+    line-height: 1.5;
+}
+
+:global([data-theme="dark"]) .teamCardDesc {
+    color: var(--color-ink-300, #8b939a);
+}
+
 /* Summary Banner */
 .summaryBanner {
     background: linear-gradient(135deg, rgba(14, 124, 134, 0.08) 0%, rgba(16, 185, 129, 0.08) 100%);
@@ -250,5 +341,9 @@
     .checkItem {
         flex-direction: column;
         align-items: stretch;
+    }
+    .teamDashboardCard {
+        flex-direction: column;
+        align-items: flex-start;
     }
 }

@@ -1,18 +1,28 @@
-import { useMemo } from "react";
-import PropTypes from "prop-types";
-import { useSelector, useDispatch } from "react-redux";
-import { updateFormData } from "../../../../redux/slices/onboardingSlice";
+// local
 import MainSelect from "../../../../components/ui/select/MainSelect";
 import MainButton from "../../../../components/ui/button/MainButton";
+import { updateFormData } from "../../../../redux/slices/onboardingSlice";
+import styles from "./Step5BookingSettings.module.css";
+
+// react
+import { useMemo } from "react";
+
+// react-redux
+import { useSelector, useDispatch } from "react-redux";
+
+// react-toastify
+import { toast } from "react-toastify";
+
+// react icons
 import {
-    FiClock,
     FiCalendar,
     FiShield,
     FiCopy,
     FiCheckCircle,
+    FiClock,
+    FiPercent,
+    FiInfo,
 } from "react-icons/fi";
-import { toast } from "react-toastify";
-import styles from "./Step5BookingSettings.module.css";
 
 // Generate 30-minute interval time options from 00:00 to 23:30
 const TIME_OPTIONS = Array.from({ length: 48 }, (_, i) => {
@@ -29,23 +39,39 @@ const TIME_OPTIONS = Array.from({ length: 48 }, (_, i) => {
 const CANCELLATION_PRESETS = [
     {
         value: "flexible",
+        title: "Flexible Policy",
+        subtitle: "100% Refund • Free cancellation up to 24h prior",
         label: "Flexible Policy — 100% Refund (Cancel up to 24h prior)",
         rule: { refundable: true, free_cancellation_hours: 24, fee_percentage: 0 },
+        tag: "Recommended",
+        color: "#10b981",
     },
     {
         value: "moderate",
+        title: "Moderate Policy",
+        subtitle: "100% Refund • Free cancellation up to 48h prior",
         label: "Moderate Policy — 100% Refund (Cancel up to 48h prior)",
         rule: { refundable: true, free_cancellation_hours: 48, fee_percentage: 0 },
+        tag: "Balanced",
+        color: "#0e7c86",
     },
     {
         value: "strict",
+        title: "Strict Policy",
+        subtitle: "50% Refund • Cancel up to 72h prior (50% fee)",
         label: "Strict Policy — 50% Refund (Cancel up to 72h prior)",
         rule: { refundable: true, free_cancellation_hours: 72, fee_percentage: 50 },
+        tag: "High Demand",
+        color: "#f59e0b",
     },
     {
         value: "non_refundable",
+        title: "Non-Refundable Policy",
+        subtitle: "No refunds upon cancellation (100% fee)",
         label: "Non-Refundable Policy — No refunds upon cancellation",
         rule: { refundable: false, free_cancellation_hours: 0, fee_percentage: 100 },
+        tag: "Special Events",
+        color: "#ef4444",
     },
 ];
 
@@ -117,6 +143,30 @@ export default function Step5BookingSettings() {
         );
     };
 
+    // Render custom option format inside the dropdown list
+    const formatPolicyOption = (option) => (
+        <div className={styles.optionLayout}>
+            <div className={styles.optionContent}>
+                <div className={styles.optionHeader}>
+                    <span className={styles.optionTitle}>{option.title}</span>
+                    {option.tag && (
+                        <span
+                            className={styles.optionTag}
+                            style={{
+                                color: option.color,
+                                backgroundColor: `${option.color}18`,
+                                borderColor: `${option.color}40`,
+                            }}
+                        >
+                            {option.tag}
+                        </span>
+                    )}
+                </div>
+                <span className={styles.optionSubtitle}>{option.subtitle}</span>
+            </div>
+        </div>
+    );
+
     return (
         <div className={styles.stepContainer}>
             {/* Heading */}
@@ -145,7 +195,7 @@ export default function Step5BookingSettings() {
                         variant="secondary"
                         size="sm"
                         onClick={handleApplyMondayToWeekdays}
-                        leftIcon={<FiCopy />}
+                        icon={<FiCopy />}
                     >
                         Copy Mon to All Weekdays
                     </MainButton>
@@ -208,15 +258,13 @@ export default function Step5BookingSettings() {
                                 )}
 
                                 <div className={styles.toggleCol}>
-                                    <button
-                                        type="button"
-                                        className={`${styles.closedToggleBtn} ${
-                                            day.is_closed ? styles.btnActiveClosed : ""
-                                        }`}
+                                    <MainButton
+                                        variant={day.is_closed ? "outline" : "ghost"}
+                                        size="xs"
                                         onClick={() => handleToggleClosed(day.day_of_week)}
                                     >
                                         {day.is_closed ? "Mark Open" : "Mark Closed"}
-                                    </button>
+                                    </MainButton>
                                 </div>
                             </div>
                         );
@@ -227,7 +275,9 @@ export default function Step5BookingSettings() {
             {/* Cancellation Policy Section */}
             <div className={styles.policyCard}>
                 <div className={styles.policyHeader}>
-                    <FiShield className={styles.policyIcon} />
+                    <div className={styles.policyIconCircle}>
+                        <FiShield size={20} />
+                    </div>
                     <div>
                         <h3 className={styles.cardTitle}>Customer Cancellation Policy</h3>
                         <span className={styles.cardSubtitle}>
@@ -236,13 +286,71 @@ export default function Step5BookingSettings() {
                     </div>
                 </div>
 
-                <MainSelect
-                    label="Select Cancellation Policy Preset"
-                    options={CANCELLATION_PRESETS}
-                    value={currentPolicyOption}
-                    onChange={handlePolicyChange}
-                    icon={FiShield}
-                />
+                <div className={styles.policySelectWrapper}>
+                    <MainSelect
+                        label="Cancellation Policy Preset"
+                        options={CANCELLATION_PRESETS}
+                        value={currentPolicyOption}
+                        onChange={handlePolicyChange}
+                        icon={FiShield}
+                        menuPlacement="top"
+                        menuPosition="fixed"
+                        menuPortalTarget={typeof document !== "undefined" ? document.body : null}
+                        formatOptionLabel={formatPolicyOption}
+                    />
+                </div>
+
+                {/* Policy Highlights Summary Card */}
+                <div className={styles.policySummaryBox}>
+                    <div className={styles.summaryItem}>
+                        <div className={styles.summaryIconWrap}>
+                            <FiClock size={16} />
+                        </div>
+                        <div className={styles.summaryTextGroup}>
+                            <span className={styles.summaryLabel}>Notice Window</span>
+                            <strong className={styles.summaryValue}>
+                                {currentPolicyOption.rule.free_cancellation_hours > 0
+                                    ? `${currentPolicyOption.rule.free_cancellation_hours} Hours Prior`
+                                    : "No Free Cancellation"}
+                            </strong>
+                        </div>
+                    </div>
+
+                    <div className={styles.summaryItem}>
+                        <div className={styles.summaryIconWrap}>
+                            <FiCheckCircle size={16} />
+                        </div>
+                        <div className={styles.summaryTextGroup}>
+                            <span className={styles.summaryLabel}>Refund Eligibility</span>
+                            <strong className={styles.summaryValue}>
+                                {currentPolicyOption.rule.refundable
+                                    ? currentPolicyOption.rule.fee_percentage === 0
+                                        ? "100% Full Refund"
+                                        : "50% Partial Refund"
+                                    : "Non-Refundable"}
+                            </strong>
+                        </div>
+                    </div>
+
+                    <div className={styles.summaryItem}>
+                        <div className={styles.summaryIconWrap}>
+                            <FiPercent size={16} />
+                        </div>
+                        <div className={styles.summaryTextGroup}>
+                            <span className={styles.summaryLabel}>Cancellation Fee</span>
+                            <strong className={styles.summaryValue}>
+                                {currentPolicyOption.rule.fee_percentage}% Retention
+                            </strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div className={styles.policyNotice}>
+                    <FiInfo size={14} className={styles.noticeIcon} />
+                    <span>
+                        You can customize custom buffer intervals and cancellation exemptions in your Tenant Dashboard after publishing.
+                    </span>
+                </div>
             </div>
         </div>
     );

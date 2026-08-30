@@ -4,6 +4,7 @@ import AuthPortalModal from "../../../components/auth/AuthPortalModal";
 import MainInput from "../../../components/ui/input/MainInput";
 import MainButton from "../../../components/ui/button/MainButton";
 import { loginUser, clearAuthError } from "../../../redux/slices/authSlice";
+import { supabase } from "../../../services/lib/supabaseClient";
 import {
     VALIDATION_PATTERNS,
     sanitizeInput,
@@ -107,7 +108,33 @@ export default function LoginPage() {
                 if (fromPath) {
                     navigate(fromPath, { replace: true });
                 } else {
-                    navigate("/account", { replace: true });
+                    const loggedInUser = resultAction.payload?.user;
+                    let targetSlug = loggedInUser?.user_metadata?.tenant_slug;
+
+                    if (!targetSlug && loggedInUser?.id) {
+                        try {
+                            const { data: tenant } = await supabase
+                                .from("tenants")
+                                .select("slug")
+                                .eq("owner_id", loggedInUser.id)
+                                .eq("status", "published")
+                                .order("created_at", { ascending: false })
+                                .limit(1)
+                                .maybeSingle();
+
+                            if (tenant?.slug) {
+                                targetSlug = tenant.slug;
+                            }
+                        } catch (tenantErr) {
+                            console.warn("Non-blocking tenant check on login:", tenantErr);
+                        }
+                    }
+
+                    if (targetSlug) {
+                        navigate(`/${targetSlug}/dashboard`, { replace: true });
+                    } else {
+                        navigate("/account", { replace: true });
+                    }
                 }
             } else {
                 const errorMsg =

@@ -1,18 +1,30 @@
-import { useState, useMemo, useEffect } from "react";
-import PropTypes from "prop-types";
-import { useSelector, useDispatch } from "react-redux";
-import { updateFormData } from "../../../../redux/slices/onboardingSlice";
+// local
 import QuickBranchModal from "../components/QuickBranchModal";
 import MainInput from "../../../../components/ui/input/MainInput";
 import MainSelect from "../../../../components/ui/select/MainSelect";
 import MainButton from "../../../../components/ui/button/MainButton";
+import { updateFormData } from "../../../../redux/slices/onboardingSlice";
 import {
     EGYPTIAN_CITIES,
     getSortedEgyptianCitiesByLocation,
 } from "../../../../utils/egyptianCities";
+import styles from "./Step2BusinessInfo.module.css";
+
+// prop-types
+import PropTypes from "prop-types";
+
+// react
+import { useState, useMemo, useEffect } from "react";
+
+// react-redux
+import { useSelector, useDispatch } from "react-redux";
+
+// react-toastify
+import { toast } from "react-toastify";
+
+// react icons
 import {
     FiBriefcase,
-    FiGlobe,
     FiMail,
     FiPhone,
     FiMapPin,
@@ -22,11 +34,8 @@ import {
     FiPlus,
     FiEdit2,
     FiTrash2,
-    FiLayers,
     FiCheckCircle,
 } from "react-icons/fi";
-import { toast } from "react-toastify";
-import styles from "./Step2BusinessInfo.module.css";
 
 // Helper to sanitize slug from business name
 function generateSlug(text) {
@@ -41,10 +50,9 @@ function generateSlug(text) {
 export default function Step2BusinessInfo({ errors = {}, onFieldChange }) {
     const dispatch = useDispatch();
     const { formData } = useSelector((state) => state.onboarding);
-    const branches = formData.branches || [];
+    const branches = useMemo(() => formData.branches || [], [formData.branches]);
 
     const [isLocating, setIsLocating] = useState(false);
-    const [userCoordinates, setUserCoordinates] = useState(null);
     const [cityList, setCityList] = useState(EGYPTIAN_CITIES);
 
     // Modal state for adding secondary branch
@@ -82,8 +90,11 @@ export default function Step2BusinessInfo({ errors = {}, onFieldChange }) {
     // Ensure Main/HQ branch is kept in sync with Step 2 inputs
     useEffect(() => {
         const city = currentCityOption.cityData;
+        const existingMain = branches.find((b) => b.is_main);
+        const otherBranches = branches.filter((b) => !b.is_main);
+
         const mainBranchData = {
-            id: branches.find((b) => b.is_main)?.id || `branch-main-${Date.now()}`,
+            id: existingMain?.id || "branch-main-hq",
             name: `${formData.name || "Main"} HQ Branch`,
             cityId: city.id,
             cityName: city.name,
@@ -96,23 +107,37 @@ export default function Step2BusinessInfo({ errors = {}, onFieldChange }) {
             is_main: true,
         };
 
-        const otherBranches = branches.filter((b) => !b.is_main);
-        const allBranches = [mainBranchData, ...otherBranches];
+        const isMainSame =
+            existingMain &&
+            existingMain.name === mainBranchData.name &&
+            existingMain.cityId === mainBranchData.cityId &&
+            existingMain.address === mainBranchData.address &&
+            existingMain.phone === mainBranchData.phone;
 
-        // If user has more than 1 branch, auto-enable multi_branch in modules
-        const shouldEnableMulti = allBranches.length > 1;
-        const updatedModules = {
-            ...(formData.modules || {}),
-            multi_branch: shouldEnableMulti ? true : formData.modules?.multi_branch || false,
-        };
+        if (!isMainSame) {
+            const allBranches = [mainBranchData, ...otherBranches];
+            const shouldEnableMulti = allBranches.length > 1;
+            const updatedModules = {
+                ...(formData.modules || {}),
+                multi_branch: shouldEnableMulti ? true : formData.modules?.multi_branch || false,
+            };
 
-        dispatch(
-            updateFormData({
-                branches: allBranches,
-                modules: updatedModules,
-            })
-        );
-    }, [formData.name, formData.address, formData.phone, currentCityOption, dispatch]);
+            dispatch(
+                updateFormData({
+                    branches: allBranches,
+                    modules: updatedModules,
+                })
+            );
+        }
+    }, [
+        formData.name,
+        formData.address,
+        formData.phone,
+        formData.modules,
+        currentCityOption,
+        branches,
+        dispatch,
+    ]);
 
     const handleNameChange = (e) => {
         const newName = e.target.value;
@@ -164,7 +189,6 @@ export default function Step2BusinessInfo({ errors = {}, onFieldChange }) {
             (pos) => {
                 const userLat = pos.coords.latitude;
                 const userLng = pos.coords.longitude;
-                setUserCoordinates({ lat: userLat, lng: userLng });
 
                 // Sort all Egyptian cities by distance
                 const sorted = getSortedEgyptianCitiesByLocation(userLat, userLng);
@@ -198,6 +222,7 @@ export default function Step2BusinessInfo({ errors = {}, onFieldChange }) {
                 setIsLocating(false);
             },
             (err) => {
+                console.error("Geolocation error:", err);
                 setIsLocating(false);
                 toast.warn(
                     "Location permission denied or unavailable. Please select your Egyptian city manually.",
@@ -210,14 +235,13 @@ export default function Step2BusinessInfo({ errors = {}, onFieldChange }) {
 
     // Branch management methods
     const handleSaveSecondaryBranch = (branchData) => {
-        let updatedBranches = [];
+        const updatedBranches = editingBranch
+            ? branches.map((b) => (b.id === editingBranch.id ? { ...b, ...branchData } : b))
+            : [...branches, branchData];
+
         if (editingBranch) {
-            updatedBranches = branches.map((b) =>
-                b.id === editingBranch.id ? { ...b, ...branchData } : b
-            );
             toast.success(`Branch "${branchData.name}" updated!`);
         } else {
-            updatedBranches = [...branches, branchData];
             toast.success(`New branch "${branchData.name}" added!`);
         }
 
@@ -476,25 +500,25 @@ export default function Step2BusinessInfo({ errors = {}, onFieldChange }) {
                                 <div className={styles.branchItemActions}>
                                     {!branch.is_main && (
                                         <>
-                                            <button
-                                                type="button"
-                                                className={styles.branchActionBtn}
+                                            <MainButton
+                                                variant="ghost"
+                                                size="xs"
                                                 onClick={() => {
                                                     setEditingBranch(branch);
                                                     setIsBranchModalOpen(true);
                                                 }}
                                                 title="Edit Branch"
-                                            >
-                                                <FiEdit2 size={14} />
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className={`${styles.branchActionBtn} ${styles.deleteActionBtn}`}
+                                                aria-label="Edit Branch"
+                                                icon={<FiEdit2 size={14} />}
+                                            />
+                                            <MainButton
+                                                variant="danger"
+                                                size="xs"
                                                 onClick={() => handleDeleteBranch(branch.id)}
                                                 title="Remove Branch"
-                                            >
-                                                <FiTrash2 size={14} />
-                                            </button>
+                                                aria-label="Remove Branch"
+                                                icon={<FiTrash2 size={14} />}
+                                            />
                                         </>
                                     )}
                                 </div>

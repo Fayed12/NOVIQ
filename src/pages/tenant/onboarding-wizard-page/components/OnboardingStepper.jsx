@@ -1,6 +1,11 @@
-import PropTypes from "prop-types";
-import { FiCheck } from "react-icons/fi";
+// local
 import styles from "./OnboardingStepper.module.css";
+
+// prop-types
+import PropTypes from "prop-types";
+
+// react icons
+import { FiCheck } from "react-icons/fi";
 
 const STEPS = [
     { number: 1, title: "Category", shortTitle: "Category" },
@@ -11,7 +16,12 @@ const STEPS = [
     { number: 6, title: "Publish", shortTitle: "Publish" },
 ];
 
-export default function OnboardingStepper({ currentStep, onStepClick, stepCompletion = {} }) {
+export default function OnboardingStepper({
+    currentStep,
+    onStepClick,
+    stepCompletion = {},
+    canAccessStep,
+}) {
     const progressPercent = Math.round(((currentStep - 1) / (STEPS.length - 1)) * 100);
     const activeStepInfo = STEPS.find((s) => s.number === currentStep) || STEPS[0];
 
@@ -30,15 +40,17 @@ export default function OnboardingStepper({ currentStep, onStepClick, stepComple
                     {STEPS.map((step) => {
                         const isCompleted = stepCompletion[step.number] || step.number < currentStep;
                         const isCurrent = step.number === currentStep;
-                        const isClickable = isCompleted || step.number <= currentStep;
+                        const isClickable = canAccessStep
+                            ? canAccessStep(step.number)
+                            : isCompleted || step.number <= currentStep;
 
                         return (
                             <div
                                 key={step.number}
                                 className={`${styles.stepNode} ${isCurrent ? styles.activeNode : ""} ${
                                     isCompleted ? styles.completedNode : ""
-                                } ${isClickable ? styles.clickableNode : ""}`}
-                                onClick={() => isClickable && onStepClick(step.number)}
+                                } ${isClickable ? styles.clickableNode : styles.lockedNode}`}
+                                onClick={() => onStepClick(step.number)}
                                 role="button"
                                 tabIndex={isClickable ? 0 : -1}
                                 aria-label={`Step ${step.number}: ${step.title}`}
@@ -81,4 +93,5 @@ OnboardingStepper.propTypes = {
     currentStep: PropTypes.number.isRequired,
     onStepClick: PropTypes.func.isRequired,
     stepCompletion: PropTypes.object,
+    canAccessStep: PropTypes.func,
 };

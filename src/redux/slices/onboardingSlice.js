@@ -256,8 +256,8 @@ const onboardingSlice = createSlice({
 
             // Load user draft tenant
             .addCase(loadUserDraftTenantThunk.fulfilled, (state, action) => {
-                if (action.payload?.tenant) {
-                    const t = action.payload.tenant;
+                const t = action.payload?.tenant || (action.payload?.id ? action.payload : null);
+                if (t) {
                     state.draftTenant = t;
                     state.formData.categoryId = t.category_id || state.formData.categoryId;
                     state.formData.selectedCategory = t.categories || state.formData.selectedCategory;
@@ -299,9 +299,18 @@ const onboardingSlice = createSlice({
                 state.formData.resources.push(action.payload);
             })
 
-            // Add starter service
+            // Add/update starter service
             .addCase(addStarterServiceThunk.fulfilled, (state, action) => {
-                state.formData.services.push(action.payload);
+                if (action.payload) {
+                    const existingIndex = state.formData.services.findIndex(
+                        (s) => s.id === action.payload.id
+                    );
+                    if (existingIndex >= 0) {
+                        state.formData.services[existingIndex] = action.payload;
+                    } else {
+                        state.formData.services.push(action.payload);
+                    }
+                }
             })
 
             // Publish tenant

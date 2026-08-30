@@ -1,10 +1,16 @@
-import { useEffect, useRef, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { useNavigate, useLocation, useParams } from "react-router";
+// local
+import OnboardingHeader from "./components/OnboardingHeader";
+import OnboardingStepper from "./components/OnboardingStepper";
+import OnboardingFooter from "./components/OnboardingFooter";
+import Step1Category from "./steps/Step1Category";
+import Step2BusinessInfo from "./steps/Step2BusinessInfo";
+import Step3Theme from "./steps/Step3Theme";
+import Step4Modules from "./steps/Step4Modules";
+import Step5BookingSettings from "./steps/Step5BookingSettings";
+import Step6Publish from "./steps/Step6Publish";
 import {
     setStep,
     setStepCompleted,
-    updateFormData,
     fetchLiveCategoriesThunk,
     loadUserDraftTenantThunk,
     saveDraftStepThunk,
@@ -12,25 +18,25 @@ import {
     saveBranchesThunk,
     publishTenantThunk,
 } from "../../../redux/slices/onboardingSlice";
-
-// Components
-import OnboardingHeader from "./components/OnboardingHeader";
-import OnboardingStepper from "./components/OnboardingStepper";
-import OnboardingFooter from "./components/OnboardingFooter";
-
-// Steps
-import Step1Category from "./steps/Step1Category";
-import Step2BusinessInfo from "./steps/Step2BusinessInfo";
-import Step3Theme from "./steps/Step3Theme";
-import Step4Modules from "./steps/Step4Modules";
-import Step5BookingSettings from "./steps/Step5BookingSettings";
-import Step6Publish from "./steps/Step6Publish";
-
-// Icons & Toast
-import { FiCheckCircle } from "react-icons/fi";
-import { toast } from "react-toastify";
-import gsap from "gsap";
 import styles from "./OnboardingWizardPage.module.css";
+
+// react
+import { useState, useRef, useEffect, useCallback } from "react";
+
+// react-router
+import { useNavigate, useParams } from "react-router";
+
+// react-redux
+import { useDispatch, useSelector } from "react-redux";
+
+// react-toastify
+import { toast } from "react-toastify";
+
+// react icons
+import { FiCheckCircle } from "react-icons/fi";
+
+// gsap
+import gsap from "gsap";
 
 const STEP_ROUTES = {
     category: 1,
@@ -53,7 +59,6 @@ const STEP_NUM_TO_ROUTE = {
 export default function OnboardingWizardPage() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const location = useLocation();
     const { stepSlug } = useParams();
 
     const { user } = useSelector((state) => state.auth);
@@ -62,8 +67,6 @@ export default function OnboardingWizardPage() {
         formData,
         draftTenant,
         stepCompletion,
-        status,
-        publishedTenant,
     } = useSelector((state) => state.onboarding);
 
     const [isSaving, setIsSaving] = useState(false);
@@ -74,15 +77,68 @@ export default function OnboardingWizardPage() {
     const contentContainerRef = useRef(null);
     const celebrationOverlayRef = useRef(null);
 
-    // 1. Sync URL subpath with Step number
+    // Step Completion Checker
+    const isStepCompleted = useCallback(
+        (stepNum) => {
+            switch (stepNum) {
+                case 1:
+                    return Boolean(formData.categoryId);
+                case 2:
+                    return Boolean(formData.name?.trim() && formData.slug?.trim());
+                case 3:
+                    return Boolean(formData.themeColor);
+                case 4:
+                    return Boolean(formData.modules);
+                case 5:
+                    return Boolean(formData.workingHours && formData.workingHours.length > 0);
+                case 6:
+                    return Boolean(
+                        formData.services &&
+                        formData.services.length > 0
+                    );
+                default:
+                    return true;
+            }
+        },
+        [formData]
+    );
+
+    // Check if user is allowed to access target step (all previous steps must be complete)
+    const canAccessStep = useCallback(
+        (targetStep) => {
+            if (targetStep <= 1) return true;
+            for (let s = 1; s < targetStep; s++) {
+                if (!isStepCompleted(s)) return false;
+            }
+            return true;
+        },
+        [isStepCompleted]
+    );
+
+    const getEarliestIncompleteStep = useCallback(() => {
+        for (let s = 1; s <= 6; s++) {
+            if (!isStepCompleted(s)) return s;
+        }
+        return 6;
+    }, [isStepCompleted]);
+
+    // 1. Sync URL subpath with Step number and guard against skipping incomplete steps
     useEffect(() => {
         if (stepSlug && STEP_ROUTES[stepSlug]) {
-            dispatch(setStep(STEP_ROUTES[stepSlug]));
+            const requestedStep = STEP_ROUTES[stepSlug];
+            if (!canAccessStep(requestedStep)) {
+                const earliest = getEarliestIncompleteStep();
+                toast.warn(`Please complete Step ${earliest} first.`, {
+                    toastId: `step-skip-warn-${earliest}`,
+                });
+                navigate(`/onboarding/${STEP_NUM_TO_ROUTE[earliest]}`, { replace: true });
+            } else {
+                dispatch(setStep(requestedStep));
+            }
         } else if (!stepSlug) {
-            // Default to step 1 route
             navigate(`/onboarding/${STEP_NUM_TO_ROUTE[currentStep]}`, { replace: true });
         }
-    }, [stepSlug, currentStep, dispatch, navigate]);
+    }, [stepSlug, currentStep, canAccessStep, getEarliestIncompleteStep, dispatch, navigate]);
 
     // 2. On Mount: Fetch categories & restore user draft tenant from Supabase
     useEffect(() => {
@@ -123,13 +179,12 @@ export default function OnboardingWizardPage() {
                 toast.error("Please fill in all required business details", { position: "top-center" });
                 return false;
             }
-        } else if (currentStep === 6) {
-            if (!formData.resources || formData.resources.length === 0) {
-                toast.error("Please add at least 1 bookable resource (Doctor/Stylist/Room)", {
-                    position: "top-center",
-                });
+        } else if (currentStep === 3) {
+            if (!formData.themeColor) {
+                toast.warn("Please select a theme color palette to proceed", { position: "top-center" });
                 return false;
             }
+        } else if (currentStep === 6) {
             if (!formData.services || formData.services.length === 0) {
                 toast.error("Please add at least 1 bookable service (Treatment/Consultation)", {
                     position: "top-center",
@@ -156,7 +211,7 @@ export default function OnboardingWizardPage() {
                             stepData: {
                                 category_id: formData.categoryId,
                                 name: formData.name || "My Business",
-                                slug: formData.slug || `draft-${Date.now()}`,
+                                slug: formData.slug || "my-business",
                                 description: formData.description,
                                 phone: formData.phone,
                                 email: formData.email,
@@ -215,7 +270,20 @@ export default function OnboardingWizardPage() {
     };
 
     const handleStepClick = (targetStep) => {
-        navigate(`/onboarding/${STEP_NUM_TO_ROUTE[targetStep]}`);
+        if (targetStep === currentStep) return;
+        if (targetStep < currentStep) {
+            // Going back to review/edit previous step is always allowed
+            navigate(`/onboarding/${STEP_NUM_TO_ROUTE[targetStep]}`);
+        } else {
+            if (!canAccessStep(targetStep)) {
+                const earliest = getEarliestIncompleteStep();
+                toast.warn(`Please complete Step ${earliest} before advancing to Step ${targetStep}.`, {
+                    toastId: `step-click-warn-${earliest}`,
+                });
+                return;
+            }
+            navigate(`/onboarding/${STEP_NUM_TO_ROUTE[targetStep]}`);
+        }
     };
 
     // Save & Exit handler (stores draft and redirects to /account)
@@ -229,7 +297,7 @@ export default function OnboardingWizardPage() {
                         stepData: {
                             category_id: formData.categoryId,
                             name: formData.name || "Draft Business",
-                            slug: formData.slug || `draft-${Date.now()}`,
+                            slug: formData.slug || "draft-business",
                             description: formData.description,
                             phone: formData.phone,
                             email: formData.email,
@@ -244,6 +312,7 @@ export default function OnboardingWizardPage() {
             toast.success("Progress saved! You can resume onboarding anytime from your account.");
             navigate("/account");
         } catch (err) {
+            console.error(err);
             toast.error("Could not save online draft, saved locally instead.");
             navigate("/account");
         } finally {
@@ -319,6 +388,8 @@ export default function OnboardingWizardPage() {
         }
     };
 
+    const isCurrentStepValid = isStepCompleted(currentStep);
+
     return (
         <div className={styles.wizardPageWrapper}>
             {/* Header */}
@@ -332,6 +403,7 @@ export default function OnboardingWizardPage() {
                         currentStep={currentStep}
                         onStepClick={handleStepClick}
                         stepCompletion={stepCompletion}
+                        canAccessStep={canAccessStep}
                     />
 
                     {/* Step Body */}
@@ -345,6 +417,7 @@ export default function OnboardingWizardPage() {
                         totalSteps={6}
                         onBack={handleBack}
                         onNext={handleNext}
+                        isNextDisabled={!isCurrentStepValid}
                         isLoading={isSaving || isPublishing}
                     />
                 </div>

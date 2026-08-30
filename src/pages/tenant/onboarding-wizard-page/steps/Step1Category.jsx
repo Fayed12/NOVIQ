@@ -1,7 +1,20 @@
-import { useEffect } from "react";
+// local
+import {
+    fetchLiveCategoriesThunk,
+    updateFormData,
+} from "../../../../redux/slices/onboardingSlice";
+import styles from "./Step1Category.module.css";
+
+// prop-types
 import PropTypes from "prop-types";
+
+// react
+import { useEffect } from "react";
+
+// react-redux
 import { useSelector, useDispatch } from "react-redux";
-import { fetchLiveCategoriesThunk, updateFormData } from "../../../../redux/slices/onboardingSlice";
+
+// react icons
 import {
     FiActivity,
     FiScissors,
@@ -12,7 +25,6 @@ import {
     FiClock,
     FiGrid,
 } from "react-icons/fi";
-import styles from "./Step1Category.module.css";
 
 // Dynamic icon resolver for category icons stored in DB
 function getCategoryIcon(iconName, color) {
@@ -82,7 +94,9 @@ function getCategoryStrategyDetails(slug) {
 
 export default function Step1Category({ onSelectCategory }) {
     const dispatch = useDispatch();
-    const { liveCategories, formData, status } = useSelector((state) => state.onboarding);
+    const { liveCategories, formData, status } = useSelector(
+        (state) => state.onboarding,
+    );
     const selectedCategoryId = formData.categoryId;
 
     useEffect(() => {
@@ -92,29 +106,60 @@ export default function Step1Category({ onSelectCategory }) {
     }, [dispatch, liveCategories]);
 
     const handleCardClick = (cat) => {
-        const defaultTheme = cat.theme_color || (cat.available_themes?.[0]?.color) || "#0E7C86";
+        // Resolve raw color/slug into guaranteed valid hex code
+        const rawTheme =
+            cat.theme_color ||
+            (typeof cat.available_themes?.[0] === "string"
+                ? cat.available_themes[0]
+                : cat.available_themes?.[0]?.color) ||
+            "#0E7C86";
+
+        let defaultTheme = rawTheme;
+        if (defaultTheme.includes("medical") || defaultTheme.includes("clinic")) {
+            defaultTheme = "#0E7C86";
+        } else if (defaultTheme.includes("salon") || defaultTheme.includes("beauty")) {
+            defaultTheme = "#B45309";
+        } else if (defaultTheme.includes("hotel") || defaultTheme.includes("hospitality")) {
+            defaultTheme = "#7C3AED";
+        } else if (defaultTheme.includes("fitness") || defaultTheme.includes("gym")) {
+            defaultTheme = "#DC2626";
+        } else if (!/^#([0-9A-F]{3}|[0-9A-F]{6})$/i.test(defaultTheme)) {
+            defaultTheme = defaultTheme.startsWith("#") ? defaultTheme : `#${defaultTheme}`;
+            if (!/^#([0-9A-F]{3}|[0-9A-F]{6})$/i.test(defaultTheme)) {
+                defaultTheme = "#0E7C86";
+            }
+        }
+
         dispatch(
             updateFormData({
                 categoryId: cat.id,
                 selectedCategory: cat,
                 themeColor: defaultTheme,
-            })
+            }),
         );
         if (onSelectCategory) {
             onSelectCategory(cat);
         }
     };
 
-    const isLoading = status === "loading" && (!liveCategories || liveCategories.length === 0);
+    const isLoading =
+        status === "loading" &&
+        (!liveCategories || liveCategories.length === 0);
 
     return (
         <div className={styles.stepContainer}>
             {/* Step Heading */}
             <div className={styles.headingGroup}>
-                <span className={styles.stepKicker}>Step 1 — Business Category</span>
-                <h2 className={styles.stepTitle}>What kind of business are you setting up?</h2>
+                <span className={styles.stepKicker}>
+                    Step 1 — Business Category
+                </span>
+                <h2 className={styles.stepTitle}>
+                    What kind of business are you setting up?
+                </h2>
                 <p className={styles.stepSubtitle}>
-                    Select your vertical to configure scheduling models, terminology (e.g. Doctors vs. Stylists vs. Rooms), and dashboard widgets.
+                    Select your vertical to configure scheduling models,
+                    terminology (e.g. Doctors vs. Stylists vs. Rooms), and
+                    dashboard widgets.
                 </p>
             </div>
 
@@ -129,7 +174,9 @@ export default function Step1Category({ onSelectCategory }) {
                 <div className={styles.categoriesGrid}>
                     {liveCategories.map((cat) => {
                         const isSelected = selectedCategoryId === cat.id;
-                        const strategyInfo = getCategoryStrategyDetails(cat.slug);
+                        const strategyInfo = getCategoryStrategyDetails(
+                            cat.slug,
+                        );
 
                         return (
                             <div
@@ -150,21 +197,35 @@ export default function Step1Category({ onSelectCategory }) {
                                             backgroundColor: `${cat.theme_color || "#0e7c86"}18`,
                                         }}
                                     >
-                                        {getCategoryIcon(cat.icon || cat.slug, cat.theme_color)}
+                                        {getCategoryIcon(
+                                            cat.icon || cat.slug,
+                                            cat.theme_color,
+                                        )}
                                     </div>
                                     <div
                                         className={`${styles.radioIndicator} ${
-                                            isSelected ? styles.radioSelected : ""
+                                            isSelected
+                                                ? styles.radioSelected
+                                                : ""
                                         }`}
                                     >
-                                        {isSelected && <FiCheck size={13} className={styles.checkIcon} />}
+                                        {isSelected && (
+                                            <FiCheck
+                                                size={13}
+                                                className={styles.checkIcon}
+                                            />
+                                        )}
                                     </div>
                                 </div>
 
                                 {/* Category Information */}
                                 <div className={styles.cardContent}>
-                                    <h3 className={styles.categoryName}>{cat.name}</h3>
-                                    <p className={styles.categoryDesc}>{strategyInfo.desc}</p>
+                                    <h3 className={styles.categoryName}>
+                                        {cat.name}
+                                    </h3>
+                                    <p className={styles.categoryDesc}>
+                                        {strategyInfo.desc}
+                                    </p>
                                 </div>
 
                                 {/* Strategy Tag Footer */}

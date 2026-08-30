@@ -1,7 +1,12 @@
-import PropTypes from "prop-types";
+// local
 import MainButton from "../../../../components/ui/button/MainButton";
-import { FiArrowLeft, FiArrowRight, FiCheckCircle } from "react-icons/fi";
 import styles from "./OnboardingFooter.module.css";
+
+// prop-types
+import PropTypes from "prop-types";
+
+// react icons
+import { FiArrowLeft, FiArrowRight, FiCheckCircle } from "react-icons/fi";
 
 export default function OnboardingFooter({
     currentStep,
@@ -28,7 +33,7 @@ export default function OnboardingFooter({
                         size="md"
                         onClick={onBack}
                         disabled={isLoading}
-                        leftIcon={<FiArrowLeft />}
+                        icon={<FiArrowLeft />}
                     >
                         Back
                     </MainButton>
@@ -42,7 +47,7 @@ export default function OnboardingFooter({
                     size="md"
                     onClick={onNext}
                     disabled={isNextDisabled || isLoading}
-                    loading={isLoading}
+                    isLoading={isLoading}
                     rightIcon={isLastStep ? <FiCheckCircle /> : <FiArrowRight />}
                 >
                     {label}

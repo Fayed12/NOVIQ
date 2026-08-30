@@ -27,7 +27,9 @@ export default function PublicOnlyRoute({ children }) {
     if (!isEmailVerified) {
       return <Navigate to="/verify-email" state={{ email: user.email }} replace />;
     }
-    const destination = location.state?.from?.pathname || '/account';
+    const tenantSlug = user.user_metadata?.tenant_slug;
+    const defaultDest = tenantSlug ? `/${tenantSlug}/dashboard` : '/account';
+    const destination = location.state?.from?.pathname || defaultDest;
     return <Navigate to={destination} replace />;
   }
 

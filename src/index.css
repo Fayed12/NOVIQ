@@ -733,3 +733,18 @@ p, .text-body { font-size: var(--text-sm); font-weight: var(--fw-regular); color
   .container { padding-inline: var(--space-md); }
   .app-content { padding: var(--space-md); padding-bottom: 80px; }
 }
+
+/* ============================================================
+   21. TOASTIFY GLOBAL ELEVATION & STYLING
+   ============================================================ */
+.Toastify__toast-container {
+  z-index: 99999999 !important;
+}
+
+.Toastify__toast {
+  border-radius: var(--radius-md, 10px) !important;
+  box-shadow: 0 16px 40px rgba(22, 31, 38, 0.22) !important;
+  font-family: var(--font-sans) !important;
+  font-size: 13.5px !important;
+  font-weight: 500 !important;
+}

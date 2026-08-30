@@ -25,6 +25,9 @@ export default function MainSelect({
     className = "",
     formatOptionLabel,
     menuPlacement = "auto",
+    menuPortalTarget = typeof document !== "undefined" ? document.body : null,
+    menuPosition = "fixed",
+    maxMenuHeight = 280,
 }) {
     const currentTheme = useSelector(selectTheme);
     const isDark = currentTheme === "dark";
@@ -66,17 +69,22 @@ export default function MainSelect({
             borderColor: isDark ? "var(--color-ink-700, #2b3640)" : "var(--color-border, #e4e1d9)",
             borderRadius: "10px",
             boxShadow: isDark
-                ? "0 10px 30px rgba(0, 0, 0, 0.5)"
-                : "0 10px 30px rgba(22, 31, 38, 0.12)",
+                ? "0 16px 48px rgba(0, 0, 0, 0.7)"
+                : "0 16px 48px rgba(22, 31, 38, 0.18)",
             border: `1px solid ${isDark ? "#2b3640" : "#e4e1d9"}`,
-            zIndex: 9999,
+            zIndex: 10000000,
             overflow: "hidden",
-            padding: "4px",
+            padding: "6px",
+        }),
+        menuPortal: (provided) => ({
+            ...provided,
+            zIndex: 10000000,
+            pointerEvents: "auto",
         }),
         menuList: (provided) => ({
             ...provided,
-            padding: "4px",
-            maxHeight: "260px",
+            padding: "2px",
+            maxHeight: `${maxMenuHeight}px`,
             "::-webkit-scrollbar": {
                 width: "6px",
             },
@@ -96,8 +104,8 @@ export default function MainSelect({
                     : "rgba(14, 124, 134, 0.12)"
                 : state.isFocused
                 ? isDark
-                    ? "rgba(255, 255, 255, 0.06)"
-                    : "rgba(243, 242, 238, 0.9)"
+                    ? "rgba(255, 255, 255, 0.08)"
+                    : "rgba(243, 242, 238, 0.95)"
                 : "transparent",
             color: state.isSelected
                 ? isDark
@@ -115,6 +123,7 @@ export default function MainSelect({
             display: "flex",
             alignItems: "center",
             gap: "8px",
+            margin: "2px 0",
             "&:active": {
                 backgroundColor: isDark ? "rgba(14, 124, 134, 0.4)" : "rgba(14, 124, 134, 0.2)",
             },
@@ -192,6 +201,9 @@ export default function MainSelect({
                     styles={customStyles}
                     formatOptionLabel={formatOptionLabel}
                     menuPlacement={menuPlacement}
+                    menuPortalTarget={menuPortalTarget}
+                    menuPosition={menuPosition}
+                    maxMenuHeight={maxMenuHeight}
                 />
             </div>
 
@@ -221,4 +233,7 @@ MainSelect.propTypes = {
     className: PropTypes.string,
     formatOptionLabel: PropTypes.func,
     menuPlacement: PropTypes.string,
+    menuPortalTarget: PropTypes.any,
+    menuPosition: PropTypes.string,
+    maxMenuHeight: PropTypes.number,
 };

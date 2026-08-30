@@ -1,9 +1,22 @@
-import { useState, useEffect } from "react";
-import PropTypes from "prop-types";
-import { useSelector, useDispatch } from "react-redux";
-import { updateFormData } from "../../../../redux/slices/onboardingSlice";
+// local
 import QuickBranchModal from "../components/QuickBranchModal";
 import MainButton from "../../../../components/ui/button/MainButton";
+import { updateFormData } from "../../../../redux/slices/onboardingSlice";
+import styles from "./Step4Modules.module.css";
+
+// prop-types
+import PropTypes from "prop-types";
+
+// react
+import { useState, useEffect } from "react";
+
+// react-redux
+import { useSelector, useDispatch } from "react-redux";
+
+// react-toastify
+import { toast } from "react-toastify";
+
+// react icons
 import {
     FiCalendar,
     FiStar,
@@ -14,11 +27,8 @@ import {
     FiPlus,
     FiTrash2,
     FiEdit2,
-    FiCheck,
     FiHome,
 } from "react-icons/fi";
-import { toast } from "react-toastify";
-import styles from "./Step4Modules.module.css";
 
 const MODULES_CONFIG = [
     {
@@ -71,7 +81,7 @@ export default function Step4Modules({ onToggleModule }) {
     useEffect(() => {
         if (modules.multi_branch && branches.length === 0) {
             const defaultHq = {
-                id: `branch-main-${Date.now()}`,
+                id: "branch-main-hq",
                 name: `${formData.name || "Main"} HQ Branch`,
                 cityId: formData.location?.cityId || "cairo",
                 cityName: formData.location?.cityName || "Cairo",
@@ -85,7 +95,7 @@ export default function Step4Modules({ onToggleModule }) {
             };
             dispatch(updateFormData({ branches: [defaultHq] }));
         }
-    }, [modules.multi_branch, branches.length, formData, dispatch]);
+    }, [modules.multi_branch, branches.length, formData.name, formData.location, formData.address, formData.phone, dispatch]);
 
     const handleToggle = (key, currentVal, locked) => {
         if (locked) return;
@@ -98,16 +108,18 @@ export default function Step4Modules({ onToggleModule }) {
     };
 
     const handleSaveBranch = (branchData) => {
-        let updatedBranches = [];
-        if (editingBranch) {
-            updatedBranches = branches.map((b) =>
+        const updatedBranches = editingBranch
+            ? branches.map((b) =>
                 b.id === editingBranch.id ? { ...b, ...branchData } : b
-            );
+            )
+            : [...branches, branchData];
+
+        if (editingBranch) {
             toast.success(`Branch "${branchData.name}" updated!`);
         } else {
-            updatedBranches = [...branches, branchData];
             toast.success(`New branch "${branchData.name}" added!`);
         }
+
         dispatch(updateFormData({ branches: updatedBranches }));
         setIsBranchModalOpen(false);
         setEditingBranch(null);
@@ -248,23 +260,23 @@ export default function Step4Modules({ onToggleModule }) {
                                                 </div>
 
                                                 <div className={styles.branchItemActions}>
-                                                    <button
-                                                        type="button"
-                                                        className={styles.branchActionBtn}
+                                                    <MainButton
+                                                        variant="ghost"
+                                                        size="xs"
                                                         onClick={(e) => handleOpenEdit(branch, e)}
                                                         title="Edit Branch"
-                                                    >
-                                                        <FiEdit2 size={14} />
-                                                    </button>
+                                                        aria-label="Edit Branch"
+                                                        icon={<FiEdit2 size={14} />}
+                                                    />
                                                     {!branch.is_main && (
-                                                        <button
-                                                            type="button"
-                                                            className={`${styles.branchActionBtn} ${styles.deleteActionBtn}`}
+                                                        <MainButton
+                                                            variant="danger"
+                                                            size="xs"
                                                             onClick={(e) => handleDeleteBranch(branch.id, e)}
                                                             title="Remove Branch"
-                                                        >
-                                                            <FiTrash2 size={14} />
-                                                        </button>
+                                                            aria-label="Remove Branch"
+                                                            icon={<FiTrash2 size={14} />}
+                                                        />
                                                     )}
                                                 </div>
                                             </div>

@@ -1,32 +1,36 @@
 import { supabase } from "./lib/supabaseClient";
 
 /**
- * Service for Section 4 Onboarding Wizard (Become a Business Owner)
- * Interacts with live Supabase database for categories, draft tenants,
- * memberships, working hours, cancellation policies, starter resources, and services.
+ * Onboarding Data Service
+ * Interacts with Supabase tables: categories, tenants, working_hours, cancellation_policies, branches, services, resources, tenant_memberships
  */
 export const onboardingService = {
     /**
-     * Fetch all categories directly from the live Supabase database
+     * Fetch all active business categories from Supabase
      */
-    async fetchLiveCategories() {
+    async getCategories() {
         const { data, error } = await supabase
             .from("categories")
-            .select("id, name, slug, icon, icon_color, theme_color, available_themes, created_at, updated_at")
-            .order("name", { ascending: true });
+            .select("*")
+            .eq("is_active", true)
+            .order("sort_order", { ascending: true });
 
         if (error) throw error;
         return data || [];
     },
 
+    // Alias for getCategories
+    async fetchLiveCategories() {
+        return this.getCategories();
+    },
+
     /**
-     * Look up an existing draft tenant owned by the user
+     * Load existing draft tenant for the authenticated user (status = 'draft')
      */
     async getDraftTenantForUser(userId) {
         if (!userId) return null;
 
-        // Fetch draft tenant
-        const { data: tenant, error: tenantError } = await supabase
+        const { data: tenant, error } = await supabase
             .from("tenants")
             .select("*, categories(*)")
             .eq("owner_id", userId)
@@ -35,260 +39,164 @@ export const onboardingService = {
             .limit(1)
             .maybeSingle();
 
-        if (tenantError) throw tenantError;
-        if (!tenant) return null;
+        if (error || !tenant) return null;
 
-        // Fetch associated working hours, policies, resources, services, branches
-        const [hoursRes, policiesRes, resourcesRes, servicesRes, branchesRes] = await Promise.all([
-            supabase
-                .from("working_hours")
-                .select("*")
-                .eq("entity_type", "tenant")
-                .eq("entity_id", tenant.id)
-                .order("day_of_week", { ascending: true }),
-            supabase
-                .from("cancellation_policies")
-                .select("*")
-                .eq("tenant_id", tenant.id),
-            supabase
-                .from("resources")
-                .select("*, resource_types(*)")
-                .eq("tenant_id", tenant.id),
-            supabase
-                .from("services")
-                .select("*")
-                .eq("tenant_id", tenant.id),
-            supabase
-                .from("branches")
-                .select("*")
-                .eq("tenant_id", tenant.id)
-                .is("deleted_at", null)
-                .order("is_main", { ascending: false }),
+        // Fetch related entities in parallel with individual error protection
+        const [branchesRes, hoursRes, servicesRes, resourcesRes] = await Promise.all([
+            supabase.from("branches").select("*").eq("tenant_id", tenant.id).then(r => r.data || []).catch(() => []),
+            supabase.from("working_hours").select("*").eq("tenant_id", tenant.id).then(r => r.data || []).catch(() => []),
+            supabase.from("services").select("*").eq("tenant_id", tenant.id).then(r => r.data || []).catch(() => []),
+            supabase.from("resources").select("*, resource_types(*)").eq("tenant_id", tenant.id).then(r => r.data || []).catch(() => []),
         ]);
 
         return {
-            tenant,
-            workingHours: hoursRes.data || [],
-            cancellationPolicies: policiesRes.data || [],
-            resources: resourcesRes.data || [],
-            services: servicesRes.data || [],
-            branches: branchesRes.data || [],
+            tenant: tenant,
+            branches: branchesRes || [],
+            working_hours: hoursRes || [],
+            services: servicesRes || [],
+            resources: resourcesRes || [],
         };
     },
 
     /**
-     * Resolve a guaranteed unique slug across all tenants
+     * Create or update draft tenant step data in Supabase
      */
-    async resolveUniqueSlug(desiredSlug, currentTenantId = null) {
-        if (!desiredSlug) return `business-${Date.now()}`;
+    async upsertDraftTenant(userId, stepData) {
+        if (!userId) throw new Error("User ID is required");
 
-        let candidate = desiredSlug
-            .toLowerCase()
-            .trim()
-            .replace(/[^\w\s-]/g, "")
-            .replace(/[\s_-]+/g, "-")
-            .replace(/^-+|-+$/g, "");
+        // 1. Check if user already has an active draft tenant
+        const { data: existingDraft } = await supabase
+            .from("tenants")
+            .select("id")
+            .eq("owner_id", userId)
+            .eq("status", "draft")
+            .maybeSingle();
 
-        let suffix = 1;
-        let isUnique = false;
-
-        while (!isUnique) {
-            let query = supabase
-                .from("tenants")
-                .select("id")
-                .eq("slug", candidate);
-
-            if (currentTenantId) {
-                query = query.neq("id", currentTenantId);
-            }
-
-            const { data, error } = await query.maybeSingle();
-            if (error) {
-                console.warn("Slug check query warning:", error.message);
-                break;
-            }
-
-            if (!data) {
-                isUnique = true;
-            } else {
-                suffix += 1;
-                candidate = `${desiredSlug}-${suffix}`;
-            }
-        }
-
-        return candidate;
-    },
-
-    /**
-     * Upsert a draft tenant with strict owner scoping (1 admin per business draft)
-     */
-    async saveDraftTenant(userId, payload, existingTenantId = null) {
-        if (!userId) throw new Error("User ID is required to create or save a business draft");
-
-        // 1. Resolve unique slug without conflicting with other tenants
-        const safeSlug = await this.resolveUniqueSlug(
-            payload.slug || payload.name || "business",
-            existingTenantId
-        );
-
-        const tenantData = {
-            owner_id: userId,
-            category_id: payload.category_id || null,
-            name: payload.name || "My Business",
-            slug: safeSlug,
-            description: payload.description || null,
-            phone: payload.phone || null,
-            email: payload.email || null,
-            address: payload.address || null,
-            theme_color: payload.theme_color || "#0E7C86",
-            theme_config: payload.theme_config || {},
-            config: payload.config || {
-                modules: {
-                    bookings: true,
-                    reviews: true,
-                    gallery: true,
-                    multi_branch: false,
-                    staff_management: true,
-                },
-            },
-            status: "draft",
-        };
-
-        let savedTenant = null;
-
-        // 2. Check if specific tenant ID or user already has an existing draft
-        let targetId = existingTenantId;
-        if (!targetId) {
-            const { data: existingDraft } = await supabase
-                .from("tenants")
-                .select("id")
-                .eq("owner_id", userId)
-                .eq("status", "draft")
-                .order("created_at", { ascending: false })
-                .limit(1)
-                .maybeSingle();
-
-            if (existingDraft?.id) {
-                targetId = existingDraft.id;
-            }
-        }
-
-        if (targetId) {
-            // Strictly scoped update: only updates if tenant belongs to this userId
+        if (existingDraft) {
+            // Update existing draft
             const { data, error } = await supabase
                 .from("tenants")
-                .update(tenantData)
-                .eq("id", targetId)
-                .eq("owner_id", userId)
+                .update({
+                    ...stepData,
+                    updated_at: new Date().toISOString(),
+                })
+                .eq("id", existingDraft.id)
                 .select("*, categories(*)")
                 .single();
 
             if (error) throw error;
-            savedTenant = data;
+            return data;
         } else {
-            // Strictly scoped insert for this owner
+            // Insert new draft tenant
             const { data, error } = await supabase
                 .from("tenants")
-                .insert(tenantData)
+                .insert({
+                    owner_id: userId,
+                    status: "draft",
+                    ...stepData,
+                })
                 .select("*, categories(*)")
                 .single();
 
             if (error) throw error;
-            savedTenant = data;
+            return data;
+        }
+    },
+
+    // Alias for upsertDraftTenant
+    async saveDraftTenant(userId, stepData) {
+        return this.upsertDraftTenant(userId, stepData);
+    },
+
+    /**
+     * Check if a business slug is already taken
+     */
+    async checkSlugAvailability(slug, currentTenantId = null) {
+        if (!slug) return false;
+
+        let query = supabase
+            .from("tenants")
+            .select("id")
+            .eq("slug", slug.trim().toLowerCase());
+
+        if (currentTenantId) {
+            query = query.neq("id", currentTenantId);
         }
 
-        // 3. Ensure strictly isolated owner membership in tenant_memberships
-        if (savedTenant?.id) {
-            const { error: memberError } = await supabase
-                .from("tenant_memberships")
-                .upsert(
-                    {
-                        user_id: userId,
-                        tenant_id: savedTenant.id,
-                        role: "owner",
-                        permissions: { all: true },
-                    },
-                    { onConflict: "user_id,tenant_id" }
-                );
-
-            if (memberError) {
-                console.warn("Could not upsert tenant_memberships:", memberError.message);
-            }
-        }
-
-        return savedTenant;
-    },
-
-    /**
-     * Save 7-day operational working hours
-     */
-    async saveWorkingHours(tenantId, scheduleList) {
-        if (!tenantId || !Array.isArray(scheduleList)) return [];
-
-        // Delete existing tenant hours first to ensure clean state
-        await supabase
-            .from("working_hours")
-            .delete()
-            .eq("entity_type", "tenant")
-            .eq("entity_id", tenantId);
-
-        const rowsToInsert = scheduleList.map((item) => ({
-            entity_type: "tenant",
-            entity_id: tenantId,
-            day_of_week: item.day_of_week,
-            open_time: item.is_closed ? null : item.open_time,
-            close_time: item.is_closed ? null : item.close_time,
-            is_closed: !!item.is_closed,
-        }));
-
-        const { data, error } = await supabase
-            .from("working_hours")
-            .insert(rowsToInsert)
-            .select("*");
-
+        const { data, error } = await query;
         if (error) throw error;
-        return data || [];
+        return !data || data.length === 0;
     },
 
     /**
-     * Save default cancellation policy
+     * Save weekly working hours and cancellation policy to Supabase
      */
-    async saveCancellationPolicy(tenantId, policy) {
-        if (!tenantId) return null;
-
-        const payload = {
-            tenant_id: tenantId,
-            name: policy.name || "Standard Flexible Policy",
-            rule: policy.rule || {
-                refundable: true,
-                free_cancellation_hours: 24,
-                fee_percentage: 0,
-            },
-        };
-
-        const { data, error } = await supabase
-            .from("cancellation_policies")
-            .insert(payload)
-            .select("*")
-            .single();
-
-        if (error) throw error;
-        return data;
-    },
-
-    /**
-     * Create starter resource type + resource
-     */
-    async createStarterResource(tenantId, { name, typeName = "General Specialist", capacity = 1 }) {
+    async saveScheduleAndPolicy(tenantId, workingHoursList = [], cancellationPolicy = null) {
         if (!tenantId) throw new Error("Tenant ID is required");
 
-        // 1. Get or create resource type
+        // 1. Upsert Working Hours (7 days)
+        if (workingHoursList.length > 0) {
+            const formattedHours = workingHoursList.map((wh) => ({
+                tenant_id: tenantId,
+                day_of_week: wh.day_of_week,
+                open_time: wh.is_closed ? null : wh.open_time || "09:00",
+                close_time: wh.is_closed ? null : wh.close_time || "18:00",
+                is_closed: !!wh.is_closed,
+            }));
+
+            // Delete old hours for this tenant and re-insert
+            await supabase.from("working_hours").delete().eq("tenant_id", tenantId);
+            const { error: whErr } = await supabase
+                .from("working_hours")
+                .insert(formattedHours);
+
+            if (whErr) throw whErr;
+        }
+
+        // 2. Save cancellation policy if provided
+        if (cancellationPolicy) {
+            const policyPayload = {
+                tenant_id: tenantId,
+                name: cancellationPolicy.name || "Default Cancellation Policy",
+                refundable: cancellationPolicy.rule?.refundable ?? true,
+                free_cancellation_hours: cancellationPolicy.rule?.free_cancellation_hours ?? 24,
+                fee_percentage: cancellationPolicy.rule?.fee_percentage ?? 0,
+                is_active: true,
+            };
+
+            await supabase.from("cancellation_policies").delete().eq("tenant_id", tenantId);
+            const { error: cpErr } = await supabase
+                .from("cancellation_policies")
+                .insert(policyPayload);
+
+            if (cpErr) throw cpErr;
+        }
+
+        return { success: true };
+    },
+
+    // Aliases for granular saves
+    async saveWorkingHours(tenantId, workingHoursList) {
+        return this.saveScheduleAndPolicy(tenantId, workingHoursList, null);
+    },
+
+    async saveCancellationPolicy(tenantId, cancellationPolicy) {
+        return this.saveScheduleAndPolicy(tenantId, [], cancellationPolicy);
+    },
+
+    /**
+     * Create starter resource and default resource_type
+     */
+    async addStarterResource(tenantId, { name, typeName = "Specialist", capacity = 1 }) {
+        if (!tenantId) throw new Error("Tenant ID is required");
+
+        // 1. Find or create resource_type
         let resourceTypeId = null;
         const { data: existingType } = await supabase
             .from("resource_types")
             .select("id")
             .eq("tenant_id", tenantId)
-            .limit(1)
+            .eq("name", typeName)
             .maybeSingle();
 
         if (existingType) {
@@ -325,6 +233,11 @@ export const onboardingService = {
 
         if (resErr) throw resErr;
         return resource;
+    },
+
+    // Alias
+    async createStarterResource(tenantId, resourceData) {
+        return this.addStarterResource(tenantId, resourceData);
     },
 
     /**
@@ -370,8 +283,6 @@ export const onboardingService = {
             is_main: !!b.is_main,
         }));
 
-        if (rowsToInsert.length === 0) return [];
-
         const { data, error } = await supabase
             .from("branches")
             .insert(rowsToInsert)
@@ -383,21 +294,39 @@ export const onboardingService = {
 
     /**
      * Publish Tenant (Validates required elements and activates tenant strictly for owner)
+     * Assigns user role as owner/admin in tenant_memberships and auth metadata.
      */
     async publishTenant(tenantId, userId = null) {
         if (!tenantId) throw new Error("Tenant ID is required to publish");
 
-        // Verify resources & services count
-        const [resCheck, srvCheck] = await Promise.all([
-            supabase.from("resources").select("id", { count: "exact" }).eq("tenant_id", tenantId),
-            supabase.from("services").select("id", { count: "exact" }).eq("tenant_id", tenantId),
-        ]);
+        // Verify services count
+        const srvCheck = await supabase
+            .from("services")
+            .select("id", { count: "exact" })
+            .eq("tenant_id", tenantId);
 
-        const resourceCount = resCheck.count || 0;
         const serviceCount = srvCheck.count || 0;
 
-        if (resourceCount === 0 || serviceCount === 0) {
-            throw new Error("Cannot publish: Business must have at least 1 bookable resource and 1 active service.");
+        if (serviceCount === 0) {
+            throw new Error("Cannot publish: Business must have at least 1 active service.");
+        }
+
+        // Auto-seed default specialist resource if none exists so data integrity is preserved
+        const resCheck = await supabase
+            .from("resources")
+            .select("id", { count: "exact" })
+            .eq("tenant_id", tenantId);
+
+        if (!resCheck.count || resCheck.count === 0) {
+            try {
+                await this.addStarterResource(tenantId, {
+                    name: "Lead Practitioner / Team",
+                    typeName: "Specialist",
+                    capacity: 1,
+                });
+            } catch (seedErr) {
+                console.warn("Auto-seeding default resource non-blocking warning:", seedErr);
+            }
         }
 
         let updateQuery = supabase
@@ -414,6 +343,33 @@ export const onboardingService = {
             .single();
 
         if (error) throw error;
+
+        // Register user as tenant owner & admin in tenant_memberships and auth user metadata
+        if (userId && data?.id) {
+            try {
+                // 1. Upsert membership into tenant_memberships
+                await supabase.from("tenant_memberships").upsert(
+                    {
+                        tenant_id: data.id,
+                        user_id: userId,
+                        role: "owner",
+                    },
+                    { onConflict: "tenant_id, user_id" }
+                );
+
+                // 2. Update user metadata for instant client-side role recognition & dashboard routing
+                await supabase.auth.updateUser({
+                    data: {
+                        role: "owner",
+                        tenant_id: data.id,
+                        tenant_slug: data.slug,
+                    },
+                });
+            } catch (memberErr) {
+                console.warn("Non-blocking membership sync warning:", memberErr);
+            }
+        }
+
         return data;
     },
 };

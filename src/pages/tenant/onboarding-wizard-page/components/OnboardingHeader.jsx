@@ -1,14 +1,25 @@
-import PropTypes from "prop-types";
-import { useSelector, useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router";
+// local
+import MainButton from "../../../../components/ui/button/MainButton";
 import { selectTheme, toggleTheme } from "../../../../redux/themeSlice";
-import { FiSun, FiMoon, FiSave, FiHelpCircle, FiX } from "react-icons/fi";
-import { toast } from "react-toastify";
 import styles from "./OnboardingHeader.module.css";
+
+// prop-types
+import PropTypes from "prop-types";
+
+// react-router
+import { Link } from "react-router";
+
+// react-redux
+import { useSelector, useDispatch } from "react-redux";
+
+// react-toastify
+import { toast } from "react-toastify";
+
+// react icons
+import { FiSun, FiMoon, FiSave, FiHelpCircle } from "react-icons/fi";
 
 export default function OnboardingHeader({ onSaveAndExit, isSaving }) {
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     const currentTheme = useSelector(selectTheme);
     const isDark = currentTheme === "dark";
     const { user } = useSelector((state) => state.auth);
@@ -38,36 +49,36 @@ export default function OnboardingHeader({ onSaveAndExit, isSaving }) {
 
                 {/* Right Actions */}
                 <div className={styles.actions}>
-                    <button
-                        type="button"
-                        className={styles.iconBtn}
+                    <MainButton
+                        variant="ghost"
+                        size="sm"
                         onClick={handleHelpClick}
                         aria-label="Help & Guidance"
                         title="Help & Guidance"
                         disabled={isSaving}
-                    >
-                        <FiHelpCircle size={18} />
-                    </button>
+                        icon={<FiHelpCircle size={17} />}
+                    />
 
-                    <button
-                        type="button"
-                        className={styles.iconBtn}
+                    <MainButton
+                        variant="ghost"
+                        size="sm"
                         onClick={() => dispatch(toggleTheme())}
                         aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
                         title={`Switch to ${isDark ? "light" : "dark"} mode`}
-                    >
-                        {isDark ? <FiSun size={18} /> : <FiMoon size={18} />}
-                    </button>
+                        icon={isDark ? <FiSun size={17} /> : <FiMoon size={17} />}
+                    />
 
-                    <button
-                        type="button"
-                        className={styles.saveExitBtn}
+                    <MainButton
+                        variant="outline"
+                        size="sm"
                         onClick={onSaveAndExit}
                         disabled={isSaving}
+                        isLoading={isSaving}
+                        loadingText="Saving..."
+                        icon={<FiSave size={15} />}
                     >
-                        <FiSave size={15} />
-                        <span>{isSaving ? "Saving..." : "Save & Exit"}</span>
-                    </button>
+                        Save & Exit
+                    </MainButton>
                 </div>
             </div>
         </header>
