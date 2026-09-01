@@ -2,6 +2,7 @@
 import MainInput from "../../../../components/ui/input/MainInput";
 import MainSelect from "../../../../components/ui/select/MainSelect";
 import MainButton from "../../../../components/ui/button/MainButton";
+import MediaUploader from "./MediaUploader";
 import styles from "./QuickServiceModal.module.css";
 
 // prop-types
@@ -12,7 +13,14 @@ import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 
 // react icons
-import { FiCheckSquare, FiX, FiClock, FiDollarSign } from "react-icons/fi";
+import {
+    FiCheckSquare,
+    FiX,
+    FiClock,
+    FiDollarSign,
+    FiCheckCircle,
+    FiAlertCircle,
+} from "react-icons/fi";
 
 const DURATION_OPTIONS = [
     { value: 15, label: "15 minutes" },
@@ -36,8 +44,16 @@ function QuickServiceModalContent({
     onClose,
     onSave,
     isLoading,
+    servicesList = [],
+    cancellationPolicyId = null,
+    defaultIcon = "FiBriefcase",
+    defaultIconColor = "#0E7C86",
+    tenantId = null,
 }) {
     const [name, setName] = useState(() => existingService?.name || "");
+    const [description, setDescription] = useState(
+        () => existingService?.description || ""
+    );
     const [duration, setDuration] = useState(() => {
         if (existingService?.durationMinutes || existingService?.duration_minutes) {
             const targetMin =
@@ -55,13 +71,19 @@ function QuickServiceModalContent({
     const [currency, setCurrency] = useState(() => {
         if (existingService?.currency) {
             return (
-                CURRENCY_OPTIONS.find(
-                    (c) => c.value === existingService.currency
-                ) || CURRENCY_OPTIONS[0]
+                CURRENCY_OPTIONS.find((c) => c.value === existingService.currency) ||
+                CURRENCY_OPTIONS[0]
             );
         }
         return CURRENCY_OPTIONS[0];
     });
+
+
+
+    const [imageUrl, setImageUrl] = useState(
+        () => existingService?.image_url || existingService?.imageUrl || ""
+    );
+
     const [error, setError] = useState("");
 
     // Lock body scrolling when modal is open
@@ -86,17 +108,37 @@ function QuickServiceModalContent({
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (!name.trim()) {
+        const trimmedName = name.trim();
+        if (!trimmedName) {
             setError("Service name is required (e.g. Consultation, Haircut, VIP Session)");
+            return;
+        }
+
+        // Case-insensitive duplicate name check against existing services
+        const isDuplicate = (servicesList || []).some((s) => {
+            if (existingService?.id && s.id === existingService.id) return false;
+            return (s.name || "").trim().toLowerCase() === trimmedName.toLowerCase();
+        });
+
+        if (isDuplicate) {
+            setError(
+                `A service named "${trimmedName}" is already registered. Please enter a distinctive service name.`
+            );
             return;
         }
 
         onSave({
             id: existingService?.id,
-            name: name.trim(),
+            name: trimmedName,
+            description: description.trim() || null,
             durationMinutes: duration.value,
             price: parseFloat(price) || 0,
             currency: currency.value,
+            cancellation_policy_id: cancellationPolicyId || null,
+            icon: existingService?.icon || defaultIcon,
+            icon_color: existingService?.icon_color || defaultIconColor,
+            theme_color: existingService?.theme_color || defaultIconColor,
+            image_url: imageUrl || null,
         });
     };
 
@@ -161,10 +203,12 @@ function QuickServiceModalContent({
                         </div>
                         <div>
                             <h3 className={styles.modalTitle}>
-                                {existingService ? `Edit Service — ${existingService.name}` : "Add Initial Service"}
+                                {existingService
+                                    ? `Edit Service — ${existingService.name}`
+                                    : "Add Initial Service"}
                             </h3>
                             <p className={styles.modalSubtitle}>
-                                What treatment or service can clients book with you?
+                                Define the treatment or service clients can book with you
                             </p>
                         </div>
                     </div>
@@ -179,6 +223,13 @@ function QuickServiceModalContent({
 
                 {/* Form */}
                 <form onSubmit={handleSubmit} className={styles.formBody}>
+                    {error && (
+                        <div className={styles.errorAlert} role="alert">
+                            <FiAlertCircle size={16} />
+                            <span>{error}</span>
+                        </div>
+                    )}
+
                     <MainInput
                         name="serviceName"
                         label="Service Name"
@@ -186,14 +237,36 @@ function QuickServiceModalContent({
                         value={name}
                         onChange={(e) => {
                             setName(e.target.value);
-                            setError("");
+                            if (error) setError("");
                         }}
                         hasError={!!error}
-                        errorMsg={error}
                         icon={<FiCheckSquare size={16} />}
                         required
                         autoFocus
                     />
+
+                    {/* Description */}
+                    <div className={styles.textareaGroup}>
+                        <label className={styles.fieldLabel}>Service Description (Optional)</label>
+                        <textarea
+                            className={styles.textarea}
+                            rows={2}
+                            placeholder="Brief description of the service, what's included, or prerequisites..."
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                        />
+                    </div>
+
+                    {/* Universal Branch Availability Notification */}
+                    <div className={styles.branchSyncInfo}>
+                        <FiCheckCircle size={15} className={styles.branchSyncIcon} />
+                        <div className={styles.branchSyncText}>
+                            <strong>Universal Branch Availability</strong>
+                            <span>
+                                This service will automatically be synchronized and offered across all operating branches of your business.
+                            </span>
+                        </div>
+                    </div>
 
                     <div className={styles.twoCol}>
                         <MainSelect
@@ -227,27 +300,26 @@ function QuickServiceModalContent({
                         placeholder="0.00"
                     />
 
-                    {/* Shared Service Notice */}
-                    <div
-                        style={{
-                            padding: "10px 12px",
-                            backgroundColor: "rgba(14, 124, 134, 0.08)",
-                            borderRadius: "8px",
-                            fontSize: "12px",
-                            color: "var(--color-ink-700, #2b3640)",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px",
-                        }}
-                    >
-                        <span>
-                            🌐 <strong>Shared Across All Branches:</strong> This service will be bookable at all your branches (Cairo, Alex, etc.).
-                        </span>
-                    </div>
+                    {/* Service Photo */}
+                    <MediaUploader
+                        label="Service Image"
+                        kind="services"
+                        aspectRatio="banner"
+                        value={imageUrl}
+                        onChange={(url) => setImageUrl(url)}
+                        tenantId={tenantId}
+                        recommendedSize="800×500 JPG / WebP"
+                        helperText="Visual photo featured on your booking catalog"
+                    />
 
                     {/* Actions */}
                     <div className={styles.modalActions}>
-                        <MainButton variant="ghost" size="md" onClick={onClose} disabled={isLoading}>
+                        <MainButton
+                            variant="ghost"
+                            size="md"
+                            onClick={onClose}
+                            disabled={isLoading}
+                        >
                             Cancel
                         </MainButton>
                         <MainButton
@@ -270,6 +342,12 @@ QuickServiceModalContent.propTypes = {
     onClose: PropTypes.func.isRequired,
     onSave: PropTypes.func.isRequired,
     isLoading: PropTypes.bool,
+    servicesList: PropTypes.array,
+    branchesList: PropTypes.array,
+    cancellationPolicyId: PropTypes.string,
+    defaultIcon: PropTypes.string,
+    defaultIconColor: PropTypes.string,
+    tenantId: PropTypes.string,
 };
 
 export default function QuickServiceModal({
@@ -278,6 +356,11 @@ export default function QuickServiceModal({
     onSave,
     isLoading,
     existingService,
+    servicesList = [],
+    cancellationPolicyId = null,
+    defaultIcon = "FiBriefcase",
+    defaultIconColor = "#0E7C86",
+    tenantId = null,
 }) {
     if (!isOpen) return null;
 
@@ -292,6 +375,11 @@ export default function QuickServiceModal({
             onClose={onClose}
             onSave={onSave}
             isLoading={isLoading}
+            servicesList={servicesList}
+            cancellationPolicyId={cancellationPolicyId}
+            defaultIcon={defaultIcon}
+            defaultIconColor={defaultIconColor}
+            tenantId={tenantId}
         />,
         document.body
     );
@@ -303,4 +391,9 @@ QuickServiceModal.propTypes = {
     onSave: PropTypes.func.isRequired,
     isLoading: PropTypes.bool,
     existingService: PropTypes.object,
+    servicesList: PropTypes.array,
+    cancellationPolicyId: PropTypes.string,
+    defaultIcon: PropTypes.string,
+    defaultIconColor: PropTypes.string,
+    tenantId: PropTypes.string,
 };

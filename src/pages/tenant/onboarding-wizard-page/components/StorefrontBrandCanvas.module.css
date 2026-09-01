@@ -1,0 +1,523 @@
+.canvasContainer {
+    width: 100%;
+    margin-bottom: 24px;
+}
+
+.showcaseCard {
+    background: var(--color-white, #ffffff);
+    border: 1px solid var(--color-border, #e4e1d9);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+    transition: all 0.25s ease;
+}
+
+:global([data-theme="dark"]) .showcaseCard {
+    background: #151d24;
+    border-color: var(--color-ink-700, #2b3640);
+    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.35);
+}
+
+/* Panoramic Cover Area */
+.coverArea {
+    position: relative;
+    width: 100%;
+    height: 180px;
+    background-color: #f1f5f9;
+    overflow: hidden;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+:global([data-theme="dark"]) .coverArea {
+    background-color: #0b1116;
+}
+
+.coverDragging {
+    outline: 2px dashed var(--color-accent-teal, #0e7c86);
+    outline-offset: -4px;
+}
+
+.coverImageWrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.coverImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.coverGradientOverlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.3) 0%,
+        transparent 50%,
+        rgba(0, 0, 0, 0.5) 100%
+    );
+    pointer-events: none;
+}
+
+/* Placeholder Mesh when no cover image */
+.coverPlaceholderMesh {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.meshPattern {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(
+        rgba(255, 255, 255, 0.15) 1px,
+        transparent 1px
+    );
+    background-size: 16px 16px;
+    opacity: 0.6;
+}
+
+.meshHint {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--color-ink-600, #3a444d);
+    font-size: 12px;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(8px);
+    padding: 8px 16px;
+    border-radius: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+:global([data-theme="dark"]) .meshHint {
+    background: rgba(15, 23, 42, 0.75);
+    color: #94a3b8;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+.meshHintIcon {
+    color: var(--color-accent-teal, #0e7c86);
+}
+
+:global([data-theme="dark"]) .meshHintIcon {
+    color: #2dd4bf;
+}
+
+/* Floating Actions on Cover */
+.coverActions {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 10;
+}
+
+.coverActionBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    color: #0f172a;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:global([data-theme="dark"]) .coverActionBtn {
+    background: rgba(22, 31, 38, 0.85);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+}
+
+.coverActionBtn:hover {
+    background: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16);
+}
+
+:global([data-theme="dark"]) .coverActionBtn:hover {
+    background: #1e293b;
+}
+
+.coverRemoveBtn {
+    padding: 7px 10px;
+    color: #dc2626 !important;
+}
+
+.coverRemoveBtn:hover {
+    background: #fee2e2 !important;
+}
+
+:global([data-theme="dark"]) .coverRemoveBtn:hover {
+    background: rgba(220, 38, 38, 0.2) !important;
+}
+
+/* Metadata Bar & Floating Avatar */
+.metaRow {
+    position: relative;
+    padding: 0 24px 18px 24px;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+/* Overlapping Avatar Card */
+.avatarWrapper {
+    position: relative;
+    margin-top: -44px;
+    flex-shrink: 0;
+    z-index: 12;
+}
+
+.avatarCard {
+    width: 88px;
+    height: 88px;
+    border-radius: 20px;
+    border: 4px solid var(--color-white, #ffffff);
+    background: var(--color-white, #ffffff);
+    box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.18);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+:global([data-theme="dark"]) .avatarCard {
+    border-color: #151d24;
+    background: #151d24;
+    box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.5);
+}
+
+.avatarCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px -4px rgba(0, 0, 0, 0.25);
+}
+
+.avatarImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.avatarFallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    transition: all 0.2s ease;
+}
+
+.avatarCameraBadge {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(4px);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+:global([data-theme="dark"]) .avatarCameraBadge {
+    border-color: #151d24;
+}
+
+.avatarLoadingSpinner {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(2px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.logoRemoveSmall {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #dc2626;
+    color: #ffffff;
+    border: 2px solid #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: transform 0.15s ease;
+    z-index: 14;
+}
+
+.logoRemoveSmall:hover {
+    transform: scale(1.15);
+}
+
+/* Identity Details */
+.identityDetails {
+    flex: 1;
+    padding-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.titleRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.businessDisplayName {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--color-ink-900, #161f26);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+:global([data-theme="dark"]) .businessDisplayName {
+    color: var(--color-surface-cream, #f3f2ee);
+}
+
+.previewTag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 8px;
+    border-radius: 12px;
+    background: rgba(14, 124, 134, 0.1);
+    color: var(--color-accent-teal, #0e7c86);
+    font-size: 11px;
+    font-weight: 600;
+}
+
+:global([data-theme="dark"]) .previewTag {
+    background: rgba(45, 212, 191, 0.15);
+    color: #2dd4bf;
+}
+
+.subMetaRow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.slugBadge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 8px;
+    background: var(--color-surface-cream, #f7f6f2);
+    border: 1px solid var(--color-border, #e4e1d9);
+    font-family: monospace;
+    font-size: 11.5px;
+}
+
+:global([data-theme="dark"]) .slugBadge {
+    background: #0d151c;
+    border-color: var(--color-ink-700, #2b3640);
+}
+
+.slugDomain {
+    color: var(--color-ink-400, #6e7982);
+}
+
+:global([data-theme="dark"]) .slugDomain {
+    color: #64748b;
+}
+
+.slugPath {
+    color: var(--color-accent-teal, #0e7c86);
+    font-weight: 600;
+}
+
+:global([data-theme="dark"]) .slugPath {
+    color: #2dd4bf;
+}
+
+.categoryPill {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--color-ink-700, #2b3640);
+    padding: 2px 8px;
+    background: rgba(0, 0, 0, 0.04);
+    border-radius: 6px;
+}
+
+:global([data-theme="dark"]) .categoryPill {
+    color: #94a3b8;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Format Specs Footer */
+.specsFooter {
+    border-top: 1px solid var(--color-border, #e4e1d9);
+    padding: 12px 24px;
+    background: #fafaf8;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+:global([data-theme="dark"]) .specsFooter {
+    background: #0f161c;
+    border-top-color: var(--color-ink-700, #2b3640);
+}
+
+.specItem {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+}
+
+.specIconCircle {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: rgba(14, 124, 134, 0.1);
+    color: var(--color-accent-teal, #0e7c86);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+:global([data-theme="dark"]) .specIconCircle {
+    background: rgba(45, 212, 191, 0.15);
+    color: #2dd4bf;
+}
+
+.specTexts {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.specTitle {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-ink-900, #161f26);
+}
+
+:global([data-theme="dark"]) .specTitle {
+    color: var(--color-surface-cream, #f3f2ee);
+}
+
+.specMeta {
+    font-size: 11px;
+    color: var(--color-ink-400, #6e7982);
+}
+
+:global([data-theme="dark"]) .specMeta {
+    color: #8b939a;
+}
+
+.specActionBtn {
+    margin-left: auto;
+    padding: 5px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--color-border, #e4e1d9);
+    background: var(--color-white, #ffffff);
+    color: var(--color-ink-800, #1f2a33);
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+:global([data-theme="dark"]) .specActionBtn {
+    background: #1e293b;
+    border-color: #334155;
+    color: #f1f5f9;
+}
+
+.specActionBtn:hover:not(:disabled) {
+    border-color: var(--color-accent-teal, #0e7c86);
+    color: var(--color-accent-teal, #0e7c86);
+}
+
+:global([data-theme="dark"]) .specActionBtn:hover:not(:disabled) {
+    border-color: #2dd4bf;
+    color: #2dd4bf;
+}
+
+.specDivider {
+    width: 1px;
+    height: 32px;
+    background: var(--color-border, #e4e1d9);
+}
+
+:global([data-theme="dark"]) .specDivider {
+    background: var(--color-ink-700, #2b3640);
+}
+
+@media (max-width: 700px) {
+    .metaRow {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    .specsFooter {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+    .specDivider {
+        display: none;
+    }
+}

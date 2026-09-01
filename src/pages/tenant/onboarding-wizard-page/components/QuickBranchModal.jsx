@@ -147,8 +147,19 @@ function QuickBranchModalContent({
             region: city.region,
             lat: city.lat,
             lng: city.lng,
+            location: {
+                cityId: city.id,
+                cityName: city.name,
+                arabicName: city.arabicName,
+                region: city.region,
+                lat: city.lat,
+                lng: city.lng,
+            },
             address: address.trim() || `${city.name}, Egypt`,
             phone: phone.trim(),
+            icon: existingBranch?.icon || formData?.icon || "FiBriefcase",
+            icon_color: existingBranch?.icon_color || formData?.iconColor || formData?.themeColor || "#0E7C86",
+            theme_color: existingBranch?.theme_color || formData?.themeColor || "#0E7C86",
             is_main: isMain,
         });
     };

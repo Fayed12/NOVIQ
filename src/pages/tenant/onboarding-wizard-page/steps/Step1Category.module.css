@@ -243,3 +243,166 @@
         font-size: 20px;
     }
 }
+
+.errorBox {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 12px;
+    margin: 20px 0;
+}
+
+:global([data-theme="dark"]) .errorBox {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+.errorIcon {
+    color: #ef4444;
+}
+
+.errorTitle {
+    font-weight: 600;
+    font-size: 16px;
+    color: #991b1b;
+    margin: 0;
+}
+
+:global([data-theme="dark"]) .errorTitle {
+    color: #fca5a5;
+}
+
+.errorMessage {
+    font-size: 13px;
+    color: #b91c1c;
+    margin: 0;
+}
+
+:global([data-theme="dark"]) .errorMessage {
+    color: #f87171;
+}
+
+.ownedBusinessBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 9px;
+    border-radius: 12px;
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.28);
+    color: #d97706;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+:global([data-theme="dark"]) .ownedBusinessBadge {
+    background: rgba(251, 191, 36, 0.12);
+    border-color: rgba(251, 191, 36, 0.3);
+    color: #fbbf24;
+}
+
+.ownedCard {
+    opacity: 0.92;
+    border-color: rgba(245, 158, 11, 0.3) !important;
+}
+
+.ownedCard:hover {
+    border-color: #d97706 !important;
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.15) !important;
+}
+
+.activeConflictBanner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 20px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.08), rgba(245, 158, 11, 0.08));
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    margin-bottom: 24px;
+    animation: fadeIn 0.3s ease;
+}
+
+:global([data-theme="dark"]) .activeConflictBanner {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(245, 158, 11, 0.15));
+    border-color: rgba(239, 68, 68, 0.4);
+}
+
+.conflictBannerHeader {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.conflictBannerIcon {
+    color: #ef4444;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.conflictBannerTitle {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: #b91c1c;
+    margin: 0 0 4px;
+}
+
+:global([data-theme="dark"]) .conflictBannerTitle {
+    color: #fca5a5;
+}
+
+.conflictBannerText {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--color-ink-700, #2c3842);
+    margin: 0;
+}
+
+:global([data-theme="dark"]) .conflictBannerText {
+    color: #cbd5e1;
+}
+
+.conflictBannerText strong {
+    color: var(--color-ink-900, #161f26);
+}
+
+:global([data-theme="dark"]) .conflictBannerText strong {
+    color: #ffffff;
+}
+
+.usedCard {
+    position: relative;
+    cursor: pointer;
+    border-color: rgba(245, 158, 11, 0.35) !important;
+}
+
+.usedCard:hover {
+    border-color: #d97706 !important;
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.18) !important;
+}
+
+.usedBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 9px;
+    border-radius: 12px;
+    background: rgba(245, 158, 11, 0.14);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    color: #d97706;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+:global([data-theme="dark"]) .usedBadge {
+    background: rgba(251, 191, 36, 0.14);
+    border-color: rgba(251, 191, 36, 0.35);
+    color: #fbbf24;
+}

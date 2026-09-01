@@ -528,3 +528,263 @@
     color: var(--color-danger, #dc2626) !important;
     background-color: rgba(220, 38, 38, 0.08) !important;
 }
+
+/* Media Section */
+.mediaSection {
+    border-top: 1px solid var(--color-border, #e4e1d9);
+    padding-top: 24px;
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+:global([data-theme="dark"]) .mediaSection {
+    border-top-color: var(--color-ink-700, #2b3640);
+}
+
+.sectionHeading {
+    font-size: 15.5px;
+    font-weight: 700;
+    color: var(--color-ink-900, #161f26);
+    margin: 0;
+}
+
+:global([data-theme="dark"]) .sectionHeading {
+    color: var(--color-surface-cream, #f3f2ee);
+}
+
+.sectionSubtitle {
+    font-size: 12.5px;
+    color: var(--color-ink-600, #3a444d);
+    margin: 0;
+    line-height: 1.5;
+}
+
+:global([data-theme="dark"]) .sectionSubtitle {
+    color: var(--color-ink-300, #8b939a);
+}
+
+.mediaGrid {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+@media (max-width: 640px) {
+    .mediaGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Icon Selection Section */
+.iconSection {
+    border-top: 1px solid var(--color-border, #e4e1d9);
+    padding-top: 24px;
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+:global([data-theme="dark"]) .iconSection {
+    border-top-color: var(--color-ink-700, #2b3640);
+}
+
+.iconSectionHeader {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.titleWithActivePreview {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.activeEmblemBadge {
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--color-accent-teal, #0e7c86);
+    background: rgba(14, 124, 134, 0.1);
+    padding: 3px 10px;
+    border-radius: 20px;
+}
+
+:global([data-theme="dark"]) .activeEmblemBadge {
+    background: rgba(45, 212, 191, 0.15);
+    color: #2dd4bf;
+}
+
+.iconFilterTabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.filterTab {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 14px;
+    border-radius: 24px;
+    border: 1px solid var(--color-border, #e4e1d9);
+    background-color: var(--color-surface-cream, #f7f6f2);
+    color: var(--color-ink-700, #2b3640);
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:global([data-theme="dark"]) .filterTab {
+    background-color: rgba(255, 255, 255, 0.03);
+    border-color: var(--color-ink-700, #2b3640);
+    color: var(--color-ink-300, #8b939a);
+}
+
+.filterTab:hover {
+    border-color: var(--color-accent-teal, #0e7c86);
+    color: var(--color-accent-teal, #0e7c86);
+    transform: translateY(-1px);
+}
+
+:global([data-theme="dark"]) .filterTab:hover {
+    border-color: #2dd4bf;
+    color: #2dd4bf;
+}
+
+.filterTabActive {
+    background-color: var(--color-ink-900, #161f26);
+    border-color: var(--color-ink-900, #161f26);
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+:global([data-theme="dark"]) .filterTabActive {
+    background-color: #2dd4bf;
+    border-color: #2dd4bf;
+    color: #0d151c !important;
+    box-shadow: 0 4px 14px rgba(45, 212, 191, 0.25);
+}
+
+.industryTag {
+    font-size: 9.5px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    background-color: rgba(14, 124, 134, 0.18);
+    color: var(--color-accent-teal, #0e7c86);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-weight: 700;
+}
+
+.filterTabActive .industryTag {
+    background-color: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+}
+
+:global([data-theme="dark"]) .filterTabActive .industryTag {
+    background-color: rgba(0, 0, 0, 0.25);
+    color: #0d151c;
+}
+
+/* Emblem Grid */
+.iconGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 12px;
+}
+
+.iconOptionCard {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 16px 10px;
+    border-radius: 16px;
+    background-color: var(--color-surface-cream, #f7f6f2);
+    border: 1.5px solid var(--color-border, #e4e1d9);
+    cursor: pointer;
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:global([data-theme="dark"]) .iconOptionCard {
+    background-color: rgba(255, 255, 255, 0.03);
+    border-color: var(--color-ink-700, #2b3640);
+}
+
+.iconOptionCard:hover {
+    border-color: var(--color-accent-teal, #0e7c86);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+}
+
+:global([data-theme="dark"]) .iconOptionCard:hover {
+    border-color: #2dd4bf;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+}
+
+.iconOptionSelected {
+    border-color: var(--color-accent-teal, #0e7c86);
+    background-color: rgba(14, 124, 134, 0.06);
+    box-shadow: 0 0 0 1px var(--color-accent-teal, #0e7c86), 0 6px 20px rgba(14, 124, 134, 0.15);
+}
+
+:global([data-theme="dark"]) .iconOptionSelected {
+    border-color: #2dd4bf;
+    background-color: rgba(45, 212, 191, 0.08);
+    box-shadow: 0 0 0 1px #2dd4bf, 0 6px 20px rgba(45, 212, 191, 0.2);
+}
+
+.iconSquircle {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    margin-bottom: 2px;
+}
+
+.iconSelectedCheck {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    color: var(--color-accent-teal, #0e7c86);
+}
+
+:global([data-theme="dark"]) .iconSelectedCheck {
+    color: #2dd4bf;
+}
+
+.iconLabel {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-ink-800, #1f2a33);
+    text-align: center;
+    line-height: 1.3;
+}
+
+:global([data-theme="dark"]) .iconLabel {
+    color: var(--color-surface-cream, #f3f2ee);
+}
+
+.iconCategoryBadge {
+    font-size: 9.5px;
+    color: var(--color-ink-400, #6c757d);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-weight: 600;
+}
+
+:global([data-theme="dark"]) .iconCategoryBadge {
+    color: var(--color-ink-300, #8b939a);
+}

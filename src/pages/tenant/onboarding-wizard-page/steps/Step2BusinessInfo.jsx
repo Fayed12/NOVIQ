@@ -1,5 +1,6 @@
 // local
 import QuickBranchModal from "../components/QuickBranchModal";
+import StorefrontBrandCanvas from "../components/StorefrontBrandCanvas";
 import MainInput from "../../../../components/ui/input/MainInput";
 import MainSelect from "../../../../components/ui/select/MainSelect";
 import MainButton from "../../../../components/ui/button/MainButton";
@@ -25,17 +26,169 @@ import { toast } from "react-toastify";
 // react icons
 import {
     FiBriefcase,
+    FiActivity,
+    FiHeart,
+    FiScissors,
+    FiCoffee,
+    FiCompass,
+    FiAward,
+    FiSmile,
+    FiStar,
+    FiShield,
+    FiZap,
+    FiTarget,
+    FiGrid,
     FiMail,
     FiPhone,
     FiMapPin,
     FiNavigation,
-    FiCompass,
     FiHome,
     FiPlus,
     FiEdit2,
     FiTrash2,
     FiCheckCircle,
+    FiLifeBuoy,
+    FiSun,
+    FiMoon,
+    FiTrendingUp,
 } from "react-icons/fi";
+
+const FOUR_CATEGORIES = [
+    { id: "all", label: "All Categories", icon: FiGrid },
+    { id: "clinics", label: "Clinics & Medical", icon: FiActivity },
+    { id: "salons", label: "Beauty & Salons", icon: FiScissors },
+    { id: "hotels", label: "Hotels & Lodging", icon: FiHome },
+    { id: "fitness", label: "Fitness & Gym", icon: FiZap },
+];
+
+const BUSINESS_ICON_PRESETS = [
+    // 1. Clinics & Healthcare
+    {
+        id: "FiActivity",
+        label: "Medical Pulse",
+        category: "clinics",
+        categoryLabel: "Clinics",
+        icon: FiActivity,
+    },
+    {
+        id: "FiHeart",
+        label: "Healthcare",
+        category: "clinics",
+        categoryLabel: "Clinics",
+        icon: FiHeart,
+    },
+    {
+        id: "FiShield",
+        label: "Clinic Care",
+        category: "clinics",
+        categoryLabel: "Clinics",
+        icon: FiShield,
+    },
+    {
+        id: "FiPlus",
+        label: "Emergency & Care",
+        category: "clinics",
+        categoryLabel: "Clinics",
+        icon: FiPlus,
+    },
+    {
+        id: "FiLifeBuoy",
+        label: "Wellness Support",
+        category: "clinics",
+        categoryLabel: "Clinics",
+        icon: FiLifeBuoy,
+    },
+
+    // 2. Beauty & Salons
+    {
+        id: "FiScissors",
+        label: "Hair & Styling",
+        category: "salons",
+        categoryLabel: "Salons",
+        icon: FiScissors,
+    },
+    {
+        id: "FiSmile",
+        label: "Spa & Facial",
+        category: "salons",
+        categoryLabel: "Salons",
+        icon: FiSmile,
+    },
+    {
+        id: "FiStar",
+        label: "Luxury Salon",
+        category: "salons",
+        categoryLabel: "Salons",
+        icon: FiStar,
+    },
+    {
+        id: "FiSun",
+        label: "Glow & Beauty",
+        category: "salons",
+        categoryLabel: "Salons",
+        icon: FiSun,
+    },
+
+    // 3. Hotels & Hospitality
+    {
+        id: "FiHome",
+        label: "Suites & Rooms",
+        category: "hotels",
+        categoryLabel: "Hotels",
+        icon: FiHome,
+    },
+    {
+        id: "FiCoffee",
+        label: "Lounge & Stay",
+        category: "hotels",
+        categoryLabel: "Hotels",
+        icon: FiCoffee,
+    },
+    {
+        id: "FiCompass",
+        label: "Resort & Travel",
+        category: "hotels",
+        categoryLabel: "Hotels",
+        icon: FiCompass,
+    },
+    {
+        id: "FiMoon",
+        label: "Night Stays",
+        category: "hotels",
+        categoryLabel: "Hotels",
+        icon: FiMoon,
+    },
+
+    // 4. Fitness & Gym
+    {
+        id: "FiZap",
+        label: "Power & Cardio",
+        category: "fitness",
+        categoryLabel: "Fitness",
+        icon: FiZap,
+    },
+    {
+        id: "FiAward",
+        label: "Gym & Strength",
+        category: "fitness",
+        categoryLabel: "Fitness",
+        icon: FiAward,
+    },
+    {
+        id: "FiTarget",
+        label: "Studio & Goals",
+        category: "fitness",
+        categoryLabel: "Fitness",
+        icon: FiTarget,
+    },
+    {
+        id: "FiTrendingUp",
+        label: "Performance",
+        category: "fitness",
+        categoryLabel: "Fitness",
+        icon: FiTrendingUp,
+    },
+];
 
 // Helper to sanitize slug from business name
 function generateSlug(text) {
@@ -49,11 +202,53 @@ function generateSlug(text) {
 
 export default function Step2BusinessInfo({ errors = {}, onFieldChange }) {
     const dispatch = useDispatch();
-    const { formData } = useSelector((state) => state.onboarding);
+    const { formData, draftTenant } = useSelector((state) => state.onboarding);
     const branches = useMemo(() => formData.branches || [], [formData.branches]);
 
     const [isLocating, setIsLocating] = useState(false);
     const [cityList, setCityList] = useState(EGYPTIAN_CITIES);
+
+    // Resolve active platform category from Step 1
+    const activeCategorySlug = useMemo(() => {
+        const slug = formData.selectedCategory?.slug?.toLowerCase();
+        if (slug) {
+            if (slug.includes("clinic") || slug.includes("medical")) return "clinics";
+            if (slug.includes("salon") || slug.includes("beauty")) return "salons";
+            if (slug.includes("hotel") || slug.includes("hospitality")) return "hotels";
+            if (slug.includes("fitness") || slug.includes("gym")) return "fitness";
+        }
+        return "all";
+    }, [formData.selectedCategory]);
+
+    const [iconCategoryFilter, setIconCategoryFilter] = useState(() => {
+        return activeCategorySlug !== "all" ? activeCategorySlug : "all";
+    });
+
+    // Auto-select initial industry icon if user hasn't explicitly customized it
+    useEffect(() => {
+        if (!formData.icon || formData.icon === "FiBriefcase") {
+            let defaultCategoryIcon = "FiActivity";
+            if (activeCategorySlug === "salons") defaultCategoryIcon = "FiScissors";
+            else if (activeCategorySlug === "hotels") defaultCategoryIcon = "FiHome";
+            else if (activeCategorySlug === "fitness") defaultCategoryIcon = "FiZap";
+
+            dispatch(updateFormData({ icon: defaultCategoryIcon }));
+        }
+    }, [activeCategorySlug, formData.icon, dispatch]);
+
+    const filteredIcons = useMemo(() => {
+        if (iconCategoryFilter === "all") return BUSINESS_ICON_PRESETS;
+        return BUSINESS_ICON_PRESETS.filter(
+            (item) => item.category === iconCategoryFilter
+        );
+    }, [iconCategoryFilter]);
+
+    const currentEmblem = useMemo(() => {
+        return (
+            BUSINESS_ICON_PRESETS.find((item) => item.id === formData.icon) ||
+            BUSINESS_ICON_PRESETS[0]
+        );
+    }, [formData.icon]);
 
     // Modal state for adding secondary branch
     const [isBranchModalOpen, setIsBranchModalOpen] = useState(false);
@@ -363,6 +558,111 @@ export default function Step2BusinessInfo({ errors = {}, onFieldChange }) {
                         }
                         icon={FiPhone}
                     />
+                </div>
+
+                {/* Brand Visuals & Media (Interactive Live Storefront Canvas) */}
+                <div className={styles.mediaSection}>
+                    <div className={styles.mediaHeader}>
+                        <div>
+                            <h3 className={styles.sectionHeading}>Brand Identity & Media Showcase</h3>
+                            <p className={styles.sectionSubtitle}>
+                                Upload your brand logo and header cover photo. Preview how your storefront hero appears to prospective customers.
+                            </p>
+                        </div>
+                    </div>
+
+                    <StorefrontBrandCanvas
+                        businessName={formData.name}
+                        businessSlug={formData.slug}
+                        categoryName={formData.selectedCategory?.name}
+                        themeColor={formData.themeColor || "#0E7C86"}
+                        iconName={formData.icon || "FiActivity"}
+                        logoUrl={formData.logoUrl || ""}
+                        coverUrl={formData.coverUrl || ""}
+                        tenantId={draftTenant?.id}
+                        onChangeLogo={(url) => dispatch(updateFormData({ logoUrl: url }))}
+                        onChangeCover={(url) => dispatch(updateFormData({ coverUrl: url }))}
+                    />
+                </div>
+
+                {/* Business Icon & Emblem Studio */}
+                <div className={styles.iconSection}>
+                    <div className={styles.iconSectionHeader}>
+                        <div className={styles.titleWithActivePreview}>
+                            <h3 className={styles.sectionHeading}>Business Icon & Emblem</h3>
+                            {currentEmblem && (
+                                <span className={styles.activeEmblemBadge}>
+                                    Active: <strong>{currentEmblem.label}</strong>
+                                </span>
+                            )}
+                        </div>
+                        <p className={styles.sectionSubtitle}>
+                            Choose an emblem crafted for your industry. This icon and theme color will cascade to your branches, booking badges, and services.
+                        </p>
+                    </div>
+
+                    {/* Category Filter Tabs */}
+                    <div className={styles.iconFilterTabs} role="tablist" aria-label="Filter icons by category">
+                        {FOUR_CATEGORIES.map((cat) => {
+                            const isActive = iconCategoryFilter === cat.id;
+                            const isUserIndustry = cat.id !== "all" && activeCategorySlug === cat.id;
+                            const CatIcon = cat.icon;
+                            return (
+                                <button
+                                    key={cat.id}
+                                    type="button"
+                                    role="tab"
+                                    aria-selected={isActive}
+                                    className={`${styles.filterTab} ${
+                                        isActive ? styles.filterTabActive : ""
+                                    }`}
+                                    onClick={() => setIconCategoryFilter(cat.id)}
+                                >
+                                    <CatIcon size={14} />
+                                    <span>{cat.label}</span>
+                                    {isUserIndustry && (
+                                        <span className={styles.industryTag}>Your Category</span>
+                                    )}
+                                </button>
+                            );
+                        })}
+                    </div>
+
+                    <div className={styles.iconGrid}>
+                        {filteredIcons.map((item) => {
+                            const isSelected = (formData.icon || "FiActivity") === item.id;
+                            const IconComponent = item.icon;
+                            const activeTheme = formData.iconColor || formData.themeColor || "#0E7C86";
+                            return (
+                                <button
+                                    key={item.id}
+                                    type="button"
+                                    className={`${styles.iconOptionCard} ${
+                                        isSelected ? styles.iconOptionSelected : ""
+                                    }`}
+                                    onClick={() => dispatch(updateFormData({ icon: item.id }))}
+                                    aria-label={`Select ${item.label} icon (${item.categoryLabel})`}
+                                >
+                                    {isSelected && (
+                                        <div className={styles.iconSelectedCheck}>
+                                            <FiCheckCircle size={13} />
+                                        </div>
+                                    )}
+                                    <div
+                                        className={styles.iconSquircle}
+                                        style={{
+                                            backgroundColor: isSelected ? activeTheme : `${activeTheme}14`,
+                                            color: isSelected ? "#ffffff" : activeTheme,
+                                        }}
+                                    >
+                                        <IconComponent size={24} />
+                                    </div>
+                                    <span className={styles.iconLabel}>{item.label}</span>
+                                    <span className={styles.iconCategoryBadge}>{item.categoryLabel}</span>
+                                </button>
+                            );
+                        })}
+                    </div>
                 </div>
 
                 {/* Main HQ Location & Geolocation Section */}

@@ -52,6 +52,20 @@ export default function Step6Publish() {
 
     // Handle Quick Service Save (create or update)
     const handleSaveService = async (serviceData) => {
+        const trimmedName = (serviceData.name || "").trim();
+        const existingServices = formData.services || [];
+
+        // Check duplicate name
+        const isDupe = existingServices.some(
+            (s) => (!editingService || s.id !== editingService.id) &&
+                   (s.name || "").trim().toLowerCase() === trimmedName.toLowerCase()
+        );
+
+        if (isDupe) {
+            toast.error(`A service with the name "${trimmedName}" already exists.`);
+            return;
+        }
+
         setIsAddingService(true);
         try {
             let activeTenantId = draftTenant?.id;
@@ -69,6 +83,11 @@ export default function Step6Publish() {
                             phone: formData.phone,
                             email: formData.email,
                             address: formData.address,
+                            location: formData.location || null,
+                            icon: formData.icon || "FiBriefcase",
+                            icon_color: formData.iconColor || formData.themeColor || "#0E7C86",
+                            logo_url: formData.logoUrl || null,
+                            cover_url: formData.coverUrl || null,
                             theme_color: formData.themeColor,
                             theme_config: formData.themeConfig,
                             config: { modules: formData.modules },
@@ -83,7 +102,10 @@ export default function Step6Publish() {
                 await dispatch(
                     addStarterServiceThunk({
                         tenantId: activeTenantId,
-                        serviceData,
+                        serviceData: {
+                            ...serviceData,
+                            name: trimmedName,
+                        },
                     })
                 ).unwrap();
             } else {
@@ -94,12 +116,17 @@ export default function Step6Publish() {
                         (typeof crypto !== "undefined" && crypto.randomUUID
                             ? crypto.randomUUID()
                             : `srv-${Math.random().toString(36).slice(2, 9)}`),
-                    name: serviceData.name,
+                    name: trimmedName,
+                    description: serviceData.description || null,
                     duration_minutes: serviceData.durationMinutes || 30,
                     price: serviceData.price || 0,
                     currency: serviceData.currency || "EGP",
+                    cancellation_policy_id: serviceData.cancellation_policy_id || null,
+                    icon: serviceData.icon || null,
+                    icon_color: serviceData.icon_color || null,
+                    theme_color: serviceData.theme_color || null,
+                    image_url: serviceData.image_url || null,
                 };
-                const existingServices = formData.services || [];
                 const updatedList = editingService
                     ? existingServices.map((s) =>
                           s.id === editingService.id ? { ...s, ...newService } : s
@@ -111,32 +138,11 @@ export default function Step6Publish() {
 
             setIsServiceModalOpen(false);
             setEditingService(null);
-            toast.success(`Service "${serviceData.name}" saved successfully!`);
+            toast.success(`Service "${trimmedName}" saved successfully!`);
         } catch (err) {
-            console.error("Save service fallback:", err);
-            // In case of network error, ensure local Redux state is updated gracefully
-            const newService = {
-                id:
-                    serviceData.id ||
-                    (typeof crypto !== "undefined" && crypto.randomUUID
-                        ? crypto.randomUUID()
-                        : `srv-${Math.random().toString(36).slice(2, 9)}`),
-                name: serviceData.name,
-                duration_minutes: serviceData.durationMinutes || 30,
-                price: serviceData.price || 0,
-                currency: serviceData.currency || "EGP",
-            };
-            const existingServices = formData.services || [];
-            const updatedList = editingService
-                ? existingServices.map((s) =>
-                      s.id === editingService.id ? { ...s, ...newService } : s
-                  )
-                : [...existingServices, newService];
-
-            dispatch(updateFormData({ services: updatedList }));
-            setIsServiceModalOpen(false);
-            setEditingService(null);
-            toast.success(`Service "${serviceData.name}" saved!`);
+            console.error("Save service error:", err);
+            const msg = typeof err === "string" ? err : err?.message || "Failed to save service.";
+            toast.error(msg);
         } finally {
             setIsAddingService(false);
         }
@@ -344,6 +350,11 @@ export default function Step6Publish() {
                 onSave={handleSaveService}
                 isLoading={isAddingService}
                 existingService={editingService}
+                servicesList={formData.services || []}
+                cancellationPolicyId={formData.cancellationPolicyId || formData.cancellationPolicy?.id || null}
+                defaultIcon={formData.icon || "FiBriefcase"}
+                defaultIconColor={formData.iconColor || formData.themeColor || "#0E7C86"}
+                tenantId={draftTenant?.id}
             />
         </div>
     );

@@ -1,0 +1,206 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(22, 31, 38, 0.65);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+    padding: 20px;
+    animation: fadeIn 0.2s ease;
+}
+
+.modalCard {
+    width: 100%;
+    max-width: 480px;
+    background-color: var(--color-white, #ffffff);
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(22, 31, 38, 0.22);
+    border: 1px solid var(--color-border, #e4e1d9);
+    overflow: hidden;
+    animation: scaleIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:global([data-theme="dark"]) .modalCard {
+    background-color: var(--color-ink-900, #161f26);
+    border-color: var(--color-ink-700, #2b3640);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+}
+
+.modalHeader {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--color-border, #e4e1d9);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+:global([data-theme="dark"]) .modalHeader {
+    border-bottom-color: var(--color-ink-700, #2b3640);
+}
+
+.titleGroup {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.iconCircle {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background-color: rgba(14, 124, 134, 0.12);
+    color: var(--color-accent-teal, #0e7c86);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+:global([data-theme="dark"]) .iconCircle {
+    background-color: rgba(14, 124, 134, 0.2);
+    color: #14b8a6;
+}
+
+.modalTitle {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--color-ink-900, #161f26);
+    margin: 0;
+    letter-spacing: -0.01em;
+}
+
+:global([data-theme="dark"]) .modalTitle {
+    color: var(--color-surface-cream, #f3f2ee);
+}
+
+.modalSubtitle {
+    font-size: 13px;
+    color: var(--color-ink-600, #3a444d);
+    margin: 2px 0 0 0;
+}
+
+:global([data-theme="dark"]) .modalSubtitle {
+    color: var(--color-ink-300, #8b939a);
+}
+
+.closeBtn {
+    background: transparent;
+    border: none;
+    color: var(--color-ink-300, #8b939a);
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.closeBtn:hover {
+    color: var(--color-ink-900, #161f26);
+    background-color: rgba(22, 31, 38, 0.05);
+}
+
+:global([data-theme="dark"]) .closeBtn:hover {
+    color: var(--color-surface-cream, #f3f2ee);
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.modalBody {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.infoCard {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 13px 14px;
+    border-radius: 12px;
+    background-color: var(--color-surface-cream, #f7f6f2);
+    border: 1px solid var(--color-border, #e4e1d9);
+}
+
+:global([data-theme="dark"]) .infoCard {
+    background-color: rgba(255, 255, 255, 0.03);
+    border-color: var(--color-ink-700, #2b3640);
+}
+
+.itemIcon {
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.itemIconWarm {
+    color: #f59e0b;
+}
+
+.itemIconGreen {
+    color: #10b981;
+}
+
+.cardContent {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.itemTitle {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-ink-900, #161f26);
+}
+
+:global([data-theme="dark"]) .itemTitle {
+    color: var(--color-surface-cream, #f3f2ee);
+}
+
+.itemDesc {
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--color-ink-600, #3a444d);
+}
+
+:global([data-theme="dark"]) .itemDesc {
+    color: var(--color-ink-300, #8b939a);
+}
+
+.modalActions {
+    padding: 16px 24px 20px;
+    border-top: 1px solid var(--color-border, #e4e1d9);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    background-color: rgba(228, 225, 217, 0.15);
+}
+
+:global([data-theme="dark"]) .modalActions {
+    border-top-color: var(--color-ink-700, #2b3640);
+    background-color: rgba(0, 0, 0, 0.15);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.94) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}

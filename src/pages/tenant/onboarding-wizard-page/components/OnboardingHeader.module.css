@@ -7,28 +7,35 @@
     top: 0;
     z-index: 50;
     transition: background-color 0.2s ease, border-color 0.2s ease;
+    backdrop-filter: blur(8px);
 }
 
 :global([data-theme="dark"]) .header {
-    background-color: var(--color-ink-900, #161f26);
+    background-color: rgba(22, 31, 38, 0.92);
     border-bottom-color: var(--color-ink-700, #2b3640);
 }
 
 .container {
-    max-width: 1100px;
+    max-width: 1120px;
     height: 100%;
     margin: 0 auto;
     padding: 0 24px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 16px;
 }
 
 .logoLink {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+.logoLink:hover {
+    opacity: 0.85;
 }
 
 .logoImage {
@@ -41,11 +48,18 @@
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 2px 8px;
+    letter-spacing: 0.06em;
+    padding: 3px 8px;
     border-radius: 9999px;
-    background: rgba(14, 124, 134, 0.12);
+    background: rgba(14, 124, 134, 0.1);
     color: var(--color-accent-teal, #0e7c86);
+    border: 1px solid rgba(14, 124, 134, 0.2);
+}
+
+:global([data-theme="dark"]) .badge {
+    background: rgba(45, 212, 191, 0.12);
+    color: #2dd4bf;
+    border-color: rgba(45, 212, 191, 0.25);
 }
 
 .centerSection {
@@ -53,11 +67,13 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    text-align: center;
 }
 
 .wizardTitle {
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 13.5px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
     color: var(--color-ink-900, #161f26);
 }
 
@@ -66,24 +82,35 @@
 }
 
 .userEmail {
-    font-size: 12px;
+    font-size: 11.5px;
     color: var(--color-ink-300, #8b939a);
+    max-width: 240px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .actions {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
+}
+
+/* Utilities group (Help & Theme) */
+.utilitiesGroup {
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .iconBtn {
     width: 36px;
     height: 36px;
-    border-radius: 8px;
+    border-radius: 10px;
     border: 1px solid var(--color-border, #e4e1d9);
     background: transparent;
     color: var(--color-ink-600, #3a444d);
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
@@ -92,57 +119,145 @@
 
 :global([data-theme="dark"]) .iconBtn {
     border-color: var(--color-ink-700, #2b3640);
-    color: var(--color-surface-cream, #f3f2ee);
+    color: var(--color-ink-300, #8b939a);
 }
 
 .iconBtn:hover {
-    background-color: var(--color-surface-cream, #f3f2ee);
+    background-color: var(--color-surface-cream, #f7f6f2);
+    border-color: var(--color-ink-300, #8b939a);
     color: var(--color-ink-900, #161f26);
+    transform: translateY(-1px);
 }
 
 :global([data-theme="dark"]) .iconBtn:hover {
     background-color: var(--color-ink-800, #1f2a33);
+    border-color: var(--color-ink-600, #3a444d);
+    color: var(--color-surface-cream, #f3f2ee);
 }
 
+.divider {
+    width: 1px;
+    height: 22px;
+    background-color: var(--color-border, #e4e1d9);
+    margin: 0 2px;
+}
+
+:global([data-theme="dark"]) .divider {
+    background-color: var(--color-ink-700, #2b3640);
+}
+
+/* Distinct Modern 'New Business' Pill Button */
+.newBusinessBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    background-color: rgba(14, 124, 134, 0.08);
+    border: 1px solid rgba(14, 124, 134, 0.25);
+    color: var(--color-accent-teal, #0e7c86);
+    cursor: pointer;
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    white-space: nowrap;
+}
+
+:global([data-theme="dark"]) .newBusinessBtn {
+    background-color: rgba(45, 212, 191, 0.1);
+    border-color: rgba(45, 212, 191, 0.3);
+    color: #2dd4bf;
+}
+
+.newBusinessBtn:hover {
+    background-color: rgba(14, 124, 134, 0.15);
+    border-color: var(--color-accent-teal, #0e7c86);
+    color: #0b626a;
+    box-shadow: 0 2px 10px rgba(14, 124, 134, 0.16);
+    transform: translateY(-1px);
+}
+
+:global([data-theme="dark"]) .newBusinessBtn:hover {
+    background-color: rgba(45, 212, 191, 0.18);
+    border-color: #2dd4bf;
+    color: #5eead4;
+    box-shadow: 0 2px 12px rgba(45, 212, 191, 0.2);
+}
+
+.btnIconTeal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 6px;
+    background-color: rgba(14, 124, 134, 0.15);
+    color: currentColor;
+}
+
+:global([data-theme="dark"]) .btnIconTeal {
+    background-color: rgba(45, 212, 191, 0.2);
+}
+
+/* Distinct Modern 'Save & Exit' Neutral Button */
 .saveExitBtn {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 8px 14px;
-    border-radius: 8px;
+    gap: 7px;
+    padding: 7px 14px;
+    border-radius: 10px;
     font-size: 13px;
     font-weight: 600;
-    background: transparent;
+    letter-spacing: -0.01em;
+    background-color: var(--color-white, #ffffff);
     border: 1px solid var(--color-border, #e4e1d9);
     color: var(--color-ink-700, #2b3640);
     cursor: pointer;
     transition: all 0.2s ease;
+    white-space: nowrap;
 }
 
 :global([data-theme="dark"]) .saveExitBtn {
+    background-color: var(--color-ink-800, #1f2a33);
     border-color: var(--color-ink-700, #2b3640);
     color: var(--color-surface-cream, #f3f2ee);
 }
 
-.saveExitBtn:hover {
-    background-color: var(--color-surface-cream, #f3f2ee);
+.saveExitBtn:hover:not(:disabled) {
+    background-color: var(--color-surface-cream, #f7f6f2);
     border-color: var(--color-ink-300, #8b939a);
+    color: var(--color-ink-900, #161f26);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
-:global([data-theme="dark"]) .saveExitBtn:hover {
-    background-color: var(--color-ink-800, #1f2a33);
+:global([data-theme="dark"]) .saveExitBtn:hover:not(:disabled) {
+    background-color: var(--color-ink-700, #2b3640);
+    border-color: var(--color-ink-600, #3a444d);
+    color: #ffffff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
-@media (max-width: 600px) {
+.saveExitBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
     .container {
         padding: 0 16px;
     }
     .centerSection {
         display: none;
     }
-    .saveExitBtn span {
+}
+
+@media (max-width: 540px) {
+    .btnText {
         display: none;
     }
+    .newBusinessBtn,
     .saveExitBtn {
         padding: 8px;
     }

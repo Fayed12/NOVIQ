@@ -372,3 +372,163 @@
         gap: 10px;
     }
 }
+
+/* SEO & Accessibility Policy Card */
+.seoNoticeCard {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background-color: rgba(14, 124, 134, 0.07);
+    border: 1px solid rgba(14, 124, 134, 0.2);
+    margin-top: 4px;
+}
+
+:global([data-theme="dark"]) .seoNoticeCard {
+    background-color: rgba(45, 212, 191, 0.08);
+    border-color: rgba(45, 212, 191, 0.2);
+}
+
+.seoNoticeIcon {
+    color: var(--color-accent-teal, #0e7c86);
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+:global([data-theme="dark"]) .seoNoticeIcon {
+    color: #2dd4bf;
+}
+
+.seoNoticeText {
+    font-size: 12px;
+    color: var(--color-ink-700, #2b3640);
+    line-height: 1.5;
+}
+
+:global([data-theme="dark"]) .seoNoticeText {
+    color: var(--color-surface-cream, #f3f2ee);
+}
+
+.seoNoticeText strong {
+    font-weight: 700;
+    color: var(--color-ink-900, #161f26);
+}
+
+:global([data-theme="dark"]) .seoNoticeText strong {
+    color: #ffffff;
+}
+
+/* Accessible Warning Modal for Policy Overwrite */
+.modalBackdrop {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(22, 31, 38, 0.65);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 16px;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.warningModal {
+    background-color: var(--color-white, #ffffff);
+    border-radius: 16px;
+    padding: 24px;
+    max-width: 460px;
+    width: 100%;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    border: 1px solid var(--color-border, #e4e1d9);
+}
+
+:global([data-theme="dark"]) .warningModal {
+    background-color: var(--color-ink-900, #161f26);
+    border-color: var(--color-ink-700, #2b3640);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+}
+
+.modalHeader {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.warningIconWrap {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background-color: rgba(245, 158, 11, 0.15);
+    color: #d97706;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.modalTitle {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-ink-900, #161f26);
+    margin: 0;
+}
+
+:global([data-theme="dark"]) .modalTitle {
+    color: var(--color-surface-cream, #f3f2ee);
+}
+
+.modalBodyText {
+    font-size: 13px;
+    color: var(--color-ink-700, #2b3640);
+    line-height: 1.5;
+    margin: 0;
+}
+
+:global([data-theme="dark"]) .modalBodyText {
+    color: var(--color-ink-300, #8b939a);
+}
+
+.modalComparisonBox {
+    background-color: var(--color-surface-cream, #f7f6f2);
+    border-radius: 10px;
+    padding: 12px 14px;
+    border: 1px solid var(--color-border, #e4e1d9);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+:global([data-theme="dark"]) .modalComparisonBox {
+    background-color: rgba(255, 255, 255, 0.04);
+    border-color: var(--color-ink-700, #2b3640);
+}
+
+.comparisonRow {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+}
+
+.comparisonLabel {
+    color: var(--color-ink-400, #6c757d);
+}
+
+.comparisonVal {
+    font-weight: 600;
+    color: var(--color-ink-900, #161f26);
+}
+
+:global([data-theme="dark"]) .comparisonVal {
+    color: var(--color-surface-cream, #f3f2ee);
+}
+
+.modalFooter {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 8px;
+}

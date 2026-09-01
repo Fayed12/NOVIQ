@@ -8,16 +8,22 @@ import Step3Theme from "./steps/Step3Theme";
 import Step4Modules from "./steps/Step4Modules";
 import Step5BookingSettings from "./steps/Step5BookingSettings";
 import Step6Publish from "./steps/Step6Publish";
+import ResetConfirmModal from "./components/ResetConfirmModal";
+import CategoryLimitModal from "./components/CategoryLimitModal";
 import {
     setStep,
     setStepCompleted,
     fetchLiveCategoriesThunk,
+    fetchUsedCategoriesThunk,
+    fetchUserOwnedTenantsThunk,
     loadUserDraftTenantThunk,
     saveDraftStepThunk,
     saveScheduleAndPoliciesThunk,
     saveBranchesThunk,
     publishTenantThunk,
+    resetOnboarding,
 } from "../../../redux/slices/onboardingSlice";
+import { updateUserRole } from "../../../redux/slices/authSlice";
 import styles from "./OnboardingWizardPage.module.css";
 
 // react
@@ -67,22 +73,65 @@ export default function OnboardingWizardPage() {
         formData,
         draftTenant,
         stepCompletion,
+        publishedTenant,
+        userOwnedTenants,
+        usedCategories,
+        liveCategories,
     } = useSelector((state) => state.onboarding);
 
     const [isSaving, setIsSaving] = useState(false);
     const [isPublishing, setIsPublishing] = useState(false);
     const [stepErrors, setStepErrors] = useState({});
     const [showCelebration, setShowCelebration] = useState(false);
+    const [isResetModalOpen, setIsResetModalOpen] = useState(false);
+    const [categoryWarningModal, setCategoryWarningModal] = useState(null);
 
     const contentContainerRef = useRef(null);
     const celebrationOverlayRef = useRef(null);
+
+    // Open confirmation modal
+    const handleReset = () => {
+        setIsResetModalOpen(true);
+    };
+
+    // Confirmed reset: clear Redux state, storage, and route to step 1
+    const handleConfirmReset = () => {
+        setIsResetModalOpen(false);
+        dispatch(resetOnboarding());
+        navigate("/onboarding/category", { replace: true });
+        toast.info("Onboarding wizard reset. Ready to configure a new business.");
+    };
+
+    // Helper to check category conflict
+    const getCategoryConflict = useCallback(
+        (catId) => {
+            if (!catId) return null;
+            const inUsed = (usedCategories || []).find(
+                (item) =>
+                    item.category_id === catId &&
+                    item.id !== draftTenant?.id &&
+                    item.status !== "draft" &&
+                    item.status !== "deleted"
+            );
+            if (inUsed) return inUsed;
+
+            const inOwned = (userOwnedTenants || []).find(
+                (item) =>
+                    item.category_id === catId &&
+                    item.id !== draftTenant?.id &&
+                    item.status !== "deleted"
+            );
+            return inOwned || null;
+        },
+        [usedCategories, userOwnedTenants, draftTenant?.id]
+    );
 
     // Step Completion Checker
     const isStepCompleted = useCallback(
         (stepNum) => {
             switch (stepNum) {
                 case 1:
-                    return Boolean(formData.categoryId);
+                    return Boolean(formData.categoryId) && !getCategoryConflict(formData.categoryId);
                 case 2:
                     return Boolean(formData.name?.trim() && formData.slug?.trim());
                 case 3:
@@ -100,7 +149,7 @@ export default function OnboardingWizardPage() {
                     return true;
             }
         },
-        [formData]
+        [formData, getCategoryConflict]
     );
 
     // Check if user is allowed to access target step (all previous steps must be complete)
@@ -140,13 +189,22 @@ export default function OnboardingWizardPage() {
         }
     }, [stepSlug, currentStep, canAccessStep, getEarliestIncompleteStep, dispatch, navigate]);
 
-    // 2. On Mount: Fetch categories & restore user draft tenant from Supabase
+    // 2. On Mount: Fetch categories, used categories & restore user draft tenant from Supabase
     useEffect(() => {
         dispatch(fetchLiveCategoriesThunk());
+        dispatch(fetchUsedCategoriesThunk());
         if (user?.id) {
-            dispatch(loadUserDraftTenantThunk(user.id));
+            dispatch(fetchUserOwnedTenantsThunk(user.id));
+            dispatch(loadUserDraftTenantThunk(user.id)).then((res) => {
+                const draft = res.payload?.tenant || res.payload?.id;
+                // If user has no active draft in DB and previously published in this session, reset for fresh setup
+                if (!draft && publishedTenant) {
+                    dispatch(resetOnboarding());
+                    navigate("/onboarding/category", { replace: true });
+                }
+            });
         }
-    }, [dispatch, user?.id]);
+    }, [dispatch, user?.id, publishedTenant, navigate]);
 
     // 3. GSAP Step Transition Animation
     useEffect(() => {
@@ -165,6 +223,21 @@ export default function OnboardingWizardPage() {
         if (currentStep === 1) {
             if (!formData.categoryId) {
                 toast.warn("Please select a business category to proceed", { position: "top-center" });
+                return false;
+            }
+            const conflict = getCategoryConflict(formData.categoryId);
+            if (conflict) {
+                const catObj = (liveCategories || []).find((c) => c.id === formData.categoryId) || {
+                    name: "This Category",
+                };
+                setCategoryWarningModal({
+                    category: catObj,
+                    business: conflict,
+                });
+                toast.error(
+                    `A registered business ("${conflict.name}") already exists in this category. You cannot proceed with an in-use category.`,
+                    { position: "top-center" }
+                );
                 return false;
             }
         } else if (currentStep === 2) {
@@ -216,6 +289,11 @@ export default function OnboardingWizardPage() {
                                 phone: formData.phone,
                                 email: formData.email,
                                 address: formData.address,
+                                location: formData.location || null,
+                                icon: formData.icon || "FiBriefcase",
+                                icon_color: formData.iconColor || formData.themeColor || "#0E7C86",
+                                logo_url: formData.logoUrl || null,
+                                cover_url: formData.coverUrl || null,
                                 theme_color: formData.themeColor,
                                 theme_config: formData.themeConfig,
                                 config: { modules: formData.modules },
@@ -302,6 +380,11 @@ export default function OnboardingWizardPage() {
                             phone: formData.phone,
                             email: formData.email,
                             address: formData.address,
+                            location: formData.location || null,
+                            icon: formData.icon || "FiBriefcase",
+                            icon_color: formData.iconColor || formData.themeColor || "#0E7C86",
+                            logo_url: formData.logoUrl || null,
+                            cover_url: formData.coverUrl || null,
                             theme_color: formData.themeColor,
                             theme_config: formData.themeConfig,
                             config: { modules: formData.modules },
@@ -335,6 +418,16 @@ export default function OnboardingWizardPage() {
                     userId: user?.id,
                 })
             ).unwrap();
+
+            // Instantly sync Redux user role to owner
+            dispatch(
+                updateUserRole({
+                    role: "owner",
+                    tenantId: published?.id || draftTenant.id,
+                    tenantSlug: published?.slug || formData.slug,
+                })
+            );
+
             setShowCelebration(true);
 
             // GSAP celebration intro
@@ -393,7 +486,11 @@ export default function OnboardingWizardPage() {
     return (
         <div className={styles.wizardPageWrapper}>
             {/* Header */}
-            <OnboardingHeader onSaveAndExit={handleSaveAndExit} isSaving={isSaving} />
+            <OnboardingHeader
+                onSaveAndExit={handleSaveAndExit}
+                onReset={handleReset}
+                isSaving={isSaving}
+            />
 
             {/* Main Content Area */}
             <main className={styles.mainContainer}>
@@ -440,6 +537,21 @@ export default function OnboardingWizardPage() {
                     </div>
                 </div>
             )}
+
+            {/* Modern React Confirmation Modal for Wizard Reset */}
+            <ResetConfirmModal
+                isOpen={isResetModalOpen}
+                onClose={() => setIsResetModalOpen(false)}
+                onConfirm={handleConfirmReset}
+            />
+
+            {/* Category Conflict React Portal Modal */}
+            <CategoryLimitModal
+                isOpen={Boolean(categoryWarningModal)}
+                category={categoryWarningModal?.category}
+                existingBusiness={categoryWarningModal?.business}
+                onClose={() => setCategoryWarningModal(null)}
+            />
         </div>
     );
 }

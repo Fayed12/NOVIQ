@@ -1,15 +1,19 @@
 // local
 import {
     fetchLiveCategoriesThunk,
+    fetchUsedCategoriesThunk,
+    fetchUserOwnedTenantsThunk,
     updateFormData,
 } from "../../../../redux/slices/onboardingSlice";
+import MainButton from "../../../../components/ui/button/MainButton";
+import CategoryLimitModal from "../components/CategoryLimitModal";
 import styles from "./Step1Category.module.css";
 
 // prop-types
 import PropTypes from "prop-types";
 
 // react
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 // react-redux
 import { useSelector, useDispatch } from "react-redux";
@@ -24,6 +28,10 @@ import {
     FiLayers,
     FiClock,
     FiGrid,
+    FiAlertCircle,
+    FiRefreshCw,
+    FiLock,
+    FiAlertTriangle,
 } from "react-icons/fi";
 
 // Dynamic icon resolver for category icons stored in DB
@@ -94,18 +102,69 @@ function getCategoryStrategyDetails(slug) {
 
 export default function Step1Category({ onSelectCategory }) {
     const dispatch = useDispatch();
-    const { liveCategories, formData, status } = useSelector(
-        (state) => state.onboarding,
-    );
+    const {
+        liveCategories,
+        formData,
+        status,
+        error,
+        userOwnedTenants,
+        usedCategories,
+        draftTenant,
+    } = useSelector((state) => state.onboarding);
+    const { user } = useSelector((state) => state.auth);
     const selectedCategoryId = formData.categoryId;
+    const [conflictingCategory, setConflictingCategory] = useState(null);
 
     useEffect(() => {
-        if (!liveCategories || liveCategories.length === 0) {
+        if (status === "idle" && (!liveCategories || liveCategories.length === 0)) {
             dispatch(fetchLiveCategoriesThunk());
         }
-    }, [dispatch, liveCategories]);
+        dispatch(fetchUsedCategoriesThunk());
+        if (user?.id) {
+            dispatch(fetchUserOwnedTenantsThunk(user.id));
+        }
+    }, [dispatch, liveCategories, status, user?.id]);
+
+    // Check if category has an active business registered in Supabase
+    const findCategoryConflict = (catId) => {
+        if (!catId) return null;
+        // 1. Check in usedCategories (all active registered businesses across platform)
+        const inUsed = (usedCategories || []).find(
+            (item) =>
+                item.category_id === catId &&
+                item.id !== draftTenant?.id &&
+                item.status !== "draft" &&
+                item.status !== "deleted"
+        );
+        if (inUsed) return inUsed;
+
+        // 2. Also check in userOwnedTenants
+        const inUserOwned = (userOwnedTenants || []).find(
+            (item) =>
+                item.category_id === catId &&
+                item.id !== draftTenant?.id &&
+                item.status !== "deleted"
+        );
+        return inUserOwned || null;
+    };
+
+    const activeConflict = selectedCategoryId ? findCategoryConflict(selectedCategoryId) : null;
 
     const handleCardClick = (cat) => {
+        // Check if category is already used
+        const existingBusiness = findCategoryConflict(cat.id);
+
+        if (existingBusiness) {
+            setConflictingCategory({
+                category: cat,
+                business: existingBusiness,
+            });
+            if (onSelectCategory) {
+                onSelectCategory(cat, existingBusiness);
+            }
+            return;
+        }
+
         // Resolve raw color/slug into guaranteed valid hex code
         const rawTheme =
             cat.theme_color ||
@@ -138,12 +197,16 @@ export default function Step1Category({ onSelectCategory }) {
             }),
         );
         if (onSelectCategory) {
-            onSelectCategory(cat);
+            onSelectCategory(cat, null);
         }
     };
 
     const isLoading =
         status === "loading" &&
+        (!liveCategories || liveCategories.length === 0);
+
+    const isError =
+        status === "failed" &&
         (!liveCategories || liveCategories.length === 0);
 
     return (
@@ -163,6 +226,54 @@ export default function Step1Category({ onSelectCategory }) {
                 </p>
             </div>
 
+            {/* Error Banner with Retry */}
+            {isError && (
+                <div className={styles.errorBox}>
+                    <FiAlertCircle size={28} className={styles.errorIcon} />
+                    <div>
+                        <p className={styles.errorTitle}>Failed to load business categories</p>
+                        <p className={styles.errorMessage}>{error || "Unable to reach categories catalog."}</p>
+                    </div>
+                    <MainButton
+                        size="sm"
+                        variant="secondary"
+                        icon={<FiRefreshCw />}
+                        onClick={() => dispatch(fetchLiveCategoriesThunk())}
+                    >
+                        Retry Loading Categories
+                    </MainButton>
+                </div>
+            )}
+
+            {/* Prominent Warning Banner if Currently Selected Category is in Use */}
+            {activeConflict && (
+                <div className={styles.activeConflictBanner} role="alert">
+                    <div className={styles.conflictBannerHeader}>
+                        <FiAlertTriangle className={styles.conflictBannerIcon} size={22} />
+                        <div>
+                            <h4 className={styles.conflictBannerTitle}>
+                                Category Already in Use: {activeConflict.categories?.name || "Selected Vertical"}
+                            </h4>
+                            <p className={styles.conflictBannerText}>
+                                A registered business (<strong>{activeConflict.name}</strong>) is already operating in this category. You cannot proceed to the next step with an in-use category. Please select another available category below.
+                            </p>
+                        </div>
+                    </div>
+                    <MainButton
+                        size="sm"
+                        variant="secondary"
+                        onClick={() =>
+                            setConflictingCategory({
+                                category: activeConflict.categories || { name: activeConflict.name },
+                                business: activeConflict,
+                            })
+                        }
+                    >
+                        View Warning
+                    </MainButton>
+                </div>
+            )}
+
             {/* Category Grid */}
             {isLoading ? (
                 <div className={styles.loadingGrid}>
@@ -170,7 +281,7 @@ export default function Step1Category({ onSelectCategory }) {
                         <div key={n} className={styles.skeletonCard} />
                     ))}
                 </div>
-            ) : (
+            ) : !isError && (
                 <div className={styles.categoriesGrid}>
                     {liveCategories.map((cat) => {
                         const isSelected = selectedCategoryId === cat.id;
@@ -178,12 +289,15 @@ export default function Step1Category({ onSelectCategory }) {
                             cat.slug,
                         );
 
+                        // Check if category is used
+                        const conflict = findCategoryConflict(cat.id);
+
                         return (
                             <div
                                 key={cat.id}
                                 className={`${styles.categoryCard} ${
                                     isSelected ? styles.selectedCard : ""
-                                }`}
+                                } ${conflict ? styles.usedCard : ""}`}
                                 onClick={() => handleCardClick(cat)}
                                 role="button"
                                 tabIndex={0}
@@ -202,20 +316,31 @@ export default function Step1Category({ onSelectCategory }) {
                                             cat.theme_color,
                                         )}
                                     </div>
-                                    <div
-                                        className={`${styles.radioIndicator} ${
-                                            isSelected
-                                                ? styles.radioSelected
-                                                : ""
-                                        }`}
-                                    >
-                                        {isSelected && (
-                                            <FiCheck
-                                                size={13}
-                                                className={styles.checkIcon}
-                                            />
-                                        )}
-                                    </div>
+
+                                    {conflict ? (
+                                        <div
+                                            className={styles.usedBadge}
+                                            title={`Already used by ${conflict.name}`}
+                                        >
+                                            <FiLock size={12} />
+                                            <span>In Use ({conflict.name})</span>
+                                        </div>
+                                    ) : (
+                                        <div
+                                            className={`${styles.radioIndicator} ${
+                                                isSelected
+                                                    ? styles.radioSelected
+                                                    : ""
+                                            }`}
+                                        >
+                                            {isSelected && (
+                                                <FiCheck
+                                                    size={13}
+                                                    className={styles.checkIcon}
+                                                />
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* Category Information */}
@@ -243,6 +368,14 @@ export default function Step1Category({ onSelectCategory }) {
                     })}
                 </div>
             )}
+
+            {/* Warning Modal when user attempts to create duplicate business in same category */}
+            <CategoryLimitModal
+                isOpen={Boolean(conflictingCategory)}
+                category={conflictingCategory?.category}
+                existingBusiness={conflictingCategory?.business}
+                onClose={() => setConflictingCategory(null)}
+            />
         </div>
     );
 }

@@ -133,7 +133,7 @@ const POPULAR_SWATCHES = [
 /**
  * Resolves any string (preset ID, slug, hex code with or without #) into a valid hex color string.
  */
-export function resolveValidHex(input, fallback = "#0E7C86") {
+function resolveValidHex(input, fallback = "#0E7C86") {
     if (!input) return fallback;
     const str = String(input).trim();
 
@@ -238,14 +238,20 @@ export default function Step3Theme({ onSelectTheme }) {
     }, [formData.themeColor]);
 
     const [customHex, setCustomHex] = useState(activeColor);
+    const [prevThemeColor, setPrevThemeColor] = useState(formData.themeColor);
     const [selectedSlot, setSelectedSlot] = useState("11:00 AM");
     const [selectedServiceId, setSelectedServiceId] = useState(1);
 
-    // Synchronize customHex & auto-repair invalid slug format in formData.themeColor
+    // Sync customHex when formData.themeColor changes
+    if (formData.themeColor !== prevThemeColor) {
+        setPrevThemeColor(formData.themeColor);
+        setCustomHex(activeColor);
+    }
+
+    // Auto-repair invalid non-hex slug format in Redux formData.themeColor
     useEffect(() => {
         if (formData.themeColor) {
             const valid = resolveValidHex(formData.themeColor, "#0E7C86");
-            setCustomHex(valid);
 
             // If Redux stored an invalid non-hex string like "medical-clean" or "#medical-clean", repair it immediately
             if (formData.themeColor !== valid) {

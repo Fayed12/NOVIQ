@@ -5,7 +5,7 @@ import { updateFormData } from "../../../../redux/slices/onboardingSlice";
 import styles from "./Step5BookingSettings.module.css";
 
 // react
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 // react-redux
 import { useSelector, useDispatch } from "react-redux";
@@ -22,6 +22,7 @@ import {
     FiClock,
     FiPercent,
     FiInfo,
+    FiAlertTriangle,
 } from "react-icons/fi";
 
 // Generate 30-minute interval time options from 00:00 to 23:30
@@ -131,7 +132,20 @@ export default function Step5BookingSettings() {
         });
     };
 
+    const [pendingPolicyOption, setPendingPolicyOption] = useState(null);
+
     const handlePolicyChange = (option) => {
+        if (!option) return;
+        // If an existing policy is already chosen and is different from the clicked option, warn first!
+        if (policy?.value && policy.value !== option.value) {
+            setPendingPolicyOption(option);
+            return;
+        }
+
+        applyPolicyChange(option);
+    };
+
+    const applyPolicyChange = (option) => {
         dispatch(
             updateFormData({
                 cancellationPolicy: {
@@ -141,6 +155,8 @@ export default function Step5BookingSettings() {
                 },
             })
         );
+        setPendingPolicyOption(null);
+        toast.info(`Updated cancellation policy to "${option.title}"`);
     };
 
     // Render custom option format inside the dropdown list
@@ -348,10 +364,80 @@ export default function Step5BookingSettings() {
                 <div className={styles.policyNotice}>
                     <FiInfo size={14} className={styles.noticeIcon} />
                     <span>
-                        You can customize custom buffer intervals and cancellation exemptions in your Tenant Dashboard after publishing.
+                        You can customize buffer intervals and cancellation exemptions in your Tenant Dashboard after publishing.
                     </span>
                 </div>
+
+                {/* SEO & Consumer Transparency Notice */}
+                <div
+                    role="region"
+                    aria-label="SEO and Customer Booking Transparency"
+                    className={styles.seoNoticeCard}
+                >
+                    <FiShield className={styles.seoNoticeIcon} size={18} />
+                    <div className={styles.seoNoticeText}>
+                        <strong>SEO & Customer Trust Guarantee:</strong> NOVIQ enforces a single master cancellation rule per business so Google Search booking listings and customer checkout pages display 100% transparent, dispute-free terms.
+                    </div>
+                </div>
             </div>
+
+            {/* Accessible Confirmation Modal for Policy Replacement */}
+            {pendingPolicyOption && (
+                <div
+                    className={styles.modalBackdrop}
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="policy-warning-title"
+                >
+                    <div className={styles.warningModal}>
+                        <div className={styles.modalHeader}>
+                            <div className={styles.warningIconWrap}>
+                                <FiAlertTriangle size={22} />
+                            </div>
+                            <h3 id="policy-warning-title" className={styles.modalTitle}>
+                                Replace Cancellation Policy?
+                            </h3>
+                        </div>
+
+                        <p className={styles.modalBodyText}>
+                            Your business operates under a single unified cancellation policy. Changing this policy will update terms across all operating branches and services.
+                        </p>
+
+                        <div className={styles.modalComparisonBox}>
+                            <div className={styles.comparisonRow}>
+                                <span className={styles.comparisonLabel}>Current Active Policy:</span>
+                                <span className={styles.comparisonVal}>{currentPolicyOption.title}</span>
+                            </div>
+                            <div className={styles.comparisonRow}>
+                                <span className={styles.comparisonLabel}>New Policy to Apply:</span>
+                                <span
+                                    className={styles.comparisonVal}
+                                    style={{ color: pendingPolicyOption.color }}
+                                >
+                                    {pendingPolicyOption.title}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className={styles.modalFooter}>
+                            <MainButton
+                                variant="secondary"
+                                size="sm"
+                                onClick={() => setPendingPolicyOption(null)}
+                            >
+                                Keep Current Policy
+                            </MainButton>
+                            <MainButton
+                                variant="primary"
+                                size="sm"
+                                onClick={() => applyPolicyChange(pendingPolicyOption)}
+                            >
+                                Yes, Replace Policy
+                            </MainButton>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

@@ -115,6 +115,21 @@ const authSlice = createSlice({
     clearAuthError(state) {
       state.error = null;
     },
+    updateUserRole(state, action) {
+      if (state.user) {
+        state.user = {
+          ...state.user,
+          global_role: action.payload?.role || 'owner',
+          role: action.payload?.role || 'owner',
+          user_metadata: {
+            ...(state.user.user_metadata || {}),
+            role: action.payload?.role || 'owner',
+            tenant_id: action.payload?.tenantId,
+            tenant_slug: action.payload?.tenantSlug,
+          },
+        };
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -159,5 +174,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { sessionChanged, clearAuthError } = authSlice.actions;
+export const { sessionChanged, clearAuthError, updateUserRole } = authSlice.actions;
 export default authSlice.reducer;
